@@ -167,7 +167,7 @@ Esto levanta el frontend, backend y base de datos de forma conjunta.
 - ✅ Análisis del problema
 - ✅ Relevamiento de requerimientos
 - ✅ Diseño de arquitectura
-- ✅ Modelado de base de datos
+- 🔄 Modelado de base de datos
 - 🔄 Desarrollo de funcionalidades
 - 🔄 Testing e integración
 - ⏳ Despliegue final
