@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db_postgres:
+    image: postgres:15
+    container_name: barber_postgres
+    environment:
+      POSTGRES_DB: barber_db
+      POSTGRES_USER: barber_user
+      POSTGRES_PASSWORD: barber_password
+    ports:
+      - "5432:5432"
+
+  db_mongo:
+    image: mongo:latest
+    container_name: barber_mongo
+    ports:
+      - "27017:27017"
+
+  backend:
+    build: ./backend
+    container_name: barber_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db_postgres
+      - db_mongo
