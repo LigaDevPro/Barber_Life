@@ -40,9 +40,9 @@ El proyecto implementa una arquitectura **Cliente-Servidor** separada en dos rep
 | Capa | Tecnología | Repositorio |
 |---|---|---|
 | Frontend | Angular + TypeScript | [/frontend](https://github.com/LigaDevPro/Barber_Life/tree/main/frontend) |
-| Backend | Django + Python | — |
-| Base de datos | PostgreSQL + MongoDB | — |
-| Infraestructura | Docker + Docker Compose | — |
+| Backend | Django + Python | [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) |
+| Base de datos | PostgreSQL + MongoDB | [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) |
+| Infraestructura | Docker + Docker Compose | [/Raíz](https://github.com/LigaDevPro/Barber_Life/tree/main/) - [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) |
 | Pagos | Mercado Pago API | — |
 
 ---
