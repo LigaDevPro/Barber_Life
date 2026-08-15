@@ -41,7 +41,7 @@ El proyecto implementa una arquitectura **Cliente-Servidor** separada en dos rep
 |---|---|---|
 | Frontend | Angular + TypeScript | [/frontend](https://github.com/LigaDevPro/Barber_Life/tree/main/frontend) |
 | Backend | Django + Python | — |
-| Base de datos | PostgreSQL | — |
+| Base de datos | PostgreSQL + MongoDB | — |
 | Infraestructura | Docker + Docker Compose | — |
 | Pagos | Mercado Pago API | — |
 
