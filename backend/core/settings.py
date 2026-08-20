@@ -1,3 +1,8 @@
+"""
+Django settings — proyecto `core`, Barber Life.
+Generado con `django-admin startproject core .` y completado para Sprint 2
+(REST Framework, JWT, CORS, Postgres, Mongo, RBAC).
+"""
 import os
 from pathlib import Path
 from datetime import timedelta
@@ -48,6 +53,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # RBAC: valida el JWT en cada request a /api/ (ver gestion/middleware.py).
+    # El chequeo fino de rol por-endpoint vive en gestion/permissions.py.
+    'gestion.middleware.RoleCheckMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -121,10 +129,13 @@ CORS_ALLOWED_ORIGINS = env_list(
 )
 CORS_ALLOW_CREDENTIALS = True
 
-# Mongo para notificaciones y logs, no relacional
+# MongoDB (colecciones no relacionales: notificaciones, eventos_log, analytics_cache)
 MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017')
 MONGO_DB_NAME = os.environ.get('MONGO_DB_NAME', 'barberlife_nosql')
 
+# Ventana de cancelación autónoma del cliente (RBAC - restricciones críticas, wiki)
 CANCELACION_LIMITE_HORAS = int(os.environ.get('CANCELACION_LIMITE_HORAS', '2'))
 
+# Mercado Pago (ya lo tenés instalado — clave lista para Sprint 3, CU-06;
+# todavía no hay ninguna vista que la use en este sprint)
 MERCADOPAGO_ACCESS_TOKEN = os.environ.get('MERCADOPAGO_ACCESS_TOKEN', '')
