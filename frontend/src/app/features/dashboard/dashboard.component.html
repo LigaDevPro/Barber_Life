@@ -1,0 +1,81 @@
+<div class="page">
+  <bl-topbar (logout)="logout()" />
+
+  <main class="content">
+    @if (loading()) {
+      <p class="state-text">Cargando dashboard...</p>
+    } @else if (errorMsg()) {
+      <div class="state-error">{{ errorMsg() }}</div>
+    } @else if (data(); as d) {
+      <p class="eyebrow">Dashboard</p>
+      <h1 class="greeting">Hola, {{ d.nombre }}</h1>
+      <p class="subgreeting">Bienvenido de nuevo</p>
+
+      <section class="stat-list">
+        <a routerLink="/turnos" class="stat-card">
+          <span class="stat-icon stat-icon--purple">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" d="M7 2v3M17 2v3M3.5 9h17M4 5h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg>
+          </span>
+          <span class="stat-body">
+            <span class="stat-label">Turnos hoy</span>
+            <span class="stat-value">{{ d.turnos_hoy }}</span>
+          </span>
+        </a>
+
+        <div class="stat-card">
+          <span class="stat-icon stat-icon--blue">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0"/></svg>
+          </span>
+          <span class="stat-body">
+            <span class="stat-label">Clientes activos</span>
+            <span class="stat-value">{{ d.clientes_activos }}</span>
+          </span>
+        </div>
+
+        @if (d.ingresos_del_mes !== null) {
+          <div class="stat-card">
+            <span class="stat-icon stat-icon--green">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" d="M12 2v20M17 6.5c0-1.9-2.2-3.5-5-3.5S7 4.6 7 6.5 9.2 10 12 10s5 1.6 5 3.5-2.2 3.5-5 3.5-5-1.6-5-3.5"/></svg>
+            </span>
+            <span class="stat-body">
+              <span class="stat-label">Ingresos del mes</span>
+              <span class="stat-value">${{ d.ingresos_del_mes }}</span>
+            </span>
+          </div>
+        }
+      </section>
+
+      <section class="chart-section">
+        <h2 class="section-title">Turnos por semana</h2>
+        <bl-week-chart [dias]="d.turnos_por_semana" />
+      </section>
+
+      <section class="ultimos-section">
+        <div class="section-header">
+          <h2 class="section-title">Últimos turnos</h2>
+          <a routerLink="/turnos" class="ver-todos">Ver todos</a>
+        </div>
+
+        @if (d.ultimos_turnos.length === 0) {
+          <p class="state-text">Todavía no hay turnos registrados.</p>
+        } @else {
+          <ul class="turnos-list">
+            @for (t of d.ultimos_turnos; track t.id) {
+              <li class="turno-item">
+                <span class="turno-dot"></span>
+                <span class="turno-info">
+                  <span class="turno-cliente">{{ t.cliente_nombre }}</span>
+                  <span class="turno-servicio">{{ t.servicio_nombre }}</span>
+                </span>
+                <span class="turno-time">
+                  <span class="turno-fecha">{{ t.fecha }}</span>
+                  <span class="turno-hora">{{ t.hora }}</span>
+                </span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    }
+  </main>
+</div>

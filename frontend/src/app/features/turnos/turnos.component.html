@@ -1,0 +1,98 @@
+<div class="page">
+  <bl-topbar (logout)="logout()" />
+
+  <main class="content">
+    <p class="eyebrow">Gestión de turnos</p>
+    <h1 class="title">Revisa los turnos y estadísticas</h1>
+
+    @if (errorMsg()) {
+      <div class="state-error">{{ errorMsg() }}</div>
+    }
+
+    <section class="servicios-card">
+      <div class="section-header">
+        <h2 class="section-title">Servicios más solicitados</h2>
+        <span class="ver-todos">Ver todo</span>
+      </div>
+
+      @if (servicios().length === 0) {
+        <p class="state-text">Todavía no hay turnos para calcular un ranking.</p>
+      } @else {
+        <ul class="servicios-list">
+          @for (s of servicios(); track s.servicio_id) {
+            <li class="servicio-item">
+              <span class="servicio-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" d="M6 6l12 12M18 6 6 18M9 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm12 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+              </span>
+              <span class="servicio-nombre">{{ s.nombre }}</span>
+              <span class="servicio-precio">${{ s.precio }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <section class="tabla-card">
+      @if (loading()) {
+        <p class="state-text">Cargando turnos...</p>
+      } @else if (pagina(); as p) {
+        @if (p.results.length === 0) {
+          <p class="state-text">No hay turnos para mostrar.</p>
+        } @else {
+          <table class="turnos-table">
+            <thead>
+              <tr>
+                <th>Hora</th>
+                <th>Cliente</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (t of p.results; track t.id) {
+                <tr>
+                  <td>{{ t.hora }}</td>
+                  <td>
+                    <span class="cliente-nombre">{{ t.cliente_nombre }}</span>
+                    <span class="cliente-servicio">{{ t.servicio_nombre }}</span>
+                    <span class="estado-chip" [class]="'estado-' + t.estado">{{ t.estado }}</span>
+                  </td>
+                  <td class="acciones-cell">
+                    <button class="icon-btn" type="button" (click)="toggleMenu(t.id)" aria-label="Más acciones">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>
+                    </button>
+
+                    @if (menuAbierto() === t.id) {
+                      <div class="acciones-menu">
+                        <button type="button" (click)="cambiarEstado(t, 'confirmado')">Confirmar</button>
+                        <button type="button" (click)="cambiarEstado(t, 'completado')">Marcar completado</button>
+                        <button type="button" class="danger" [disabled]="!t.puede_cancelar" (click)="cambiarEstado(t, 'cancelado')">
+                          Cancelar
+                        </button>
+                      </div>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          <div class="paginacion">
+            <span class="paginacion-texto">{{ rangoTexto() }}</span>
+            <div class="paginacion-botones">
+              @for (n of paginasVisibles(); track n) {
+                <button
+                  type="button"
+                  class="page-btn"
+                  [class.page-btn--active]="n === p.page"
+                  (click)="irAPagina(n)"
+                >
+                  {{ n }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      }
+    </section>
+  </main>
+</div>

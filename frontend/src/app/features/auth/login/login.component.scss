@@ -1,0 +1,73 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(circle at 50% 0%, #17131f 0%, var(--bl-bg) 60%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.auth-title {
+  margin: 18px 0 4px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.auth-subtitle {
+  margin: 0 0 20px;
+  color: var(--bl-text-muted);
+  font-size: 14px;
+}
+
+.auth-notice {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border-radius: var(--bl-radius-sm);
+  background: rgba(224, 111, 111, 0.12);
+  border: 1px solid rgba(224, 111, 111, 0.35);
+  color: #f0a3a3;
+  font-size: 13px;
+}
+
+.auth-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.bl-divider {
+  width: 100%;
+}
+
+.bl-btn--google {
+  margin-bottom: 8px;
+}
+
+.auth-switch {
+  margin-top: 18px;
+  font-size: 13.5px;
+  color: var(--bl-text-muted);
+
+  a {
+    color: var(--bl-accent);
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
