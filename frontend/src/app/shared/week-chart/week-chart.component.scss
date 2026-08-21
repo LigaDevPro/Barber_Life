@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.chart {
+  width: 100%;
+  height: 90px;
+  display: block;
+}
+
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--bl-text-muted);
+}
