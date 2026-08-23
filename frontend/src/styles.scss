@@ -1,1 +1,136 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bl-bg: #0b0b10;
+  --bl-surface: #16161e;
+  --bl-surface-2: #1c1c26;
+  --bl-border: #2a2a36;
+  --bl-text: #f5f5f7;
+  --bl-text-muted: #808080;
+  --bl-accent: #6c4eff;
+  --bl-accent-2: #856dff;
+  --bl-accent-3: #ada2ff;
+  --bl-blue: #3a68ff;
+  --bl-blue-2: #5b82ff;
+  --bl-blue-3: #7f9dff;
+  --bl-danger: #e06f6f;
+  --bl-success: #6fdc9a;
+  --bl-warning: #e0c56f;
+  --bl-radius: 14px;
+  --bl-radius-sm: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Syne', system-ui, -apple-system, sans-serif;
+  background: var(--bl-bg);
+  color: var(--bl-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+}
+
+.bl-input {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: var(--bl-radius-sm);
+  border: 1px solid var(--bl-border);
+  background: var(--bl-surface-2);
+  color: var(--bl-text);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+
+  &::placeholder {
+    color: var(--bl-text-muted);
+  }
+
+  &:focus {
+    border-color: var(--bl-accent);
+  }
+
+  &.bl-input--error {
+    border-color: var(--bl-danger);
+  }
+}
+
+.bl-btn {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: var(--bl-radius-sm);
+  border: 1px solid var(--bl-border);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.05s ease;
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.bl-btn--primary {
+  background: var(--bl-accent);
+  color: #ffffff;
+  border-color: var(--bl-accent);
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+}
+
+.bl-btn--google {
+  background: transparent;
+  color: var(--bl-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-transform: none;
+  font-weight: 500;
+  letter-spacing: normal;
+}
+
+.bl-error-text {
+  color: var(--bl-danger);
+  font-size: 12.5px;
+  margin-top: -4px;
+}
+
+.bl-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--bl-text-muted);
+  font-size: 13px;
+  margin: 4px 0;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--bl-border);
+  }
+}

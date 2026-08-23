@@ -1,30 +1,65 @@
-version: '3.8'
-
 services:
-  db_postgres:
-    image: postgres:15
-    container_name: barber_postgres
+  postgres:
+    image: postgres:16-alpine
+    container_name: barberlife_postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: barber_db
-      POSTGRES_USER: barber_user
-      POSTGRES_PASSWORD: barber_password
+      POSTGRES_DB: barberlife
+      POSTGRES_USER: barberlife
+      POSTGRES_PASSWORD: barberlife
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U barberlife"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  db_mongo:
-    image: mongo:latest
-    container_name: barber_mongo
+  mongo:
+    image: mongo:7
+    container_name: barberlife_mongo
+    restart: unless-stopped
     ports:
       - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
 
   backend:
     build: ./backend
-    container_name: barber_backend
-    command: python manage.py runserver 0.0.0.0:8000
+    container_name: barberlife_backend
+    restart: unless-stopped
+    command: sh -c "python manage.py makemigrations gestion && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app
     ports:
       - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_HOST: postgres
+      MONGO_URI: mongodb://mongo:27017
     depends_on:
-      - db_postgres
-      - db_mongo
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+
+  frontend:
+    build: ./frontend
+    container_name: barberlife_frontend
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "4200:4200"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  mongo_data:

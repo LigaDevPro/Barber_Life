@@ -51,7 +51,8 @@ El proyecto implementa una arquitectura **Cliente-Servidor** separada en dos rep
 
 ### Requisitos previos
 
-- [Node.js](https://nodejs.org/) v24.14.1
+- [Node.js](https://nodejs.org/) v22.13 o superior (requerido por pnpm 11 y Angular 21) — se recomienda usar [nvm](https://github.com/nvm-sh/nvm) ([nvm-windows](https://github.com/coreybutler/nvm-windows) en Windows) para manejar la versión
+- [pnpm](https://pnpm.io/) v11.2.2
 - [Python](https://www.python.org/) v3.14.3
 - [Docker](https://www.docker.com/) y Docker Compose
 - [Git](https://git-scm.com/)
@@ -104,12 +105,15 @@ DB_PORT=5432
 MERCADOPAGO_ACCESS_TOKEN=tu_token
 ```
 
-Aplicar migraciones e iniciar el servidor:
+Aplicar migraciones, cargar datos de demo e iniciar el servidor:
 
 ```bash
 python manage.py migrate
+python manage.py seed_demo
 python manage.py runserver
 ```
+
+> El backend requiere PostgreSQL y MongoDB corriendo (ver sección de Docker Compose más abajo si no los tenés instalados localmente).
 
 El backend queda disponible en `http://localhost:8000`
 
@@ -121,16 +125,25 @@ El backend queda disponible en `http://localhost:8000`
 cd frontend
 ```
 
+Activar la versión de Node correcta (si usás nvm):
+
+```bash
+nvm install 22.21.0
+nvm use 22.21.0
+```
+
 Instalar dependencias:
 
 ```bash
 pnpm install
 ```
 
+> Si es la primera vez que instalás, pnpm puede pedir aprobar los build scripts de dependencias nativas (`@parcel/watcher`, `esbuild`, `lmdb`, `msgpackr-extract`). El repo ya incluye `pnpm-workspace.yaml` con esa aprobación, así que no debería hacer falta correr `pnpm approve-builds` manualmente.
+
 Iniciar el servidor de desarrollo:
 
 ```bash
-ng serve
+pnpm start
 ```
 
 El frontend queda disponible en `http://localhost:4200`
@@ -142,10 +155,61 @@ El frontend queda disponible en `http://localhost:4200`
 Desde la raíz del proyecto:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
-Esto levanta el frontend, backend y base de datos de forma conjunta.
+Esto levanta el frontend, backend y bases de datos (PostgreSQL + MongoDB) de forma conjunta. El backend aplica migraciones automáticamente al arrancar.
+
+Cargar datos de demostración (en otra terminal, con los contenedores ya corriendo):
+
+```bash
+docker compose exec backend python manage.py seed_demo
+```
+
+**Usuarios de prueba:**
+
+| Rol | Usuario | Contraseña |
+|---|---|---|
+| Admin | `admin@barberlife.com` | `admin1234` |
+| Barbero | `barbero@barberlife.com` | `barbero1234` |
+
+> Si preferís correr el frontend por fuera de Docker (por ejemplo con `pnpm start`), levantá solo el resto de los servicios: `docker compose up --build postgres mongo backend`.
+
+---
+
+## 🔀 Estructura de trabajo
+
+### Estrategia de ramas
+
+El equipo trabaja con **una rama por integrante**, creada a partir de `develop`:
+
+```
+main ← develop ← rama-de-cada-integrante (ej: ignacio-cantoni, pablo-peralta, agustin-ceballos...)
+```
+
+- Cada integrante desarrolla en su propia rama personal.
+- Al finalizar una tarea, se abre un **Pull Request hacia `develop`**.
+- `develop` concentra el trabajo integrado de todo el equipo; se prueba ahí antes de promoverlo.
+- `main` recibe únicamente el código estable, mediante merge desde `develop`, y representa las líneas base del proyecto (ver [`docs/PGC.md`](docs/PGC.md)).
+
+Esta estrategia se adapta bien a un equipo chico (6 integrantes) donde cada persona suele trabajar en un área relativamente delimitada (backend, frontend, DevOps), evitando la complejidad de un Git Flow completo con ramas de release/hotfix separadas, que aportaría poco valor en esta escala.
+
+### Convenciones del equipo
+
+- **Mensajes de commit**: en español, en modo imperativo, describiendo la acción (`Agrega endpoints de la API: auth, dashboard y turnos`, `Actualiza readme`).
+- **Nomenclatura de ramas**: nombre y apellido del integrante en minúsculas y separados por guion (`ignacio-cantoni`, `agustin-gibaut`).
+- **Integración**: todo cambio hacia `develop` se hace vía Pull Request en GitHub, no mediante push directo.
+
+### Roles respecto al repositorio
+
+| Integrante | Rol en el repo |
+|---|---|
+| Ignacio Cantoni | Scrum Master — coordina merges hacia `develop`, resuelve conflictos de integración |
+| Agustín Ceballos | Backend — Docker y entorno de desarrollo |
+| Pablo Peralta | Frontend & UX — pantallas y componentes visuales |
+| Rodrigo Rojas | Backend — servicios de autenticación |
+| Miguel Scaccia | Product Owner — estructura inicial del backend y modelos |
+| Fabricio Agustín Gibaut | QA & DevOps — integración de la SPA y routing |
 
 ---
 
