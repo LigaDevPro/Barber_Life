@@ -7,9 +7,15 @@ import { TurnoPorDia } from '../../core/models/models';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <svg [attr.viewBox]="'0 0 320 110'" class="chart" preserveAspectRatio="none">
-      <polyline [attr.points]="linePoints()" fill="none" stroke="var(--bl-accent)" stroke-width="2.5"
-        stroke-linejoin="round" stroke-linecap="round" />
+    <svg [attr.viewBox]="'0 0 320 110'" class="block h-22.5 w-full" preserveAspectRatio="none">
+      <polyline
+        [attr.points]="linePoints()"
+        fill="none"
+        stroke="var(--color-bl-accent)"
+        stroke-width="2.5"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+      />
       <polygon [attr.points]="areaPoints()" fill="url(#chart-fill)" opacity="0.35" />
       <defs>
         <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
@@ -18,16 +24,16 @@ import { TurnoPorDia } from '../../core/models/models';
         </linearGradient>
       </defs>
       @for (p of points(); track $index) {
-        <circle [attr.cx]="p.x" [attr.cy]="p.y" r="2.5" fill="var(--bl-accent)" />
+        <circle [attr.cx]="p.x" [attr.cy]="p.y" r="2.5" fill="var(--color-bl-accent)" />
       }
     </svg>
-    <div class="chart-labels">
+    <div class="mt-1 flex justify-between text-[11px] text-bl-text-muted">
       @for (d of diasValue(); track d.dia) {
         <span>{{ d.dia }}</span>
       }
     </div>
   `,
-  styleUrl: './week-chart.component.scss',
+  host: { class: 'block' },
 })
 export class WeekChartComponent {
   private _dias = signal<TurnoPorDia[]>([]);
@@ -47,7 +53,11 @@ export class WeekChartComponent {
     }));
   });
 
-  linePoints = computed(() => this.points().map((p) => `${p.x},${p.y}`).join(' '));
+  linePoints = computed(() =>
+    this.points()
+      .map((p) => `${p.x},${p.y}`)
+      .join(' '),
+  );
 
   areaPoints = computed(() => {
     const pts = this.points();

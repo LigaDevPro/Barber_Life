@@ -1,6 +1,12 @@
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LogoComponent } from '../../../shared/logo/logo.component';
@@ -16,7 +22,6 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, LogoComponent],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
   private fb = inject(FormBuilder);
@@ -29,7 +34,7 @@ export class RegisterComponent {
       password: ['', [Validators.required, Validators.minLength(8)]],
       passwordConfirm: ['', [Validators.required]],
     },
-    { validators: passwordsMatch }
+    { validators: passwordsMatch },
   );
 
   loading = signal(false);
@@ -54,7 +59,8 @@ export class RegisterComponent {
       error: (err) => {
         this.loading.set(false);
         const data = err?.error || {};
-        const firstError = data.email?.[0] || data.password?.[0] || data.password_confirm?.[0] || data.detail;
+        const firstError =
+          data.email?.[0] || data.password?.[0] || data.password_confirm?.[0] || data.detail;
         this.errorMsg.set(firstError || 'No se pudo crear la cuenta. Intentá de nuevo.');
       },
     });

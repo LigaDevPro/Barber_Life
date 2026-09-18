@@ -10,7 +10,6 @@ import { LogoComponent } from '../../../shared/logo/logo.component';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink, LogoComponent],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
