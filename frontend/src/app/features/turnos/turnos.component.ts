@@ -12,12 +12,18 @@ const ICONOS_SERVICIO: Record<string, string> = {
   color: 'drop',
 };
 
+const ESTADO_CLASSES: Record<string, string> = {
+  pendiente: 'bg-[rgba(224,197,111,0.15)] text-bl-warning',
+  confirmado: 'bg-[rgba(111,170,224,0.15)] text-[#6faae0]',
+  completado: 'bg-[rgba(111,224,154,0.15)] text-bl-success',
+  cancelado: 'bg-[rgba(224,111,111,0.15)] text-bl-danger',
+};
+
 @Component({
   selector: 'app-turnos',
   standalone: true,
   imports: [CommonModule, TopbarComponent],
   templateUrl: './turnos.component.html',
-  styleUrl: './turnos.component.scss',
 })
 export class TurnosComponent implements OnInit {
   servicios = signal<ServicioMasSolicitado[]>([]);
@@ -27,7 +33,11 @@ export class TurnosComponent implements OnInit {
   menuAbierto = signal<number | null>(null);
   paginaActual = signal(1);
 
-  constructor(private panelService: PanelService, public authService: AuthService, private router: Router) {}
+  constructor(
+    private panelService: PanelService,
+    public authService: AuthService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.cargarServicios();
@@ -88,6 +98,10 @@ export class TurnosComponent implements OnInit {
     const arr: number[] = [];
     for (let i = inicio; i <= fin; i++) arr.push(i);
     return arr;
+  }
+
+  estadoClasses(estado: string): string {
+    return `mt-1 inline-block rounded-full px-2 py-0.5 text-[10.5px] capitalize ${ESTADO_CLASSES[estado] ?? ''}`;
   }
 
   rangoTexto(): string {
