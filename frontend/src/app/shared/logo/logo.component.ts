@@ -4,7 +4,13 @@ import { Component, Input } from '@angular/core';
   selector: 'bl-logo',
   standalone: true,
   template: `
-    <img src="img/logo.png" [style.width.px]="size" [style.height.px]="size" alt="Barber Life" style="object-fit: contain;" />
+    <img
+      src="img/logo.png"
+      [style.width.px]="size"
+      [style.height.px]="size"
+      alt="Barber Life"
+      class="object-contain"
+    />
   `,
 })
 export class LogoComponent {
