@@ -138,9 +138,9 @@ class Turno(models.Model):
         indexes = [models.Index(fields=['barbero', 'fecha_turno'])]
 
     def clean(self):
-        """Prevención de superposición de turnos (wiki: 'no pueden existir dos
-        turnos simultáneos para el mismo barbero'), comparando dentro del
-        mismo día (fecha_turno) los rangos hora_inicio/hora_fin."""
+        """Prevención de superposición de turnos: no pueden existir dos turnos
+        simultáneos para el mismo barbero, comparando dentro del mismo día
+        (fecha_turno) los rangos hora_inicio/hora_fin."""
         if self.barbero_id and self.fecha_turno and self.hora_inicio and self.hora_fin:
             solapados = Turno.objects.filter(
                 barbero_id=self.barbero_id,
@@ -167,9 +167,18 @@ class Turno(models.Model):
         ).first()
         return bs.precio_final() if bs else self.servicio.precio
 
+    def es_cancelable(self):
+        """Un turno solo se puede cancelar si está pendiente o confirmado —
+        sea quien sea quien cancele, admin incluido (no tiene sentido
+        'cancelar' un turno ya completado o ya cancelado)."""
+        return self.estado in (self.Estado.PENDIENTE, self.Estado.CONFIRMADO)
+
     def puede_cancelar_cliente(self):
-        """Política de cancelación autónoma: solo dentro de la ventana definida
-        (settings.CANCELACION_LIMITE_HORAS, wiki: 'ej. hasta 2 horas antes')."""
+        """Política de cancelación autónoma del cliente: además de estar en
+        un estado cancelable, tiene que faltar más de
+        settings.CANCELACION_LIMITE_HORAS (por defecto, 2 horas)."""
+        if not self.es_cancelable():
+            return False
         from django.conf import settings as dj_settings
         limite = getattr(dj_settings, 'CANCELACION_LIMITE_HORAS', 2)
         return timezone.now() <= self.inicio_datetime() - timedelta(hours=limite)
