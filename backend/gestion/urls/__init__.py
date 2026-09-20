@@ -5,7 +5,7 @@ propio archivo acá (auth, dashboard, turno, cliente, barbero, ...) para que
 distintas personas puedan sumar sus endpoints sin pisarse en el mismo
 archivo.
 """
-from . import auth, dashboard, turno, cliente, barbero, catalogo
+from . import auth, dashboard, turno, cliente, barbero, catalogo, pago
 
 urlpatterns = (
     auth.urlpatterns
@@ -14,4 +14,5 @@ urlpatterns = (
     + cliente.urlpatterns
     + barbero.urlpatterns
     + catalogo.urlpatterns
+    + pago.urlpatterns
 )

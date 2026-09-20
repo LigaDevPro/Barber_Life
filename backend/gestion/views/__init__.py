@@ -17,6 +17,7 @@ from .catalogo import (
     HorarioListCreateView, HorarioDetailView,
     BarberoServicioListCreateView, BarberoServicioDetailView,
 )
+from .pago import PagoListCreateView, PagoWebhookView
 
 __all__ = [
     'RegisterView', 'LoginView', 'MeView',
@@ -27,4 +28,5 @@ __all__ = [
     'ServicioListCreateView', 'ServicioDetailView',
     'HorarioListCreateView', 'HorarioDetailView',
     'BarberoServicioListCreateView', 'BarberoServicioDetailView',
+    'PagoListCreateView', 'PagoWebhookView',
 ]
