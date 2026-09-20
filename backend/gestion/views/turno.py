@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from ..models import Turno
 from ..permissions import EsBarberoOAdmin
-from ..serializers import TurnoListSerializer, TurnoUpdateEstadoSerializer
+from ..serializers import TurnoListSerializer, TurnoUpdateEstadoSerializer, ServicioMasSolicitadoSerializer
 from ..mongo import registrar_notificacion, registrar_evento_log
 
 # ---------------------------------------------------------------------------
@@ -121,4 +121,4 @@ class ServiciosMasSolicitadosView(APIView):
             'precio': r['servicio__precio'],
             'cantidad': r['cantidad'],
         } for r in ranking]
-        return Response(data)
+        return Response(ServicioMasSolicitadoSerializer(data, many=True).data)

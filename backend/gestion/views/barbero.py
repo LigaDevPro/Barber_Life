@@ -1,7 +1,7 @@
 from rest_framework import generics
-from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
+from .mixins import PerfilPropioMixin
 from ..models import Barbero
 from ..serializers import BarberoPublicSerializer, BarberoDetailSerializer, BarberoMeSerializer
 
@@ -29,15 +29,11 @@ class BarberoDetailView(generics.RetrieveAPIView):
     queryset = Barbero.objects.filter(activo=True).select_related('usuario')
 
 
-class BarberoMeView(generics.RetrieveUpdateAPIView):
+class BarberoMeView(PerfilPropioMixin, generics.RetrieveUpdateAPIView):
     """GET/PATCH /api/barberos/me/ — el barbero autenticado ve y edita su
     propio perfil. El objeto sale siempre de request.user, nunca de la URL."""
     permission_classes = (IsAuthenticated,)
     serializer_class = BarberoMeSerializer
     http_method_names = ['get', 'patch']
-
-    def get_object(self):
-        barbero = getattr(self.request.user, 'barbero', None)
-        if barbero is None:
-            raise NotFound('Tu usuario no tiene un perfil de Barbero asociado.')
-        return barbero
+    perfil_attr = 'barbero'
+    perfil_no_encontrado_mensaje = 'Tu usuario no tiene un perfil de Barbero asociado.'
