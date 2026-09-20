@@ -13,14 +13,17 @@ import { WeekChartComponent } from '../../shared/week-chart/week-chart.component
   standalone: true,
   imports: [CommonModule, RouterLink, LogoComponent, TopbarComponent, WeekChartComponent],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit {
   data = signal<DashboardData | null>(null);
   loading = signal(true);
   errorMsg = signal<string | null>(null);
 
-  constructor(private panelService: PanelService, public authService: AuthService, private router: Router) {}
+  constructor(
+    private panelService: PanelService,
+    public authService: AuthService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.cargar();

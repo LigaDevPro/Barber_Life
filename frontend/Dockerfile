@@ -11,4 +11,4 @@ COPY . .
 
 EXPOSE 4200
 
-CMD ["pnpm", "start", "--", "--host", "0.0.0.0", "--poll", "2000"]
+CMD ["pnpm", "start", "--host", "0.0.0.0"]

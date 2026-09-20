@@ -27,6 +27,7 @@ RUTAS_PUBLICAS = (
     '/api/auth/login/',
     '/api/auth/refresh/',
     '/admin/',
+    '/api/barberos/',
 )
 
 
