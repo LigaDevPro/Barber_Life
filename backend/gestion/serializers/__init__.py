@@ -6,7 +6,10 @@ vive en su propio archivo para que distintas personas puedan trabajar en
 paralelo sin pisarse en el mismo archivo.
 """
 from .auth import RegisterSerializer, LoginSerializer, UsuarioMeSerializer
-from .turno import TurnoListSerializer, TurnoUpdateEstadoSerializer, ServicioMasSolicitadoSerializer
+from .turno import (
+    TurnoListSerializer, TurnoCreateSerializer, TurnoUpdateEstadoSerializer,
+    ServicioMasSolicitadoSerializer,
+)
 from .cliente import ClienteMeSerializer
 from .barbero import (
     BarberoPublicSerializer, BarberoDetailSerializer, BarberoMeSerializer,
@@ -15,7 +18,8 @@ from .barbero import (
 
 __all__ = [
     'RegisterSerializer', 'LoginSerializer', 'UsuarioMeSerializer',
-    'TurnoListSerializer', 'TurnoUpdateEstadoSerializer', 'ServicioMasSolicitadoSerializer',
+    'TurnoListSerializer', 'TurnoCreateSerializer', 'TurnoUpdateEstadoSerializer',
+    'ServicioMasSolicitadoSerializer',
     'ClienteMeSerializer',
     'BarberoPublicSerializer', 'BarberoDetailSerializer', 'BarberoMeSerializer',
     'HorarioInlineSerializer', 'ServicioOfrecidoInlineSerializer',

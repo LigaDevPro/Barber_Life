@@ -1,19 +1,24 @@
 from django.db.models import Count, Q
-from rest_framework import generics
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, status
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..models import Turno
-from ..permissions import EsBarberoOAdmin
-from ..serializers import TurnoListSerializer, TurnoUpdateEstadoSerializer, ServicioMasSolicitadoSerializer
+from ..permissions import EsBarberoOAdmin, EsClienteOAdmin
+from ..serializers import (
+    TurnoListSerializer, TurnoCreateSerializer, TurnoUpdateEstadoSerializer,
+    ServicioMasSolicitadoSerializer,
+)
 from ..mongo import registrar_notificacion, registrar_evento_log
 
 # ---------------------------------------------------------------------------
 # Gestión de turnos — CU-04/CU-05. RBAC: barbero solo su propia agenda,
-# admin control total, cliente denegado (matriz de la wiki).
-# La reserva/cancelación por el cliente todavía no está implementada acá.
+# admin control total. El cliente reserva (POST) y cancela lo propio
+# (TurnoCancelarView); no puede ver la agenda de nadie (matriz de la wiki).
 # ---------------------------------------------------------------------------
 
 
@@ -30,14 +35,35 @@ class TurnosPagination(PageNumberPagination):
         })
 
 
-class TurnosListView(generics.ListAPIView):
-    """GET /api/turnos/?barbero=<id>&estado=&q=
+class TurnosListView(generics.ListCreateAPIView):
+    """GET /api/turnos/?barbero=<id>&estado=&q= — Barbero o Admin.
     Un Barbero solo puede ver su propia agenda aunque manipule ?barbero= por
     la URL (RBAC: 'Barbero: reserva de turnos ajenos -> Denegado').
-    El Administrador ve todo y puede filtrar por barbero."""
-    permission_classes = (IsAuthenticated, EsBarberoOAdmin)
-    serializer_class = TurnoListSerializer
+    El Administrador ve todo y puede filtrar por barbero.
+
+    POST /api/turnos/ — el cliente reserva un turno (Cliente o Admin)."""
     pagination_class = TurnosPagination
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated(), EsClienteOAdmin()]
+        return [IsAuthenticated(), EsBarberoOAdmin()]
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return TurnoCreateSerializer
+        return TurnoListSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        turno = serializer.save()
+        registrar_notificacion(
+            turno.barbero.usuario_id, 'nuevo_turno',
+            f'Tenés un nuevo turno el {turno.fecha_turno:%d/%m} {turno.hora_inicio:%H:%M}.',
+        )
+        registrar_evento_log(request.user.id, 'creacion_turno', {'turno_id': turno.id})
+        return Response(TurnoListSerializer(turno).data, status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
         usuario = self.request.user
@@ -84,7 +110,6 @@ class TurnoDetailView(generics.RetrieveUpdateAPIView):
         if usuario.rol != 'admin':
             barbero = getattr(usuario, 'barbero', None)
             if barbero is None or obj.barbero_id != barbero.id:
-                from rest_framework.exceptions import PermissionDenied
                 raise PermissionDenied('No podés modificar turnos de otro barbero.')
         return obj
 
@@ -96,6 +121,38 @@ class TurnoDetailView(generics.RetrieveUpdateAPIView):
             f'ahora está {turno.get_estado_display()}.',
         )
         registrar_evento_log(self.request.user.id, 'cambio_estado_turno', {'turno_id': turno.id, 'estado': turno.estado})
+
+
+class TurnoCancelarView(APIView):
+    """PATCH /api/turnos/<id>/cancelar/ — el cliente cancela su propio turno,
+    dentro de la ventana permitida (Turno.puede_cancelar_cliente()). Admin
+    puede cancelar cualquiera, sin la restricción de ventana (mismo criterio
+    que TurnoDetailView, que ya le da control total)."""
+    permission_classes = (IsAuthenticated, EsClienteOAdmin)
+
+    def patch(self, request, pk):
+        turno = get_object_or_404(
+            Turno.objects.select_related('cliente__usuario', 'barbero__usuario', 'servicio'), pk=pk,
+        )
+        usuario = request.user
+
+        if usuario.rol != 'admin':
+            cliente = getattr(usuario, 'cliente', None)
+            if cliente is None or turno.cliente_id != cliente.id:
+                raise PermissionDenied('No podés cancelar turnos de otro cliente.')
+            if turno.estado not in (Turno.Estado.PENDIENTE, Turno.Estado.CONFIRMADO):
+                raise ValidationError({'detail': 'Este turno ya no se puede cancelar.'})
+            if not turno.puede_cancelar_cliente():
+                raise PermissionDenied('Ya no podés cancelar este turno, contactá al administrador.')
+
+        turno.estado = Turno.Estado.CANCELADO
+        turno.save(update_fields=['estado'])
+        registrar_notificacion(
+            turno.barbero.usuario_id, 'turno_cancelado',
+            f'El turno del {turno.fecha_turno:%d/%m} {turno.hora_inicio:%H:%M} fue cancelado.',
+        )
+        registrar_evento_log(usuario.id, 'cancelacion_turno', {'turno_id': turno.id})
+        return Response(TurnoListSerializer(turno).data)
 
 
 class ServiciosMasSolicitadosView(APIView):

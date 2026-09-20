@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
 from ..models import Turno
@@ -34,6 +37,31 @@ class TurnoListSerializer(serializers.ModelSerializer):
 
     def get_puede_cancelar(self, obj):
         return obj.estado in (Turno.Estado.PENDIENTE, Turno.Estado.CONFIRMADO) and obj.puede_cancelar_cliente()
+
+
+class TurnoCreateSerializer(serializers.ModelSerializer):
+    """POST /api/turnos/ — reserva hecha por el cliente. `cliente` sale de
+    request.user, nunca del body (ownership). `hora_fin` se calcula acá
+    desde `servicio.duracion_minutos`, no la manda el frontend."""
+
+    class Meta:
+        model = Turno
+        fields = ('id', 'barbero', 'servicio', 'fecha_turno', 'hora_inicio', 'observaciones')
+        read_only_fields = ('id',)
+
+    def create(self, validated_data):
+        servicio = validated_data['servicio']
+        inicio_dt = datetime.combine(validated_data['fecha_turno'], validated_data['hora_inicio'])
+        hora_fin = (inicio_dt + timedelta(minutes=servicio.duracion_minutos)).time()
+
+        cliente = self.context['request'].user.cliente
+        turno = Turno(cliente=cliente, hora_fin=hora_fin, **validated_data)
+        try:
+            turno.clean()
+        except DjangoValidationError as e:
+            raise serializers.ValidationError({'detail': e.messages[0]})
+        turno.save()
+        return turno
 
 
 class TurnoUpdateEstadoSerializer(serializers.ModelSerializer):
