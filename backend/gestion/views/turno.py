@@ -2,12 +2,12 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..models import Turno
+from ..pagination import PaginacionEstandar
 from ..permissions import EsBarberoOAdmin, EsClienteOAdmin
 from ..serializers import (
     TurnoListSerializer, TurnoCreateSerializer, TurnoUpdateEstadoSerializer,
@@ -32,17 +32,8 @@ def _verificar_ownership(usuario, turno, attr, mensaje):
         raise PermissionDenied(mensaje)
 
 
-class TurnosPagination(PageNumberPagination):
-    page_size = 7
-    page_size_query_param = 'page_size'
-
-    def get_paginated_response(self, data):
-        return Response({
-            'count': self.page.paginator.count,
-            'page': self.page.number,
-            'num_pages': self.page.paginator.num_pages,
-            'results': data,
-        })
+class TurnosPagination(PaginacionEstandar):
+    pass
 
 
 class TurnosListView(generics.ListCreateAPIView):
