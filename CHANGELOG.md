@@ -5,11 +5,11 @@ Todos los cambios significativos de este proyecto se documentan en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
-## [Released]
+# Released
 
 Cambios integrados a `main` que forman parte de una línea base.
 
-## [0.1.0] - 2026-08-21
+# 0.1.0 - 2026-08-21
 
 Cierre del Sprint 2 del proyecto. Esta línea base es además la que se toma como
 evidencia para la Evidencia Valorativa 4 de Ingeniería de Software (Gestión de
