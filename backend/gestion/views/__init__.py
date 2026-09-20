@@ -12,6 +12,12 @@ from .turno import (
 )
 from .cliente import ClienteMeView
 from .barbero import BarberoListView, BarberoDetailView, BarberoMeView
+from .catalogo import (
+    ServicioListCreateView, ServicioDetailView,
+    HorarioListCreateView, HorarioDetailView,
+    BarberoServicioListCreateView, BarberoServicioDetailView,
+)
+from .pago import PagoListCreateView, PagoWebhookView
 
 __all__ = [
     'RegisterView', 'LoginView', 'MeView',
@@ -19,4 +25,8 @@ __all__ = [
     'TurnosListView', 'TurnoDetailView', 'TurnoCancelarView', 'ServiciosMasSolicitadosView', 'TurnosPagination',
     'ClienteMeView',
     'BarberoListView', 'BarberoDetailView', 'BarberoMeView',
+    'ServicioListCreateView', 'ServicioDetailView',
+    'HorarioListCreateView', 'HorarioDetailView',
+    'BarberoServicioListCreateView', 'BarberoServicioDetailView',
+    'PagoListCreateView', 'PagoWebhookView',
 ]

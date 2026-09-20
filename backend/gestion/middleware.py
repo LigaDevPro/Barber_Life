@@ -1,8 +1,7 @@
 """
 RoleCheckMiddleware
 
-Implementa el primer escalón del diagrama de seguridad de la wiki
-(ESTRUCTURA-Y-ARQUITECTURA > Implementación de Seguridad):
+Implementa el primer escalón del diagrama de seguridad del proyecto:
 
     [ Petición HTTP ]
             v
@@ -27,7 +26,20 @@ RUTAS_PUBLICAS = (
     '/api/auth/login/',
     '/api/auth/refresh/',
     '/admin/',
+    # Ruta exacta (no un prefijo compartido con otros endpoints): la llama
+    # Mercado Pago, no un usuario logueado.
+    '/api/pagos/webhook/',
+)
+
+# Prefijos con lectura pública (catálogos/listados: barberos, servicios, la
+# oferta barbero-servicio). Solo exime GET/HEAD — POST/PATCH/DELETE bajo
+# estos mismos prefijos siguen exigiendo JWT acá, y el permiso fino
+# (admin-only, dueño del recurso, etc.) lo resuelve cada vista con sus
+# permission_classes.
+PREFIJOS_LECTURA_PUBLICA = (
     '/api/barberos/',
+    '/api/servicios/',
+    '/api/barbero-servicio/',
 )
 
 
@@ -38,7 +50,20 @@ class RoleCheckMiddleware:
     def __call__(self, request):
         path = request.path
 
-        if not path.startswith('/api/') or path.startswith(RUTAS_PUBLICAS):
+        if not path.startswith('/api/'):
+            return self.get_response(request)
+
+        es_publica = path.startswith(RUTAS_PUBLICAS)
+        # `/me/` es siempre privado (perfil propio) aunque comparta prefijo
+        # con un catálogo público (p.ej. '/api/barberos/me/' vs
+        # '/api/barberos/<id>/') — nunca lo tratamos como lectura pública acá,
+        # sea cual sea PREFIJOS_LECTURA_PUBLICA.
+        es_lectura_publica = (
+            request.method in ('GET', 'HEAD')
+            and path.startswith(PREFIJOS_LECTURA_PUBLICA)
+            and not path.endswith('/me/')
+        )
+        if es_publica or es_lectura_publica:
             return self.get_response(request)
 
         auth_header = request.headers.get('Authorization', '')

@@ -6,9 +6,8 @@ from .auth import UsuarioMeSerializer
 
 class HorarioInlineSerializer(serializers.ModelSerializer):
     """Representación liviana de un horario, embebida en el perfil público
-    de un barbero. Si más adelante se agrega un CRUD completo de Horario con
-    su propio serializer, conviene unificar y que éste lo reutilice en vez
-    de duplicarlo."""
+    de un barbero (sin `barbero` ni `activo`, que ya están implícitos en ese
+    contexto). El CRUD completo vive en HorarioSerializer (serializers/catalogo.py)."""
 
     dia_semana_display = serializers.CharField(source='get_dia_semana_display', read_only=True)
 
