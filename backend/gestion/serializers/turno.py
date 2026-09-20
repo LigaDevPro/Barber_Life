@@ -19,8 +19,7 @@ class TurnoListSerializer(serializers.ModelSerializer):
         )
 
     def get_cliente_nombre(self, obj):
-        u = obj.cliente.usuario
-        return u.get_full_name() or u.email.split('@')[0]
+        return obj.cliente.usuario.get_display_name()
 
     def get_hora(self, obj):
         return obj.hora_inicio.strftime('%H:%M')

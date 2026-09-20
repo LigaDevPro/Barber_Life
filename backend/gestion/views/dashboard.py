@@ -76,7 +76,7 @@ class DashboardView(APIView):
 
         return Response({
             'rol': usuario.rol,
-            'nombre': usuario.get_full_name() or usuario.email.split('@')[0],
+            'nombre': usuario.get_display_name(),
             'turnos_hoy': turnos_hoy,
             'clientes_activos': clientes_activos,
             'ingresos_del_mes': ingresos_del_mes,

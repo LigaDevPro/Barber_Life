@@ -12,9 +12,12 @@ from ..serializers import BarberoPublicSerializer, BarberoDetailSerializer, Barb
 
 
 class BarberoListView(generics.ListAPIView):
-    """GET /api/barberos/ — listado público de barberos activos."""
+    """GET /api/barberos/ — listado público de barberos activos. Sin
+    paginar a propósito: es la lista completa para elegir barbero en el
+    flujo de reserva, no una tabla que necesite paginado."""
     permission_classes = (AllowAny,)
     serializer_class = BarberoPublicSerializer
+    pagination_class = None
     queryset = Barbero.objects.filter(activo=True).select_related('usuario')
 
 

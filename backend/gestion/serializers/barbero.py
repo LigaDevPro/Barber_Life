@@ -42,8 +42,7 @@ class BarberoPublicSerializer(serializers.ModelSerializer):
         fields = ('id', 'nombre', 'foto_perfil_url', 'activo')
 
     def get_nombre(self, obj):
-        u = obj.usuario
-        return u.get_full_name() or u.email.split('@')[0]
+        return obj.usuario.get_display_name()
 
 
 class BarberoDetailSerializer(BarberoPublicSerializer):
@@ -61,7 +60,11 @@ class BarberoDetailSerializer(BarberoPublicSerializer):
         return HorarioInlineSerializer(qs, many=True).data
 
     def get_servicios_ofrecidos(self, obj):
-        qs = obj.servicios_ofrecidos.filter(activo=True)
+        # horario__activo=True además de activo=True: si se desactiva un
+        # horario sin tocar el BarberoServicio asociado, no queremos devolver
+        # un servicio cuyo `horario` no aparece en la lista de `horarios` de
+        # esta misma respuesta.
+        qs = obj.servicios_ofrecidos.filter(activo=True, horario__activo=True).select_related('servicio')
         return ServicioOfrecidoInlineSerializer(qs, many=True).data
 
 

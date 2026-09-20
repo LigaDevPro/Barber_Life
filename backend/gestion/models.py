@@ -34,6 +34,9 @@ class Usuario(AbstractUser):
         self.is_active = self.estado == self.Estado.ACTIVO
         super().save(*args, **kwargs)
 
+    def get_display_name(self):
+        return self.get_full_name() or self.email.split('@')[0]
+
     def __str__(self):
         return f'{self.get_full_name() or self.username} ({self.rol})'
 

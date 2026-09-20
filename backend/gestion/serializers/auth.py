@@ -68,4 +68,4 @@ class UsuarioMeSerializer(serializers.ModelSerializer):
         fields = ('id', 'nombre', 'email', 'rol', 'estado', 'telefono')
 
     def get_nombre(self, obj):
-        return obj.get_full_name() or obj.email.split('@')[0]
+        return obj.get_display_name()
