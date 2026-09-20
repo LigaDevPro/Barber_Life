@@ -93,6 +93,28 @@ class TurnosListView(generics.ListCreateAPIView):
         return qs.order_by('-fecha_turno', '-hora_inicio')
 
 
+class MisTurnosView(generics.ListAPIView):
+    """GET /api/turnos/mis-turnos/?estado= — el Cliente ve sus propios
+    turnos (cualquier estado, no excluye cancelados). Existe porque
+    TurnosListView es exclusiva de Barbero/Admin (agenda ajena) y el
+    Cliente necesita su propio listado para la pantalla 'Mis turnos' del
+    frontend, sin poder ver turnos de otros clientes."""
+    permission_classes = (IsAuthenticated, EsClienteOAdmin)
+    serializer_class = TurnoListSerializer
+    pagination_class = TurnosPagination
+
+    def get_queryset(self):
+        cliente = getattr(self.request.user, 'cliente', None)
+        qs = Turno.objects.select_related('cliente__usuario', 'barbero__usuario', 'servicio')
+        qs = qs.filter(cliente=cliente) if cliente else qs.none()
+
+        estado = self.request.query_params.get('estado')
+        if estado:
+            qs = qs.filter(estado=estado)
+
+        return qs.order_by('-fecha_turno', '-hora_inicio')
+
+
 class TurnoDetailView(generics.RetrieveUpdateAPIView):
     """PATCH /api/turnos/<id>/ — usado para cancelar o cambiar estado desde
     el menú de acciones de la tabla. Un barbero solo puede tocar sus propios

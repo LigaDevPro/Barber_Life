@@ -9,6 +9,7 @@ from .auth import RegisterView, LoginView, MeView
 from .dashboard import DashboardView
 from .turno import (
     TurnosListView, TurnoDetailView, TurnoCancelarView, ServiciosMasSolicitadosView, TurnosPagination,
+    MisTurnosView,
 )
 from .cliente import ClienteMeView
 from .barbero import BarberoListView, BarberoDetailView, BarberoMeView
@@ -24,6 +25,7 @@ __all__ = [
     'RegisterView', 'LoginView', 'MeView',
     'DashboardView',
     'TurnosListView', 'TurnoDetailView', 'TurnoCancelarView', 'ServiciosMasSolicitadosView', 'TurnosPagination',
+    'MisTurnosView',
     'ClienteMeView',
     'BarberoListView', 'BarberoDetailView', 'BarberoMeView',
     'ServicioListCreateView', 'ServicioDetailView',
