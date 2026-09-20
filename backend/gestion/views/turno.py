@@ -18,8 +18,18 @@ from ..mongo import registrar_notificacion, registrar_evento_log
 # ---------------------------------------------------------------------------
 # Gestión de turnos — CU-04/CU-05. RBAC: barbero solo su propia agenda,
 # admin control total. El cliente reserva (POST) y cancela lo propio
-# (TurnoCancelarView); no puede ver la agenda de nadie (matriz de la wiki).
+# (TurnoCancelarView); no puede ver la agenda de nadie.
 # ---------------------------------------------------------------------------
+
+
+def _verificar_ownership(usuario, turno, attr, mensaje):
+    """`attr` es 'barbero' o 'cliente': confirma que el perfil propio del
+    usuario coincide con turno.<attr>, si no levanta PermissionDenied.
+    Usado por TurnoDetailView y TurnoCancelarView, que chequean ownership
+    contra distintos actores pero con la misma forma."""
+    perfil = getattr(usuario, attr, None)
+    if perfil is None or getattr(turno, f'{attr}_id') != perfil.id:
+        raise PermissionDenied(mensaje)
 
 
 class TurnosPagination(PageNumberPagination):
@@ -108,9 +118,7 @@ class TurnoDetailView(generics.RetrieveUpdateAPIView):
         obj = super().get_object()
         usuario = self.request.user
         if usuario.rol != 'admin':
-            barbero = getattr(usuario, 'barbero', None)
-            if barbero is None or obj.barbero_id != barbero.id:
-                raise PermissionDenied('No podés modificar turnos de otro barbero.')
+            _verificar_ownership(usuario, obj, 'barbero', 'No podés modificar turnos de otro barbero.')
         return obj
 
     def perform_update(self, serializer):
@@ -126,8 +134,9 @@ class TurnoDetailView(generics.RetrieveUpdateAPIView):
 class TurnoCancelarView(APIView):
     """PATCH /api/turnos/<id>/cancelar/ — el cliente cancela su propio turno,
     dentro de la ventana permitida (Turno.puede_cancelar_cliente()). Admin
-    puede cancelar cualquiera, sin la restricción de ventana (mismo criterio
-    que TurnoDetailView, que ya le da control total)."""
+    puede cancelar cualquiera sin la restricción de ventana ni ownership,
+    pero el chequeo de estado (no cancelar algo ya completado/cancelado)
+    aplica siempre, admin incluido."""
     permission_classes = (IsAuthenticated, EsClienteOAdmin)
 
     def patch(self, request, pk):
@@ -137,13 +146,13 @@ class TurnoCancelarView(APIView):
         usuario = request.user
 
         if usuario.rol != 'admin':
-            cliente = getattr(usuario, 'cliente', None)
-            if cliente is None or turno.cliente_id != cliente.id:
-                raise PermissionDenied('No podés cancelar turnos de otro cliente.')
-            if turno.estado not in (Turno.Estado.PENDIENTE, Turno.Estado.CONFIRMADO):
-                raise ValidationError({'detail': 'Este turno ya no se puede cancelar.'})
-            if not turno.puede_cancelar_cliente():
-                raise PermissionDenied('Ya no podés cancelar este turno, contactá al administrador.')
+            _verificar_ownership(usuario, turno, 'cliente', 'No podés cancelar turnos de otro cliente.')
+
+        if not turno.es_cancelable():
+            raise ValidationError({'detail': 'Este turno ya no se puede cancelar.'})
+
+        if usuario.rol != 'admin' and not turno.puede_cancelar_cliente():
+            raise PermissionDenied('Ya no podés cancelar este turno, contactá al administrador.')
 
         turno.estado = Turno.Estado.CANCELADO
         turno.save(update_fields=['estado'])
