@@ -34,8 +34,11 @@ class Usuario(AbstractUser):
         self.is_active = self.estado == self.Estado.ACTIVO
         super().save(*args, **kwargs)
 
+    def get_display_name(self):
+        return self.get_full_name() or self.email.split('@')[0]
+
     def __str__(self):
-        return f'{self.get_full_name() or self.username} ({self.rol})'
+        return f'{self.get_display_name()} ({self.rol})'
 
 
 class Cliente(models.Model):
@@ -159,7 +162,8 @@ class Turno(models.Model):
         precio vigente del Servicio (o el personalizado de BarberoServicio,
         si el barbero tiene uno cargado para ese servicio)."""
         bs = BarberoServicio.objects.filter(
-            barbero_id=self.barbero_id, servicio_id=self.servicio_id, activo=True
+            barbero_id=self.barbero_id, servicio_id=self.servicio_id,
+            activo=True, horario__activo=True,
         ).first()
         return bs.precio_final() if bs else self.servicio.precio
 
