@@ -183,6 +183,20 @@ class Turno(models.Model):
         limite = getattr(dj_settings, 'CANCELACION_LIMITE_HORAS', 2)
         return timezone.now() <= self.inicio_datetime() - timedelta(hours=limite)
 
+    def tiene_pago_aprobado(self):
+        pago = getattr(self, 'pago', None)
+        return pago is not None and pago.estado == pago.Estado.APROBADO
+
+    def sincronizar_pago_tras_cancelacion(self):
+        """Si el turno tenía un pago aprobado y se cancela, el pago pasa a
+        'reembolsado'. No dispara la devolución real del dinero (eso
+        requiere un flujo aparte contra la API de Mercado Pago) — evita que
+        el pago quede diciendo 'aprobado' para un turno que ya no existe."""
+        pago = getattr(self, 'pago', None)
+        if pago is not None and pago.estado == pago.Estado.APROBADO:
+            pago.estado = pago.Estado.REEMBOLSADO
+            pago.save(update_fields=['estado'])
+
     def __str__(self):
         return f'Turno #{self.pk} - {self.cliente} con {self.barbero} - {self.fecha_turno} {self.hora_inicio}'
 

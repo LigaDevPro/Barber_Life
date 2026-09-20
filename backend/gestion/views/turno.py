@@ -123,6 +123,8 @@ class TurnoDetailView(generics.RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         turno = serializer.save()
+        if turno.estado == Turno.Estado.CANCELADO:
+            turno.sincronizar_pago_tras_cancelacion()
         registrar_notificacion(
             turno.cliente.usuario_id, 'estado_turno',
             f'Tu turno del {turno.fecha_turno:%d/%m} {turno.hora_inicio:%H:%M} '
@@ -141,7 +143,7 @@ class TurnoCancelarView(APIView):
 
     def patch(self, request, pk):
         turno = get_object_or_404(
-            Turno.objects.select_related('cliente__usuario', 'barbero__usuario', 'servicio'), pk=pk,
+            Turno.objects.select_related('cliente__usuario', 'barbero__usuario', 'servicio', 'pago'), pk=pk,
         )
         usuario = request.user
 
@@ -151,11 +153,18 @@ class TurnoCancelarView(APIView):
         if not turno.es_cancelable():
             raise ValidationError({'detail': 'Este turno ya no se puede cancelar.'})
 
-        if usuario.rol != 'admin' and not turno.puede_cancelar_cliente():
-            raise PermissionDenied('Ya no podés cancelar este turno, contactá al administrador.')
+        if usuario.rol != 'admin':
+            if turno.tiene_pago_aprobado():
+                raise PermissionDenied(
+                    'Este turno ya está pagado — contactá al administrador para '
+                    'cancelarlo y gestionar el reembolso.'
+                )
+            if not turno.puede_cancelar_cliente():
+                raise PermissionDenied('Ya no podés cancelar este turno, contactá al administrador.')
 
         turno.estado = Turno.Estado.CANCELADO
         turno.save(update_fields=['estado'])
+        turno.sincronizar_pago_tras_cancelacion()
         registrar_notificacion(
             turno.barbero.usuario_id, 'turno_cancelado',
             f'El turno del {turno.fecha_turno:%d/%m} {turno.hora_inicio:%H:%M} fue cancelado.',

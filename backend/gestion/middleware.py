@@ -26,6 +26,9 @@ RUTAS_PUBLICAS = (
     '/api/auth/login/',
     '/api/auth/refresh/',
     '/admin/',
+    # Ruta exacta (no un prefijo compartido con otros endpoints): la llama
+    # Mercado Pago, no un usuario logueado.
+    '/api/pagos/webhook/',
 )
 
 # Prefijos con lectura pública (catálogos/listados: barberos, servicios, la
