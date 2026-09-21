@@ -1,0 +1,85 @@
+<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
+  <bl-topbar (logout)="logout()" />
+
+  <main class="flex flex-col gap-4 p-5">
+    <div class="flex items-center justify-between">
+      <div class="flex flex-col gap-1">
+        <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Reservas</p>
+        <h1 class="m-0 text-2xl font-bold">Mis turnos</h1>
+      </div>
+      <a
+        routerLink="/solicitar-turno"
+        class="bl-btn bl-btn--primary w-auto normal-case no-underline"
+      >
+        Nuevo turno
+      </a>
+    </div>
+
+    @if (errorMsg()) {
+      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger">
+        {{ errorMsg() }}
+      </div>
+    }
+
+    @if (loading()) {
+      <p class="text-[13.5px] text-bl-text-muted">Cargando turnos...</p>
+    } @else if (pagina(); as p) {
+      @if (p.results.length === 0) {
+        <div class="flex flex-col items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-6 text-center">
+          <p class="m-0 text-[13.5px] text-bl-text-muted">Todavía no reservaste ningún turno.</p>
+          <a routerLink="/solicitar-turno" class="bl-btn bl-btn--primary w-auto normal-case no-underline">
+            Solicitar turno
+          </a>
+        </div>
+      } @else {
+        <div class="flex flex-col gap-3">
+          @for (t of p.results; track t.id) {
+            <article class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-[15px] font-semibold">{{ t.servicio_nombre }}</span>
+                  <span class="text-[12.5px] text-bl-text-muted">{{ t.fecha }} · {{ t.hora }}</span>
+                </div>
+                <span [class]="estadoClasses(t.estado)">{{ t.estado }}</span>
+              </div>
+              <div class="flex items-center justify-between gap-3">
+                <span class="text-[14px] font-semibold">${{ t.precio_total }}</span>
+                @if (t.puede_cancelar) {
+                  <button
+                    type="button"
+                    class="bl-btn w-auto text-bl-danger normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
+                    [disabled]="cancelandoId() === t.id"
+                    (click)="cancelar(t)"
+                  >
+                    {{ cancelandoId() === t.id ? 'Cancelando...' : 'Cancelar' }}
+                  </button>
+                }
+              </div>
+            </article>
+          }
+        </div>
+
+        <div class="mt-2 flex flex-col items-center gap-2.5">
+          <span class="text-[11.5px] text-bl-text-muted">{{ p.count }} turno{{ p.count === 1 ? '' : 's' }} en total</span>
+          @if (p.num_pages > 1) {
+            <div class="flex gap-1.5">
+              @for (n of paginasVisibles(); track n) {
+                <button
+                  type="button"
+                  [class]="
+                    n === p.page
+                      ? 'h-7 w-7 cursor-pointer rounded-field border border-bl-text bg-bl-text text-[12.5px] font-bold text-bl-bg'
+                      : 'h-7 w-7 cursor-pointer rounded-field border border-bl-border bg-transparent text-[12.5px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+                  "
+                  (click)="irAPagina(n)"
+                >
+                  {{ n }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  </main>
+</div>

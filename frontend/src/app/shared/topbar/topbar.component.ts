@@ -26,6 +26,7 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
   ],
   cliente: [
     { label: 'Inicio', path: '/inicio' },
+    { label: 'Mis turnos', path: '/mis-turnos' },
     { label: 'Solicitar turno', path: '/solicitar-turno' },
     { label: 'Mi perfil', path: '/perfil' },
   ],

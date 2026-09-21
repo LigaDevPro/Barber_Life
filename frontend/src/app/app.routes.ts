@@ -38,5 +38,10 @@ export const routes: Routes = [
       import('./features/solicitar-turno/solicitar-turno.component').then((m) => m.SolicitarTurnoComponent),
     canActivate: [authGuard, roleGuard(['cliente'])],
   },
+  {
+    path: 'mis-turnos',
+    loadComponent: () => import('./features/mis-turnos/mis-turnos.component').then((m) => m.MisTurnosComponent),
+    canActivate: [authGuard, roleGuard(['cliente'])],
+  },
   { path: '**', redirectTo: 'login' },
 ];
