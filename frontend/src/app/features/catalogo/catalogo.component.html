@@ -1,0 +1,281 @@
+<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
+  <bl-topbar (logout)="logout()" />
+
+  <main class="flex flex-col gap-4 p-5">
+    <div class="flex flex-col gap-1">
+      <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Catálogo</p>
+      <h1 class="m-0 text-2xl font-bold">Servicios y disponibilidad</h1>
+    </div>
+
+    <div class="flex gap-2 overflow-x-auto">
+      <button
+        type="button"
+        (click)="cambiarTab('servicios')"
+        [class]="
+          tab() === 'servicios'
+            ? 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
+            : 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+        "
+      >
+        Servicios
+      </button>
+      <button
+        type="button"
+        (click)="cambiarTab('horarios')"
+        [class]="
+          tab() === 'horarios'
+            ? 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
+            : 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+        "
+      >
+        Horarios
+      </button>
+      <button
+        type="button"
+        (click)="cambiarTab('oferta')"
+        [class]="
+          tab() === 'oferta'
+            ? 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
+            : 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+        "
+      >
+        Mi oferta
+      </button>
+    </div>
+
+    @if (errorMsg()) {
+      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger">
+        {{ errorMsg() }}
+      </div>
+    }
+
+    @if (loading()) {
+      <p class="text-[13.5px] text-bl-text-muted">Cargando...</p>
+    } @else {
+      @if (esAdmin() && tab() !== 'servicios') {
+        <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+          Barbero
+          <select class="bl-input" (change)="elegirBarbero($any($event.target).value)">
+            <option value="">Elegí un barbero...</option>
+            @for (b of barberos(); track b.id) {
+              <option [value]="b.id">{{ b.nombre }}</option>
+            }
+          </select>
+        </label>
+      }
+
+      <!-- Tab: Servicios -->
+      @if (tab() === 'servicios') {
+        @if (esAdmin()) {
+          <form
+            [formGroup]="formServicio"
+            (ngSubmit)="guardarServicio()"
+            class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4"
+          >
+            <h2 class="m-0 text-[15px] font-bold">{{ editandoServicioId() ? 'Editar servicio' : 'Nuevo servicio' }}</h2>
+            <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+              Nombre
+              <input class="bl-input" type="text" formControlName="nombre" placeholder="Corte de pelo" />
+            </label>
+            <div class="flex gap-3">
+              <label class="flex flex-1 flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+                Duración (min)
+                <input class="bl-input" type="number" formControlName="duracion_minutos" min="1" />
+              </label>
+              <label class="flex flex-1 flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+                Precio
+                <input class="bl-input" type="text" inputmode="decimal" formControlName="precio" placeholder="15.00" />
+              </label>
+            </div>
+            <div class="flex gap-2.5">
+              <button class="bl-btn bl-btn--primary normal-case" type="submit" [disabled]="guardandoServicio()">
+                {{ guardandoServicio() ? 'Guardando...' : editandoServicioId() ? 'Guardar cambios' : 'Crear servicio' }}
+              </button>
+              @if (editandoServicioId()) {
+                <button
+                  type="button"
+                  class="bl-btn w-auto text-bl-text normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
+                  (click)="cancelarEdicionServicio()"
+                >
+                  Cancelar
+                </button>
+              }
+            </div>
+          </form>
+        }
+
+        <div class="flex flex-col gap-2.5">
+          @for (s of servicios(); track s.id) {
+            <div class="flex items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-4">
+              <div class="flex flex-1 flex-col gap-0.5">
+                <span class="text-[14.5px] font-semibold">{{ s.nombre }}</span>
+                <span class="text-[12.5px] text-bl-text-muted">{{ s.duracion_minutos }} min · ${{ s.precio }}</span>
+              </div>
+              @if (!s.activo) {
+                <span class="rounded-full border border-bl-border px-2 py-0.5 text-[10.5px] text-bl-text-muted">inactivo</span>
+              }
+              @if (esAdmin()) {
+                <button
+                  type="button"
+                  class="bl-btn w-auto text-bl-text normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
+                  (click)="editarServicio(s)"
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  class="bl-btn w-auto normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
+                  [class.text-bl-danger]="s.activo"
+                  (click)="toggleServicio(s)"
+                >
+                  {{ s.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Tab: Horarios -->
+      @if (tab() === 'horarios') {
+        @if (barberoActivoId()) {
+          <form
+            [formGroup]="formHorario"
+            (ngSubmit)="guardarHorario()"
+            class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4"
+          >
+            <h2 class="m-0 text-[15px] font-bold">Nuevo horario</h2>
+            <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+              Día
+              <select class="bl-input" formControlName="dia_semana">
+                @for (d of dias; track d.valor) {
+                  <option [value]="d.valor">{{ d.nombre }}</option>
+                }
+              </select>
+            </label>
+            <div class="flex gap-3">
+              <label class="flex flex-1 flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+                Desde
+                <input class="bl-input" type="time" formControlName="hora_inicio" />
+              </label>
+              <label class="flex flex-1 flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+                Hasta
+                <input class="bl-input" type="time" formControlName="hora_fin" />
+              </label>
+            </div>
+            <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+              Intervalo entre turnos (min)
+              <input class="bl-input" type="number" formControlName="intervalo_minutos" min="5" step="5" />
+            </label>
+            <button class="bl-btn bl-btn--primary normal-case" type="submit" [disabled]="guardandoHorario()">
+              {{ guardandoHorario() ? 'Guardando...' : 'Agregar horario' }}
+            </button>
+          </form>
+
+          <div class="flex flex-col gap-2.5">
+            @for (h of horarios(); track h.id) {
+              <div class="flex items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-4">
+                <div class="flex flex-1 flex-col gap-0.5">
+                  <span class="text-[14.5px] font-semibold">{{ diaNombre(h.dia_semana) }}</span>
+                  <span class="text-[12.5px] text-bl-text-muted"
+                    >{{ h.hora_inicio }} a {{ h.hora_fin }} · cada {{ h.intervalo_minutos }} min</span
+                  >
+                </div>
+                @if (!h.activo) {
+                  <span class="rounded-full border border-bl-border px-2 py-0.5 text-[10.5px] text-bl-text-muted">inactivo</span>
+                }
+                <button
+                  type="button"
+                  class="bl-btn w-auto normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
+                  [class.text-bl-danger]="h.activo"
+                  (click)="toggleHorario(h)"
+                >
+                  {{ h.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+              </div>
+            } @empty {
+              <p class="text-[13.5px] text-bl-text-muted">Todavía no hay horarios cargados.</p>
+            }
+          </div>
+        } @else {
+          <p class="text-[13.5px] text-bl-text-muted">Elegí un barbero para ver y gestionar sus horarios.</p>
+        }
+      }
+
+      <!-- Tab: Oferta (BarberoServicio) -->
+      @if (tab() === 'oferta') {
+        @if (barberoActivoId()) {
+          <form
+            [formGroup]="formOferta"
+            (ngSubmit)="guardarOferta()"
+            class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4"
+          >
+            <h2 class="m-0 text-[15px] font-bold">Ofrecer un servicio</h2>
+            <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+              Servicio
+              <select class="bl-input" formControlName="servicio">
+                <option [ngValue]="null">Elegí un servicio...</option>
+                @for (s of serviciosActivos(); track s.id) {
+                  <option [ngValue]="s.id">{{ s.nombre }}</option>
+                }
+              </select>
+            </label>
+            <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+              Horario
+              <select class="bl-input" formControlName="horario">
+                <option [ngValue]="null">Elegí un horario...</option>
+                @for (h of horariosActivos(); track h.id) {
+                  <option [ngValue]="h.id">{{ diaNombre(h.dia_semana) }} {{ h.hora_inicio }}-{{ h.hora_fin }}</option>
+                }
+              </select>
+            </label>
+            @if (horariosActivos().length === 0) {
+              <p class="m-0 text-[12.5px] text-bl-text-muted">
+                Este barbero todavía no tiene horarios activos — cargá uno en la pestaña "Horarios" primero.
+              </p>
+            }
+            <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+              Precio personalizado (opcional)
+              <input
+                class="bl-input"
+                type="text"
+                inputmode="decimal"
+                formControlName="precio_personalizado"
+                placeholder="Dejalo vacío para usar el precio del servicio"
+              />
+            </label>
+            <button class="bl-btn bl-btn--primary normal-case" type="submit" [disabled]="guardandoOferta()">
+              {{ guardandoOferta() ? 'Guardando...' : 'Agregar' }}
+            </button>
+          </form>
+
+          <div class="flex flex-col gap-2.5">
+            @for (o of ofertas(); track o.id) {
+              <div class="flex items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-4">
+                <div class="flex flex-1 flex-col gap-0.5">
+                  <span class="text-[14.5px] font-semibold">{{ o.servicio_nombre }}</span>
+                  <span class="text-[12.5px] text-bl-text-muted">${{ o.precio }}</span>
+                </div>
+                @if (!o.activo) {
+                  <span class="rounded-full border border-bl-border px-2 py-0.5 text-[10.5px] text-bl-text-muted">inactivo</span>
+                }
+                <button
+                  type="button"
+                  class="bl-btn w-auto normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
+                  [class.text-bl-danger]="o.activo"
+                  (click)="toggleOferta(o)"
+                >
+                  {{ o.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+              </div>
+            } @empty {
+              <p class="text-[13.5px] text-bl-text-muted">Todavía no ofrece ningún servicio.</p>
+            }
+          </div>
+        } @else {
+          <p class="text-[13.5px] text-bl-text-muted">Elegí un barbero para ver y gestionar su oferta.</p>
+        }
+      }
+    }
+  </main>
+</div>

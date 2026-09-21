@@ -19,11 +19,13 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
   barbero: [
     { label: 'Dashboard', path: '/dashboard' },
     { label: 'Gestión de turnos', path: '/turnos' },
+    { label: 'Catálogo', path: '/catalogo' },
     { label: 'Mi perfil', path: '/perfil' },
   ],
   admin: [
     { label: 'Dashboard', path: '/dashboard' },
     { label: 'Gestión de turnos', path: '/turnos' },
+    { label: 'Catálogo', path: '/catalogo' },
   ],
   cliente: [
     { label: 'Inicio', path: '/inicio' },
