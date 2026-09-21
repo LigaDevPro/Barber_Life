@@ -1,0 +1,97 @@
+<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
+  <bl-topbar (logout)="logout()" />
+
+  <main class="flex flex-col gap-4 p-5">
+    <div class="flex flex-col gap-1">
+      <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Notificaciones</p>
+      <h1 class="m-0 text-2xl font-bold">Tus avisos</h1>
+    </div>
+
+    <div class="flex gap-2">
+      <button
+        type="button"
+        (click)="cambiarFiltro(false)"
+        [class]="
+          !soloNoLeidas()
+            ? 'h-9 cursor-pointer rounded-full border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
+            : 'h-9 cursor-pointer rounded-full border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+        "
+      >
+        Todas
+      </button>
+      <button
+        type="button"
+        (click)="cambiarFiltro(true)"
+        [class]="
+          soloNoLeidas()
+            ? 'h-9 cursor-pointer rounded-full border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
+            : 'h-9 cursor-pointer rounded-full border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+        "
+      >
+        No leídas
+      </button>
+    </div>
+
+    @if (errorMsg()) {
+      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger">
+        {{ errorMsg() }}
+      </div>
+    }
+
+    @if (loading()) {
+      <p class="text-[13.5px] text-bl-text-muted">Cargando...</p>
+    } @else if (pagina(); as p) {
+      @if (p.results.length === 0) {
+        <p class="text-[13.5px] text-bl-text-muted">
+          {{ soloNoLeidas() ? 'No tenés notificaciones sin leer.' : 'Todavía no tenés notificaciones.' }}
+        </p>
+      } @else {
+        <ul class="m-0 flex list-none flex-col gap-2 p-0">
+          @for (n of p.results; track n.id) {
+            <li>
+              <button
+                type="button"
+                (click)="marcarLeida(n)"
+                class="flex w-full cursor-pointer items-start gap-3 rounded-card border border-bl-border bg-bl-surface p-4 text-left text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
+              >
+                <span
+                  class="mt-1.5 h-2 w-2 shrink-0 rounded-full"
+                  [class]="n.leida ? 'bg-bl-border' : 'bg-bl-accent'"
+                ></span>
+                <span class="flex flex-1 flex-col gap-1">
+                  <span [class]="n.leida ? 'text-[13.5px] text-bl-text-muted' : 'text-[13.5px] font-semibold'">
+                    {{ n.mensaje }}
+                  </span>
+                  <span class="text-[11.5px] text-bl-text-muted">{{ n.fecha_creacion | date: 'dd/MM/yy HH:mm' }}</span>
+                </span>
+                @if (marcandoId() === n.id) {
+                  <span class="text-[11.5px] text-bl-text-muted">...</span>
+                }
+              </button>
+            </li>
+          }
+        </ul>
+
+        @if (p.num_pages > 1) {
+          <div class="mt-2 flex flex-col items-center gap-2.5">
+            <div class="flex gap-1.5">
+              @for (n of paginasVisibles(); track n) {
+                <button
+                  type="button"
+                  [class]="
+                    n === p.page
+                      ? 'h-7 w-7 cursor-pointer rounded-field border border-bl-text bg-bl-text text-[12.5px] font-bold text-bl-bg'
+                      : 'h-7 w-7 cursor-pointer rounded-field border border-bl-border bg-transparent text-[12.5px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+                  "
+                  (click)="irAPagina(n)"
+                >
+                  {{ n }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      }
+    }
+  </main>
+</div>
