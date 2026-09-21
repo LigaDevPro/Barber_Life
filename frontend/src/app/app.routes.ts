@@ -44,6 +44,11 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard(['cliente'])],
   },
   {
+    path: 'catalogo',
+    loadComponent: () => import('./features/catalogo/catalogo.component').then((m) => m.CatalogoComponent),
+    canActivate: [authGuard, roleGuard(['barbero', 'admin'])],
+  },
+  {
     path: 'notificaciones',
     loadComponent: () =>
       import('./features/notificaciones/notificaciones.component').then((m) => m.NotificacionesComponent),
