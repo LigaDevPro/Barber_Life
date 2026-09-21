@@ -1,18 +1,14 @@
-<div
-  class="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_50%_0%,#17131f_0%,var(--color-bl-bg)_60%)] p-6"
->
-  <div class="flex w-full max-w-[380px] flex-col items-center gap-1.5 text-center">
-    <bl-logo [size]="72" />
 
-    <h1 class="mt-4.5 mb-1 text-[28px] font-bold">Bienvenido</h1>
-    <p class="mb-5 text-sm text-bl-text-muted">Creá tu cuenta para continuar</p>
-
-    <button
-      class="bl-btn bl-btn--google mb-2"
-      type="button"
-      disabled
-      title="Disponible próximamente"
-    >
+<div class="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_50%_0%,#17131f_0%,var(--color-bl-bg)_60%)] px-4 py-3">
+  <div class="flex w-full max-w-[380px] flex-col items-center gap-1 text-center">
+    <bl-logo [size]="58" />
+    <h1 class="mt-2 mb-0.5 text-[26px] font-bold">
+      Bienvenido
+    </h1>
+    <p class="mb-2.5 text-sm text-bl-text-muted">
+      Creá tu cuenta para continuar
+    </p>
+    <button class="bl-btn bl-btn--google mb-1.5" type="button" disabled title="Disponible próximamente">
       <svg width="18" height="18" viewBox="0 0 18 18">
         <path
           fill="#9a9aa8"
@@ -31,73 +27,127 @@
           d="M9 3.55c1.3 0 2.5.45 3.4 1.35l2.55-2.55C13.4.85 11.4 0 9 0 5.55 0 2.55 2.05 1.05 4.85l3 2.3C4.75 5.05 6.7 3.55 9 3.55Z"
         />
       </svg>
+
       Sign in with Google
     </button>
 
-    <div class="bl-divider w-full">o continúa con</div>
+    <div class="bl-divider w-full">
+      o continúa con
+    </div>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" class="mt-1.5 flex w-full flex-col gap-3">
-      <label class="flex flex-col gap-1.5 text-left text-[13px] font-medium text-bl-text-muted">
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      class="mt-1 flex w-full flex-col gap-2"
+    >
+
+      <label
+        class="flex flex-col gap-1 text-left text-[13px] font-medium text-bl-text-muted"
+      >
         Correo electrónico
+
         <input
           class="bl-input"
-          [class.bl-input--error]="form.get('email')?.invalid && form.get('email')?.touched"
+          [class.bl-input--error]="
+            form.get('email')?.invalid &&
+            form.get('email')?.touched
+          "
           type="email"
           placeholder="tu@email.com"
           formControlName="email"
         />
       </label>
+
       @if (form.get('email')?.invalid && form.get('email')?.touched) {
-        <span class="bl-error-text">Ingresá un email válido.</span>
+        <span class="bl-error-text">
+          Ingresá un email válido.
+        </span>
       }
 
-      <label class="flex flex-col gap-1.5 text-left text-[13px] font-medium text-bl-text-muted">
+      <label
+        class="flex flex-col gap-1 text-left text-[13px] font-medium text-bl-text-muted"
+      >
         Contraseña
+
         <input
           class="bl-input"
-          [class.bl-input--error]="form.get('password')?.invalid && form.get('password')?.touched"
+          [class.bl-input--error]="
+            form.get('password')?.invalid &&
+            form.get('password')?.touched
+          "
           type="password"
           placeholder="••••••••••"
           formControlName="password"
         />
       </label>
-      @if (form.get('password')?.hasError('minlength') && form.get('password')?.touched) {
-        <span class="bl-error-text">Mínimo 8 caracteres.</span>
+
+      @if (
+        form.get('password')?.hasError('minlength') &&
+        form.get('password')?.touched
+      ) {
+        <span class="bl-error-text">
+          Mínimo 8 caracteres.
+        </span>
       }
 
-      <label class="flex flex-col gap-1.5 text-left text-[13px] font-medium text-bl-text-muted">
+      <label
+        class="flex flex-col gap-1 text-left text-[13px] font-medium text-bl-text-muted"
+      >
         Confirmar contraseña
+
         <input
           class="bl-input"
           [class.bl-input--error]="
-            form.hasError('mismatch') && form.get('passwordConfirm')?.touched
+            form.hasError('mismatch') &&
+            form.get('passwordConfirm')?.touched
           "
           type="password"
           placeholder="••••••••••"
           formControlName="passwordConfirm"
         />
       </label>
-      @if (form.hasError('mismatch') && form.get('passwordConfirm')?.touched) {
-        <span class="bl-error-text">Las contraseñas no coinciden.</span>
+
+      @if (
+        form.hasError('mismatch') &&
+        form.get('passwordConfirm')?.touched
+      ) {
+        <span class="bl-error-text">
+          Las contraseñas no coinciden.
+        </span>
       }
 
       @if (errorMsg()) {
-        <span class="bl-error-text">{{ errorMsg() }}</span>
-      }
-      @if (successMsg()) {
-        <span class="text-[13px] text-bl-success">{{ successMsg() }}</span>
+        <span class="bl-error-text">
+          {{ errorMsg() }}
+        </span>
       }
 
-      <button class="bl-btn bl-btn--primary" type="submit" [disabled]="loading()">
+      @if (successMsg()) {
+        <span class="text-[13px] text-bl-success">
+          {{ successMsg() }}
+        </span>
+      }
+
+      <button
+        class="bl-btn bl-btn--primary mt-0.5"
+        type="submit"
+        [disabled]="loading()"
+      >
         {{ loading() ? 'Creando cuenta...' : 'Registrar' }}
       </button>
+
     </form>
 
-    <p class="mt-4.5 text-[13.5px] text-bl-text-muted">
+    <p class="mt-2.5 text-[13px] text-bl-text-muted">
       ¿Ya tenés cuenta?
-      <a routerLink="/login" class="font-semibold text-bl-accent no-underline hover:underline"
-        >Iniciá sesión</a
+
+      <a
+        routerLink="/login"
+        class="font-semibold text-bl-accent no-underline hover:underline"
       >
+        Iniciá sesión
+      </a>
     </p>
+
   </div>
 </div>
