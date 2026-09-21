@@ -42,11 +42,8 @@ export class LoginComponent implements OnInit {
     this.authService.login(email!, password!).subscribe({
       next: (res) => {
         this.loading.set(false);
-        if (res.usuario.rol === 'admin' || res.usuario.rol === 'barbero') {
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.router.navigate(['/login'], { queryParams: { sinAcceso: '1' } });
-        }
+        const destino = res.usuario.rol === 'cliente' ? '/inicio' : '/dashboard';
+        this.router.navigate([destino]);
       },
       error: (err) => {
         this.loading.set(false);

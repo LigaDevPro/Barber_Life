@@ -22,5 +22,21 @@ export const routes: Routes = [
     loadComponent: () => import('./features/turnos/turnos.component').then((m) => m.TurnosComponent),
     canActivate: [authGuard, roleGuard(['barbero', 'admin'])],
   },
+  {
+    path: 'perfil',
+    loadComponent: () => import('./features/perfil/perfil.component').then((m) => m.PerfilComponent),
+    canActivate: [authGuard, roleGuard(['cliente', 'barbero'])],
+  },
+  {
+    path: 'inicio',
+    loadComponent: () => import('./features/inicio/inicio.component').then((m) => m.InicioComponent),
+    canActivate: [authGuard, roleGuard(['cliente'])],
+  },
+  {
+    path: 'solicitar-turno',
+    loadComponent: () =>
+      import('./features/solicitar-turno/solicitar-turno.component').then((m) => m.SolicitarTurnoComponent),
+    canActivate: [authGuard, roleGuard(['cliente'])],
+  },
   { path: '**', redirectTo: 'login' },
 ];

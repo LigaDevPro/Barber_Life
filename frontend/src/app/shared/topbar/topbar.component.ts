@@ -18,12 +18,17 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
   barbero: [
     { label: 'Dashboard', path: '/dashboard' },
     { label: 'Gestión de turnos', path: '/turnos' },
+    { label: 'Mi perfil', path: '/perfil' },
   ],
   admin: [
     { label: 'Dashboard', path: '/dashboard' },
     { label: 'Gestión de turnos', path: '/turnos' },
   ],
-  cliente: [],
+  cliente: [
+    { label: 'Inicio', path: '/inicio' },
+    { label: 'Solicitar turno', path: '/solicitar-turno' },
+    { label: 'Mi perfil', path: '/perfil' },
+  ],
 };
 
 @Component({
@@ -31,7 +36,9 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
   standalone: true,
   imports: [CommonModule, RouterLink, LogoComponent],
   template: `
-    <header class="relative flex items-center justify-between border-b border-bl-border px-5 py-4">
+    <header
+      class="sticky top-0 z-30 flex items-center justify-between border-b border-bl-border bg-bl-bg px-5 py-4"
+    >
       @if (logoPath(); as path) {
         <a [routerLink]="path" class="flex items-center gap-2 text-[15px] font-bold text-bl-text no-underline">
           <bl-logo [size]="28" />
@@ -45,7 +52,7 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
       }
 
       <button
-        class="flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl-text hover:bg-bl-surface-2"
+        class="flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
         type="button"
         (click)="toggle()"
         aria-label="Menú"
@@ -68,7 +75,7 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
             <a
               [routerLink]="item.path"
               (click)="open.set(false)"
-              class="border-b border-bl-border px-4 py-3 text-left text-[13.5px] text-bl-text no-underline hover:bg-bl-surface-2"
+              class="border-b border-bl-border px-4 py-3 text-left text-[13.5px] text-bl-text no-underline transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
             >
               {{ item.label }}
             </a>
@@ -76,7 +83,7 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
           <button
             type="button"
             (click)="logout.emit()"
-            class="cursor-pointer border-0 bg-transparent px-4 py-3 text-left text-[13.5px] text-bl-danger hover:bg-bl-surface-2"
+            class="cursor-pointer border-0 bg-transparent px-4 py-3 text-left text-[13.5px] text-bl-danger transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
           >
             Cerrar sesión
           </button>

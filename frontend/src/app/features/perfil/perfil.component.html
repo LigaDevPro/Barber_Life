@@ -1,0 +1,68 @@
+<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
+  <bl-topbar (logout)="logout()" />
+
+  <main class="p-5">
+    <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Mi perfil</p>
+    <h1 class="mt-1 mb-5 text-2xl font-bold">Tus datos</h1>
+
+    @if (loading()) {
+      <p class="text-[13.5px] text-bl-text-muted">Cargando perfil...</p>
+    } @else {
+      @if (errorMsg()) {
+        <div
+          class="mb-3.5 rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger"
+        >
+          {{ errorMsg() }}
+        </div>
+      }
+      @if (successMsg()) {
+        <div
+          class="mb-3.5 rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-success"
+        >
+          {{ successMsg() }}
+        </div>
+      }
+
+      @if (esCliente()) {
+        <form
+          [formGroup]="clienteForm"
+          (ngSubmit)="guardarCliente()"
+          class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4"
+        >
+          <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+            Teléfono
+            <input class="bl-input" type="tel" formControlName="telefono" placeholder="Tu teléfono" />
+          </label>
+          <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+            Fecha de nacimiento
+            <input class="bl-input" type="date" formControlName="fecha_nacimiento" />
+          </label>
+          <button class="bl-btn bl-btn--primary" type="submit" [disabled]="guardando()">
+            {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </form>
+      } @else if (esBarbero()) {
+        <form
+          [formGroup]="barberoForm"
+          (ngSubmit)="guardarBarbero()"
+          class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4"
+        >
+          <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+            Foto de perfil (URL)
+            <input
+              class="bl-input"
+              type="url"
+              formControlName="foto_perfil_url"
+              placeholder="https://..."
+            />
+          </label>
+          <button class="bl-btn bl-btn--primary" type="submit" [disabled]="guardando()">
+            {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </form>
+      } @else {
+        <p class="text-[13.5px] text-bl-text-muted">Tu rol no tiene un perfil editable.</p>
+      }
+    }
+  </main>
+</div>
