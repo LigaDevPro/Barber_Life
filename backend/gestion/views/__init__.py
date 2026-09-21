@@ -20,6 +20,7 @@ from .catalogo import (
 )
 from .pago import PagoListCreateView, PagoWebhookView
 from .notificacion import NotificacionListView, NotificacionLeidaView
+from .resena import ResenaListCreateView
 
 __all__ = [
     'RegisterView', 'LoginView', 'MeView',
@@ -33,4 +34,5 @@ __all__ = [
     'BarberoServicioListCreateView', 'BarberoServicioDetailView',
     'PagoListCreateView', 'PagoWebhookView',
     'NotificacionListView', 'NotificacionLeidaView',
+    'ResenaListCreateView',
 ]

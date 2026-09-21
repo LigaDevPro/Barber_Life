@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import (
     Usuario, Cliente, Barbero, Servicio, BarberoServicio,
-    Horario, Turno, Pago, EstadisticaDiaria,
+    Horario, Turno, Pago, EstadisticaDiaria, Resena,
 )
 
 
@@ -54,3 +54,9 @@ class PagoAdmin(admin.ModelAdmin):
 @admin.register(EstadisticaDiaria)
 class EstadisticaDiariaAdmin(admin.ModelAdmin):
     list_display = ('fecha', 'barbero', 'turnos_realizados', 'ingresos_totales')
+
+
+@admin.register(Resena)
+class ResenaAdmin(admin.ModelAdmin):
+    list_display = ('id', 'turno', 'cliente', 'barbero', 'puntaje', 'fecha_creacion')
+    list_filter = ('puntaje', 'barbero')
