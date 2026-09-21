@@ -43,5 +43,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/mis-turnos/mis-turnos.component').then((m) => m.MisTurnosComponent),
     canActivate: [authGuard, roleGuard(['cliente'])],
   },
+  {
+    path: 'notificaciones',
+    loadComponent: () =>
+      import('./features/notificaciones/notificaciones.component').then((m) => m.NotificacionesComponent),
+    canActivate: [authGuard],
+  },
   { path: '**', redirectTo: 'login' },
 ];

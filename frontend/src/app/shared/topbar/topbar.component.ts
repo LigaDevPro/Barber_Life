@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Output, computed, inject, signal } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { LogoComponent } from '../logo/logo.component';
 import { AuthService } from '../../core/auth/auth.service';
+import { NotificacionService } from '../../core/services/notificacion.service';
 import { Rol } from '../../core/models/models';
 
 interface NavItem {
@@ -52,21 +53,46 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
         </span>
       }
 
-      <button
-        class="flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
-        type="button"
-        (click)="toggle()"
-        aria-label="Menú"
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M2 5h16M2 10h16M2 15h16"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-          />
-        </svg>
-      </button>
+      <div class="flex items-center gap-2">
+        <a
+          routerLink="/notificaciones"
+          aria-label="Notificaciones"
+          class="relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl-text no-underline transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"
+            />
+          </svg>
+          @if (unreadCount() > 0) {
+            <span
+              class="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-bl-danger px-1 text-[10px] font-bold text-white"
+            >
+              {{ unreadCount() > 9 ? '9+' : unreadCount() }}
+            </span>
+          }
+        </a>
+
+        <button
+          class="flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
+          type="button"
+          (click)="toggle()"
+          aria-label="Menú"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path
+              d="M2 5h16M2 10h16M2 15h16"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </div>
 
       @if (open()) {
         <nav
@@ -93,11 +119,13 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
     </header>
   `,
 })
-export class TopbarComponent {
+export class TopbarComponent implements OnInit {
   @Output() logout = new EventEmitter<void>();
   open = signal(false);
+  unreadCount = signal(0);
 
   private authService = inject(AuthService);
+  private notificacionService = inject(NotificacionService);
 
   navItems = computed<NavItem[]>(() => {
     const usuario = this.authService.currentUser();
@@ -107,6 +135,13 @@ export class TopbarComponent {
   /** El logo solo es clickeable si el rol tiene alguna pantalla propia
    * (evita mandar a un Cliente a `/dashboard`, que su roleGuard rebota). */
   logoPath = computed<string | null>(() => this.navItems()[0]?.path ?? null);
+
+  ngOnInit(): void {
+    this.notificacionService.listar(1, false).subscribe({
+      next: (res) => this.unreadCount.set(res.count),
+      error: () => this.unreadCount.set(0),
+    });
+  }
 
   toggle(): void {
     this.open.update((v) => !v);
