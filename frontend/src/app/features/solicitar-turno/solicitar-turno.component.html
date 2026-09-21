@@ -1,0 +1,247 @@
+<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
+  <bl-topbar (logout)="logout()" />
+
+  <main class="flex flex-col gap-5 p-5">
+    <div class="flex flex-col gap-1">
+      <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Reservar</p>
+      <h1 class="m-0 text-2xl font-bold">Solicitar turno</h1>
+      <p class="m-0 text-[13.5px] text-bl-text-muted">
+        Elegí el servicio, con quién y cuándo. Te lleva menos de un minuto.
+      </p>
+    </div>
+
+    @if (cargando()) {
+      <p class="text-[13.5px] text-bl-text-muted">Cargando...</p>
+    } @else if (errorCarga()) {
+      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger">
+        {{ errorCarga() }}
+      </div>
+    } @else if (turnoCreado(); as t) {
+      <!-- Éxito -->
+      <div class="flex flex-col items-center gap-5 rounded-card border border-bl-border bg-bl-surface p-6 text-center">
+        <span class="flex h-14 w-14 items-center justify-center rounded-full bg-bl-accent">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+            <path stroke="white" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" d="M20 6 9 17l-5-5" />
+          </svg>
+        </span>
+        <div class="flex flex-col items-center gap-2">
+          <h2 class="m-0 text-[22px] font-bold">Solicitaste tu turno</h2>
+          <span class="rounded-full border border-bl-border px-2.5 py-1 text-xs font-medium capitalize">{{
+            t.estado
+          }}</span>
+        </div>
+
+        @if (avisoPago()) {
+          <div class="w-full rounded-field border border-bl-border px-3 py-2.5 text-[13px] text-bl-warning">
+            {{ avisoPago() }}
+          </div>
+        }
+
+        <div class="flex w-full flex-col gap-3 rounded-field bg-bl-surface-2 p-4 text-[13.5px]">
+          <div class="flex justify-between gap-4"><span class="text-bl-text-muted">Servicio</span><span class="font-semibold">{{ t.servicio_nombre }}</span></div>
+          <div class="flex justify-between gap-4"><span class="text-bl-text-muted">Cliente</span><span class="font-semibold">{{ t.cliente_nombre }}</span></div>
+          <div class="flex justify-between gap-4"><span class="text-bl-text-muted">Fecha y hora</span><span class="font-semibold">{{ t.fecha }} · {{ t.hora }}</span></div>
+          <div class="flex justify-between gap-4"><span class="text-bl-text-muted">Total</span><span class="font-semibold">${{ t.precio_total }}</span></div>
+        </div>
+
+        <p class="m-0 text-[13.5px] text-bl-text-muted">Te avisamos cuando la barbería confirme tu horario.</p>
+
+        <div class="flex w-full flex-col gap-2.5">
+          <button
+            type="button"
+            class="bl-btn text-bl-text normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
+            (click)="solicitarOtro()"
+          >
+            Solicitar otro turno
+          </button>
+          <a routerLink="/inicio" class="bl-btn bl-btn--primary text-center normal-case no-underline">Volver al inicio</a>
+        </div>
+      </div>
+    } @else {
+      @if (errorMsg()) {
+        <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger">
+          {{ errorMsg() }}
+        </div>
+      }
+
+      <!-- Paso 1: Servicio -->
+      <section class="flex flex-col gap-3.5 rounded-card border border-bl-border bg-bl-surface p-4">
+        <div class="flex items-center gap-2.5">
+          <span class="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-bl-accent text-[12.5px] font-bold text-white">1</span>
+          <h2 class="m-0 text-[15px] font-bold">Servicio</h2>
+        </div>
+        @if (servicios().length === 0) {
+          <p class="text-[13px] text-bl-text-muted">No hay servicios disponibles.</p>
+        } @else {
+          <div class="flex flex-col gap-2.5">
+            @for (s of servicios(); track s.id) {
+              <button
+                type="button"
+                (click)="elegirServicio(s.id)"
+                [class]="
+                  servicioSeleccionado()?.id === s.id
+                    ? 'flex h-16 cursor-pointer items-center justify-between gap-3 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'
+                    : 'flex h-16 cursor-pointer items-center justify-between gap-3 rounded-field border border-bl-border bg-transparent px-4 text-left text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+                "
+              >
+                <span class="flex flex-col gap-0.5">
+                  <span class="text-[14px] font-semibold">{{ s.nombre }}</span>
+                  <span class="text-[12px] text-bl-text-muted">{{ s.duracion_minutos }} min</span>
+                </span>
+                <span class="text-[14px] font-semibold">${{ s.precio }}</span>
+              </button>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Paso 2: Barbero -->
+      <section class="flex flex-col gap-3.5 rounded-card border border-bl-border bg-bl-surface p-4">
+        <div class="flex items-center gap-2.5">
+          <span class="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-bl-accent text-[12.5px] font-bold text-white">2</span>
+          <h2 class="m-0 text-[15px] font-bold">Barbero</h2>
+        </div>
+        @if (barberosDisponibles().length === 0) {
+          <p class="text-[13px] text-bl-text-muted">
+            {{ servicioId() ? 'Ningún barbero ofrece este servicio.' : 'Elegí primero un servicio.' }}
+          </p>
+        } @else {
+          <div class="flex flex-col gap-2.5">
+            @for (b of barberosDisponibles(); track b.id) {
+              <button
+                type="button"
+                (click)="elegirBarbero(b.id)"
+                [class]="
+                  barberoSeleccionado()?.id === b.id
+                    ? 'flex h-16 cursor-pointer items-center gap-3 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'
+                    : 'flex h-16 cursor-pointer items-center gap-3 rounded-field border border-bl-border bg-transparent px-4 text-left text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+                "
+              >
+                <span class="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-bl-surface-2 text-[13px] font-semibold text-bl-accent">
+                  {{ b.nombre.slice(0, 2).toUpperCase() }}
+                </span>
+                <span class="text-[14px] font-semibold">{{ b.nombre }}</span>
+              </button>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Paso 3: Fecha y hora -->
+      <section class="flex flex-col gap-4 rounded-card border border-bl-border bg-bl-surface p-4">
+        <div class="flex items-center gap-2.5">
+          <span class="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-bl-accent text-[12.5px] font-bold text-white">3</span>
+          <h2 class="m-0 text-[15px] font-bold">Fecha y hora</h2>
+        </div>
+
+        @if (!barberoSeleccionado()) {
+          <p class="text-[13px] text-bl-text-muted">Elegí primero un barbero.</p>
+        } @else {
+          <div class="flex flex-col gap-2.5">
+            <span class="text-[12.5px] text-bl-text-muted">Día</span>
+            @if (diasDisponibles().length === 0) {
+              <p class="text-[13px] text-bl-text-muted">Este barbero no tiene horarios cargados.</p>
+            } @else {
+              <div class="grid grid-cols-3 gap-2">
+                @for (d of diasDisponibles(); track d.iso) {
+                  <button
+                    type="button"
+                    (click)="elegirDia(d.iso)"
+                    [class]="
+                      diaIso() === d.iso
+                        ? 'flex h-15 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-field bg-bl-accent text-white transition-opacity duration-150 ease-linear hover:opacity-90'
+                        : 'flex h-15 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-field border border-bl-border text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+                    "
+                  >
+                    <span class="text-[11.5px] font-medium">{{ d.dow }}</span>
+                    <span class="text-[18px] font-bold">{{ d.num }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          @if (diaIso()) {
+            <div class="flex flex-col gap-2.5">
+              <span class="text-[12.5px] text-bl-text-muted">Horario</span>
+              @if (horariosDisponibles().length === 0) {
+                <p class="text-[13px] text-bl-text-muted">No hay horarios para ese día.</p>
+              } @else {
+                <div class="grid grid-cols-3 gap-2">
+                  @for (h of horariosDisponibles(); track h) {
+                    <button
+                      type="button"
+                      (click)="elegirHora(h)"
+                      [class]="
+                        hora() === h
+                          ? 'h-11 cursor-pointer rounded-field bg-bl-accent text-[13.5px] font-medium text-white transition-opacity duration-150 ease-linear hover:opacity-90'
+                          : 'h-11 cursor-pointer rounded-field border border-bl-border text-[13.5px] font-medium text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+                      "
+                    >
+                      {{ h }}
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+      </section>
+
+      <!-- Paso 4: Forma de pago -->
+      <section class="flex flex-col gap-3.5 rounded-card border border-bl-border bg-bl-surface p-4">
+        <div class="flex items-center gap-2.5">
+          <span class="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-bl-accent text-[12.5px] font-bold text-white">4</span>
+          <h2 class="m-0 text-[15px] font-bold">Forma de pago</h2>
+        </div>
+        <div class="flex flex-col gap-2.5">
+          <button
+            type="button"
+            (click)="elegirPago('efectivo')"
+            [class]="
+              formaPago() === 'efectivo'
+                ? 'flex h-16 cursor-pointer flex-col justify-center gap-0.5 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'
+                : 'flex h-16 cursor-pointer flex-col justify-center gap-0.5 rounded-field border border-bl-border bg-transparent px-4 text-left text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+            "
+          >
+            <span class="text-[14px] font-semibold">Pagar en el local</span>
+            <span class="text-[12px] text-bl-text-muted">Abonás cuando llegás</span>
+          </button>
+          <button
+            type="button"
+            (click)="elegirPago('mercado_pago')"
+            [class]="
+              formaPago() === 'mercado_pago'
+                ? 'flex h-16 cursor-pointer flex-col justify-center gap-0.5 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'
+                : 'flex h-16 cursor-pointer flex-col justify-center gap-0.5 rounded-field border border-bl-border bg-transparent px-4 text-left text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+            "
+          >
+            <span class="text-[14px] font-semibold">Mercado Pago</span>
+            <span class="text-[12px] text-bl-text-muted">Pagá online ahora</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Resumen -->
+      <aside class="flex flex-col gap-4 rounded-card border border-bl-border bg-bl-surface p-4">
+        <h2 class="m-0 text-[15px] font-bold">Resumen del turno</h2>
+        <div class="flex flex-col gap-2.5 text-[13.5px]">
+          <div class="flex justify-between gap-4"><span class="text-bl-text-muted">Servicio</span><span class="text-right font-semibold">{{ servicioSeleccionado()?.nombre ?? '—' }}</span></div>
+          <div class="flex justify-between gap-4"><span class="text-bl-text-muted">Barbero</span><span class="text-right font-semibold">{{ barberoSeleccionado()?.nombre ?? '—' }}</span></div>
+          <div class="flex justify-between gap-4"><span class="text-bl-text-muted">Fecha</span><span class="text-right font-semibold">{{ diaIso() ?? '—' }}</span></div>
+          <div class="flex justify-between gap-4"><span class="text-bl-text-muted">Hora</span><span class="text-right font-semibold">{{ hora() ?? '—' }}</span></div>
+          <div class="flex justify-between gap-4"><span class="text-bl-text-muted">Pago</span><span class="text-right font-semibold">{{ formaPago() === 'efectivo' ? 'Pagar en el local' : 'Mercado Pago' }}</span></div>
+        </div>
+        <div class="h-px bg-bl-border"></div>
+        <div class="flex items-center justify-between">
+          <span class="text-[14px] font-semibold">Total</span>
+          <span class="text-[22px] font-bold">{{ servicioSeleccionado() ? '$' + servicioSeleccionado()!.precio : '—' }}</span>
+        </div>
+        <button type="button" class="bl-btn bl-btn--primary normal-case" [disabled]="!listoParaConfirmar()" (click)="confirmar()">
+          {{ enviando() ? 'Confirmando...' : 'Confirmar turno' }}
+        </button>
+        <p class="m-0 text-center text-xs text-bl-text-muted">Tu turno queda pendiente hasta que la barbería lo confirme.</p>
+      </aside>
+    }
+  </main>
+</div>

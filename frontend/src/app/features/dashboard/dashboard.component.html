@@ -1,75 +1,110 @@
-<div class="page">
+<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
   <bl-topbar (logout)="logout()" />
 
-  <main class="content">
+  <main class="p-5">
     @if (loading()) {
-      <p class="state-text">Cargando dashboard...</p>
+      <p class="text-sm text-bl-text-muted">Cargando dashboard...</p>
     } @else if (errorMsg()) {
-      <div class="state-error">{{ errorMsg() }}</div>
+      <div class="rounded-field border border-bl-border p-3 text-sm text-bl-danger">
+        {{ errorMsg() }}
+      </div>
     } @else if (data(); as d) {
-      <p class="eyebrow">Dashboard</p>
-      <h1 class="greeting">Hola, {{ d.nombre }}</h1>
-      <p class="subgreeting">Bienvenido de nuevo</p>
+      <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Dashboard</p>
+      <h1 class="mt-1 mb-0.5 text-2xl font-bold">Hola, {{ d.nombre }}</h1>
+      <p class="mb-5.5 text-[13.5px] text-bl-text-muted">Bienvenido de nuevo</p>
 
-      <section class="stat-list">
-        <a routerLink="/turnos" class="stat-card">
-          <span class="stat-icon stat-icon--purple">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" d="M7 2v3M17 2v3M3.5 9h17M4 5h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg>
+      <section class="mb-6.5 flex flex-col gap-2.5">
+        <a
+          routerLink="/turnos"
+          class="flex items-center gap-3.5 rounded-card border border-bl-border bg-bl-surface px-4 py-3.5 text-bl-text no-underline"
+        >
+          <span
+            class="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-[10px] bg-[rgba(139,111,224,0.15)] text-bl-accent"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path
+                stroke="currentColor"
+                stroke-width="1.6"
+                d="M7 2v3M17 2v3M3.5 9h17M4 5h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"
+              />
+            </svg>
           </span>
-          <span class="stat-body">
-            <span class="stat-label">Turnos hoy</span>
-            <span class="stat-value">{{ d.turnos_hoy }}</span>
+          <span class="flex flex-col gap-0.5">
+            <span class="text-[13px] text-bl-text-muted">Turnos hoy</span>
+            <span class="text-lg font-bold">{{ d.turnos_hoy }}</span>
           </span>
         </a>
 
-        <div class="stat-card">
-          <span class="stat-icon stat-icon--blue">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0"/></svg>
+        <div
+          class="flex items-center gap-3.5 rounded-card border border-bl-border bg-bl-surface px-4 py-3.5 text-bl-text"
+        >
+          <span
+            class="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-[10px] bg-[rgba(111,170,224,0.15)] text-[#6faae0]"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path
+                stroke="currentColor"
+                stroke-width="1.6"
+                d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 9a7 7 0 0 1 14 0"
+              />
+            </svg>
           </span>
-          <span class="stat-body">
-            <span class="stat-label">Clientes activos</span>
-            <span class="stat-value">{{ d.clientes_activos }}</span>
+          <span class="flex flex-col gap-0.5">
+            <span class="text-[13px] text-bl-text-muted">Clientes activos</span>
+            <span class="text-lg font-bold">{{ d.clientes_activos }}</span>
           </span>
         </div>
 
         @if (d.ingresos_del_mes !== null) {
-          <div class="stat-card">
-            <span class="stat-icon stat-icon--green">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" d="M12 2v20M17 6.5c0-1.9-2.2-3.5-5-3.5S7 4.6 7 6.5 9.2 10 12 10s5 1.6 5 3.5-2.2 3.5-5 3.5-5-1.6-5-3.5"/></svg>
+          <div
+            class="flex items-center gap-3.5 rounded-card border border-bl-border bg-bl-surface px-4 py-3.5 text-bl-text"
+          >
+            <span
+              class="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-[10px] bg-[rgba(111,224,154,0.15)] text-bl-success"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  d="M12 2v20M17 6.5c0-1.9-2.2-3.5-5-3.5S7 4.6 7 6.5 9.2 10 12 10s5 1.6 5 3.5-2.2 3.5-5 3.5-5-1.6-5-3.5"
+                />
+              </svg>
             </span>
-            <span class="stat-body">
-              <span class="stat-label">Ingresos del mes</span>
-              <span class="stat-value">${{ d.ingresos_del_mes }}</span>
+            <span class="flex flex-col gap-0.5">
+              <span class="text-[13px] text-bl-text-muted">Ingresos del mes</span>
+              <span class="text-lg font-bold">${{ d.ingresos_del_mes }}</span>
             </span>
           </div>
         }
       </section>
 
-      <section class="chart-section">
-        <h2 class="section-title">Turnos por semana</h2>
+      <section class="mb-6.5 rounded-card border border-bl-border bg-bl-surface p-4">
+        <h2 class="mb-3 text-sm font-bold">Turnos por semana</h2>
         <bl-week-chart [dias]="d.turnos_por_semana" />
       </section>
 
-      <section class="ultimos-section">
-        <div class="section-header">
-          <h2 class="section-title">Últimos turnos</h2>
-          <a routerLink="/turnos" class="ver-todos">Ver todos</a>
+      <section>
+        <div class="flex items-center justify-between">
+          <h2 class="mb-3 text-sm font-bold">Últimos turnos</h2>
+          <a routerLink="/turnos" class="text-[12.5px] text-bl-accent no-underline">Ver todos</a>
         </div>
 
         @if (d.ultimos_turnos.length === 0) {
-          <p class="state-text">Todavía no hay turnos registrados.</p>
+          <p class="text-sm text-bl-text-muted">Todavía no hay turnos registrados.</p>
         } @else {
-          <ul class="turnos-list">
+          <ul class="m-0 flex list-none flex-col gap-1 p-0">
             @for (t of d.ultimos_turnos; track t.id) {
-              <li class="turno-item">
-                <span class="turno-dot"></span>
-                <span class="turno-info">
-                  <span class="turno-cliente">{{ t.cliente_nombre }}</span>
-                  <span class="turno-servicio">{{ t.servicio_nombre }}</span>
+              <li
+                class="flex items-center gap-3 border-b border-bl-border px-1 py-3 last:border-b-0"
+              >
+                <span class="h-2 w-2 shrink-0 rounded-full bg-bl-accent"></span>
+                <span class="flex min-w-0 flex-1 flex-col">
+                  <span class="text-[13.5px] font-semibold">{{ t.cliente_nombre }}</span>
+                  <span class="text-xs text-bl-text-muted">{{ t.servicio_nombre }}</span>
                 </span>
-                <span class="turno-time">
-                  <span class="turno-fecha">{{ t.fecha }}</span>
-                  <span class="turno-hora">{{ t.hora }}</span>
+                <span class="flex flex-col items-end text-xs text-bl-text-muted">
+                  <span>{{ t.fecha }}</span>
+                  <span class="font-semibold text-bl-text">{{ t.hora }}</span>
                 </span>
               </li>
             }

@@ -6,6 +6,7 @@ BARBERO_SERVICIO ligado a HORARIOS y TURNOS con fecha/hora separadas).
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -34,8 +35,11 @@ class Usuario(AbstractUser):
         self.is_active = self.estado == self.Estado.ACTIVO
         super().save(*args, **kwargs)
 
+    def get_display_name(self):
+        return self.get_full_name() or self.email.split('@')[0]
+
     def __str__(self):
-        return f'{self.get_full_name() or self.username} ({self.rol})'
+        return f'{self.get_display_name()} ({self.rol})'
 
 
 class Cliente(models.Model):
@@ -135,9 +139,9 @@ class Turno(models.Model):
         indexes = [models.Index(fields=['barbero', 'fecha_turno'])]
 
     def clean(self):
-        """Prevención de superposición de turnos (wiki: 'no pueden existir dos
-        turnos simultáneos para el mismo barbero'), comparando dentro del
-        mismo día (fecha_turno) los rangos hora_inicio/hora_fin."""
+        """Prevención de superposición de turnos: no pueden existir dos turnos
+        simultáneos para el mismo barbero, comparando dentro del mismo día
+        (fecha_turno) los rangos hora_inicio/hora_fin."""
         if self.barbero_id and self.fecha_turno and self.hora_inicio and self.hora_fin:
             solapados = Turno.objects.filter(
                 barbero_id=self.barbero_id,
@@ -159,16 +163,40 @@ class Turno(models.Model):
         precio vigente del Servicio (o el personalizado de BarberoServicio,
         si el barbero tiene uno cargado para ese servicio)."""
         bs = BarberoServicio.objects.filter(
-            barbero_id=self.barbero_id, servicio_id=self.servicio_id, activo=True
+            barbero_id=self.barbero_id, servicio_id=self.servicio_id,
+            activo=True, horario__activo=True,
         ).first()
         return bs.precio_final() if bs else self.servicio.precio
 
+    def es_cancelable(self):
+        """Un turno solo se puede cancelar si está pendiente o confirmado —
+        sea quien sea quien cancele, admin incluido (no tiene sentido
+        'cancelar' un turno ya completado o ya cancelado)."""
+        return self.estado in (self.Estado.PENDIENTE, self.Estado.CONFIRMADO)
+
     def puede_cancelar_cliente(self):
-        """Política de cancelación autónoma: solo dentro de la ventana definida
-        (settings.CANCELACION_LIMITE_HORAS, wiki: 'ej. hasta 2 horas antes')."""
+        """Política de cancelación autónoma del cliente: además de estar en
+        un estado cancelable, tiene que faltar más de
+        settings.CANCELACION_LIMITE_HORAS (por defecto, 2 horas)."""
+        if not self.es_cancelable():
+            return False
         from django.conf import settings as dj_settings
         limite = getattr(dj_settings, 'CANCELACION_LIMITE_HORAS', 2)
         return timezone.now() <= self.inicio_datetime() - timedelta(hours=limite)
+
+    def tiene_pago_aprobado(self):
+        pago = getattr(self, 'pago', None)
+        return pago is not None and pago.estado == pago.Estado.APROBADO
+
+    def sincronizar_pago_tras_cancelacion(self):
+        """Si el turno tenía un pago aprobado y se cancela, el pago pasa a
+        'reembolsado'. No dispara la devolución real del dinero (eso
+        requiere un flujo aparte contra la API de Mercado Pago) — evita que
+        el pago quede diciendo 'aprobado' para un turno que ya no existe."""
+        pago = getattr(self, 'pago', None)
+        if pago is not None and pago.estado == pago.Estado.APROBADO:
+            pago.estado = pago.Estado.REEMBOLSADO
+            pago.save(update_fields=['estado'])
 
     def __str__(self):
         return f'Turno #{self.pk} - {self.cliente} con {self.barbero} - {self.fecha_turno} {self.hora_inicio}'
@@ -219,3 +247,20 @@ class EstadisticaDiaria(models.Model):
 
     def __str__(self):
         return f'Estadística {self.fecha} - {self.barbero}'
+
+
+class Resena(models.Model):
+    """RESEÑAS — calificación del cliente a un turno ya completado. 1:1 con
+    Turno: no tiene sentido más de una reseña por turno."""
+    turno = models.OneToOneField(Turno, on_delete=models.CASCADE, related_name='resena')
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='resenas')
+    barbero = models.ForeignKey(Barbero, on_delete=models.CASCADE, related_name='resenas')
+    puntaje = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comentario = models.TextField(blank=True, default='')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-fecha_creacion']
+
+    def __str__(self):
+        return f'Reseña #{self.pk} - {self.puntaje}/5 - {self.barbero}'

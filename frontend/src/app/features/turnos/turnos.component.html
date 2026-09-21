@@ -1,71 +1,129 @@
-<div class="page">
+<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
   <bl-topbar (logout)="logout()" />
 
-  <main class="content">
-    <p class="eyebrow">Gestión de turnos</p>
-    <h1 class="title">Revisa los turnos y estadísticas</h1>
+  <main class="p-5">
+    <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Gestión de turnos</p>
+    <h1 class="mt-1 mb-5 text-2xl font-bold">Revisa los turnos y estadísticas</h1>
 
     @if (errorMsg()) {
-      <div class="state-error">{{ errorMsg() }}</div>
+      <div
+        class="mb-3.5 rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger"
+      >
+        {{ errorMsg() }}
+      </div>
     }
 
-    <section class="servicios-card">
-      <div class="section-header">
-        <h2 class="section-title">Servicios más solicitados</h2>
-        <span class="ver-todos">Ver todo</span>
+    <section class="mb-4.5 rounded-card border border-bl-border bg-bl-surface p-4">
+      <div class="mb-2.5 flex items-center justify-between">
+        <h2 class="m-0 text-sm font-bold">Servicios más solicitados</h2>
+        <span class="text-xs text-bl-accent">Ver todo</span>
       </div>
 
       @if (servicios().length === 0) {
-        <p class="state-text">Todavía no hay turnos para calcular un ranking.</p>
+        <p class="text-[13.5px] text-bl-text-muted">
+          Todavía no hay turnos para calcular un ranking.
+        </p>
       } @else {
-        <ul class="servicios-list">
+        <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
           @for (s of servicios(); track s.servicio_id) {
-            <li class="servicio-item">
-              <span class="servicio-icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path stroke="currentColor" stroke-width="1.6" d="M6 6l12 12M18 6 6 18M9 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm12 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+            <li
+              class="flex items-center gap-2.5 border-b border-bl-border px-0.5 py-2.25 text-[13.5px] last:border-b-0"
+            >
+              <span
+                class="flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-lg bg-bl-surface-2 text-bl-accent"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    stroke="currentColor"
+                    stroke-width="1.6"
+                    d="M6 6l12 12M18 6 6 18M9 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm12 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                  />
+                </svg>
               </span>
-              <span class="servicio-nombre">{{ s.nombre }}</span>
-              <span class="servicio-precio">${{ s.precio }}</span>
+              <span class="flex-1">{{ s.nombre }}</span>
+              <span class="font-semibold text-bl-text-muted">${{ s.precio }}</span>
             </li>
           }
         </ul>
       }
     </section>
 
-    <section class="tabla-card">
+    <section class="mb-4.5 rounded-card border border-bl-border bg-bl-surface p-4">
       @if (loading()) {
-        <p class="state-text">Cargando turnos...</p>
+        <p class="text-[13.5px] text-bl-text-muted">Cargando turnos...</p>
       } @else if (pagina(); as p) {
         @if (p.results.length === 0) {
-          <p class="state-text">No hay turnos para mostrar.</p>
+          <p class="text-[13.5px] text-bl-text-muted">No hay turnos para mostrar.</p>
         } @else {
-          <table class="turnos-table">
+          <table class="w-full border-collapse text-[13px]">
             <thead>
               <tr>
-                <th>Hora</th>
-                <th>Cliente</th>
-                <th>Acciones</th>
+                <th
+                  class="border-b border-bl-border px-1 pb-2.5 text-left text-[11.5px] font-semibold tracking-[0.04em] text-bl-text-muted uppercase"
+                >
+                  Hora
+                </th>
+                <th
+                  class="border-b border-bl-border px-1 pb-2.5 text-left text-[11.5px] font-semibold tracking-[0.04em] text-bl-text-muted uppercase"
+                >
+                  Cliente
+                </th>
+                <th
+                  class="border-b border-bl-border px-1 pb-2.5 text-left text-[11.5px] font-semibold tracking-[0.04em] text-bl-text-muted uppercase"
+                >
+                  Acciones
+                </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="[&>tr:last-child>td]:border-b-0">
               @for (t of p.results; track t.id) {
                 <tr>
-                  <td>{{ t.hora }}</td>
-                  <td>
-                    <span class="cliente-nombre">{{ t.cliente_nombre }}</span>
-                    <span class="cliente-servicio">{{ t.servicio_nombre }}</span>
-                    <span class="estado-chip" [class]="'estado-' + t.estado">{{ t.estado }}</span>
+                  <td class="border-b border-bl-border px-1 py-2.5 align-top">{{ t.hora }}</td>
+                  <td class="border-b border-bl-border px-1 py-2.5 align-top">
+                    <span class="block font-semibold">{{ t.cliente_nombre }}</span>
+                    <span class="block text-[11.5px] text-bl-text-muted">{{
+                      t.servicio_nombre
+                    }}</span>
+                    <span [class]="estadoClasses(t.estado)">{{ t.estado }}</span>
                   </td>
-                  <td class="acciones-cell">
-                    <button class="icon-btn" type="button" (click)="toggleMenu(t.id)" aria-label="Más acciones">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></svg>
+                  <td class="relative border-b border-bl-border px-1 py-2.5 text-right align-top">
+                    <button
+                      class="cursor-pointer rounded-field border border-bl-border bg-transparent p-1.5 text-bl-text hover:bg-bl-surface-2"
+                      type="button"
+                      (click)="toggleMenu(t.id)"
+                      aria-label="Más acciones"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <circle cx="5" cy="12" r="1.6" fill="currentColor" />
+                        <circle cx="12" cy="12" r="1.6" fill="currentColor" />
+                        <circle cx="19" cy="12" r="1.6" fill="currentColor" />
+                      </svg>
                     </button>
 
                     @if (menuAbierto() === t.id) {
-                      <div class="acciones-menu">
-                        <button type="button" (click)="cambiarEstado(t, 'confirmado')">Confirmar</button>
-                        <button type="button" (click)="cambiarEstado(t, 'completado')">Marcar completado</button>
-                        <button type="button" class="danger" [disabled]="!t.puede_cancelar" (click)="cambiarEstado(t, 'cancelado')">
+                      <div
+                        class="absolute top-8.5 right-0 z-15 flex min-w-40 flex-col overflow-hidden rounded-field border border-bl-border bg-bl-surface-2 shadow-[0_12px_30px_rgba(0,0,0,0.45)]"
+                      >
+                        <button
+                          class="cursor-pointer border-0 border-b border-bl-border bg-transparent px-3.5 py-2.5 text-left text-[12.5px] text-bl-text last:border-b-0 hover:enabled:bg-bl-surface disabled:cursor-not-allowed disabled:opacity-40"
+                          type="button"
+                          (click)="cambiarEstado(t, 'confirmado')"
+                        >
+                          Confirmar
+                        </button>
+                        <button
+                          class="cursor-pointer border-0 border-b border-bl-border bg-transparent px-3.5 py-2.5 text-left text-[12.5px] text-bl-text last:border-b-0 hover:enabled:bg-bl-surface disabled:cursor-not-allowed disabled:opacity-40"
+                          type="button"
+                          (click)="cambiarEstado(t, 'completado')"
+                        >
+                          Marcar completado
+                        </button>
+                        <button
+                          class="cursor-pointer border-0 border-b border-bl-border bg-transparent px-3.5 py-2.5 text-left text-[12.5px] text-bl-danger last:border-b-0 hover:enabled:bg-bl-surface disabled:cursor-not-allowed disabled:opacity-40"
+                          type="button"
+                          [disabled]="!t.puede_cancelar"
+                          (click)="cambiarEstado(t, 'cancelado')"
+                        >
                           Cancelar
                         </button>
                       </div>
@@ -76,14 +134,17 @@
             </tbody>
           </table>
 
-          <div class="paginacion">
-            <span class="paginacion-texto">{{ rangoTexto() }}</span>
-            <div class="paginacion-botones">
+          <div class="mt-4 flex flex-col items-center gap-2.5">
+            <span class="text-[11.5px] text-bl-text-muted">{{ rangoTexto() }}</span>
+            <div class="flex gap-1.5">
               @for (n of paginasVisibles(); track n) {
                 <button
                   type="button"
-                  class="page-btn"
-                  [class.page-btn--active]="n === p.page"
+                  [class]="
+                    n === p.page
+                      ? 'h-7 w-7 cursor-pointer rounded-field border border-bl-text bg-bl-text text-[12.5px] font-bold text-bl-bg'
+                      : 'h-7 w-7 cursor-pointer rounded-field border border-bl-border bg-transparent text-[12.5px] text-bl-text hover:bg-bl-surface-2'
+                  "
                   (click)="irAPagina(n)"
                 >
                   {{ n }}
