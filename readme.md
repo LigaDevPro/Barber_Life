@@ -173,6 +173,12 @@ docker compose exec backend python manage.py seed_demo
 | Admin | `admin@barberlife.com` | `admin1234` |
 | Barbero | `barbero@barberlife.com` | `barbero1234` |
 
+> `seed_demo` también crea varios clientes de prueba con contraseña
+> `cliente1234` y emails con el patrón `nombre.apellido<N>@mail.com` (por
+> ejemplo `carlos.ruiz3@mail.com`) — revisá el comando o la base para ver
+> los generados. Algunos incluyen tildes en el email; si tu navegador/teclado
+> tiene problemas para escribirlas, usá uno de los que no las lleve.
+
 > Si preferís correr el frontend por fuera de Docker (por ejemplo con `pnpm start`), levantá solo el resto de los servicios: `docker compose up --build postgres mongo backend`.
 
 ---
@@ -231,7 +237,7 @@ Esta estrategia se adapta bien a un equipo chico (6 integrantes) donde cada pers
 - ✅ Análisis del problema
 - ✅ Relevamiento de requerimientos
 - ✅ Diseño de arquitectura
-- 🔄 Modelado de base de datos
+- ✅ Modelado de base de datos
 - 🔄 Desarrollo de funcionalidades
 - 🔄 Testing e integración
 - ⏳ Despliegue final
