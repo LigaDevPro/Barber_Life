@@ -6,6 +6,7 @@ BARBERO_SERVICIO ligado a HORARIOS y TURNOS con fecha/hora separadas).
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -246,3 +247,20 @@ class EstadisticaDiaria(models.Model):
 
     def __str__(self):
         return f'Estadística {self.fecha} - {self.barbero}'
+
+
+class Resena(models.Model):
+    """RESEÑAS — calificación del cliente a un turno ya completado. 1:1 con
+    Turno: no tiene sentido más de una reseña por turno."""
+    turno = models.OneToOneField(Turno, on_delete=models.CASCADE, related_name='resena')
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='resenas')
+    barbero = models.ForeignKey(Barbero, on_delete=models.CASCADE, related_name='resenas')
+    puntaje = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comentario = models.TextField(blank=True, default='')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-fecha_creacion']
+
+    def __str__(self):
+        return f'Reseña #{self.pk} - {self.puntaje}/5 - {self.barbero}'

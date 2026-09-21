@@ -18,6 +18,7 @@ from .barbero import (
 from .catalogo import ServicioSerializer, HorarioSerializer, BarberoServicioSerializer
 from .pago import PagoSerializer, PagoCreateSerializer
 from .notificacion import NotificacionSerializer
+from .resena import ResenaSerializer, ResenaCreateSerializer
 
 __all__ = [
     'RegisterSerializer', 'LoginSerializer', 'UsuarioMeSerializer',
@@ -29,4 +30,5 @@ __all__ = [
     'ServicioSerializer', 'HorarioSerializer', 'BarberoServicioSerializer',
     'PagoSerializer', 'PagoCreateSerializer',
     'NotificacionSerializer',
+    'ResenaSerializer', 'ResenaCreateSerializer',
 ]

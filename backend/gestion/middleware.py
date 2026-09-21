@@ -40,6 +40,7 @@ PREFIJOS_LECTURA_PUBLICA = (
     '/api/barberos/',
     '/api/servicios/',
     '/api/barbero-servicio/',
+    '/api/resenas/',
 )
 
 
