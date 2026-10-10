@@ -3,7 +3,6 @@ Pagos: creación de preferencia, listado, webhook de Mercado Pago y
 cliente `mercadopago_client`. Enfocado en los casos que importan: dinero,
 ownership, idempotencia del webhook y manejo de errores de MP.
 """
-import unittest
 from unittest import mock
 
 from django.test import override_settings
@@ -206,17 +205,36 @@ class MercadoPagoClientTests(PagoBaseCase):
         self.assertEqual(datos['external_reference'], str(self.turno.id))
         self.assertEqual(datos['items'][0]['unit_price'], 5000.0)
 
-    @unittest.expectedFailure
-    @override_settings(MERCADOPAGO_ACCESS_TOKEN='TEST-token')
-    def test_preferencia_envia_back_urls_y_notification_url(self):
-        # BUG documentado: la preferencia no manda back_urls ni
-        # notification_url, así que MP no devuelve al usuario a la app ni
-        # llama al webhook. Cuando se arregle, quitar el expectedFailure.
+    def _datos_preferencia(self):
         _, sdk = self._sdk()
         sdk.preference.return_value.create.return_value = {'status': 201, 'response': {'id': 'p'}}
-
         crear_preferencia(self.turno)
+        return sdk.preference.return_value.create.call_args.args[0]
 
-        datos = sdk.preference.return_value.create.call_args.args[0]
+    @override_settings(
+        MERCADOPAGO_ACCESS_TOKEN='TEST-token',
+        FRONTEND_URL='https://app.test/', BACKEND_PUBLIC_URL='https://api.test/',
+    )
+    def test_preferencia_envia_back_urls_auto_return_y_notification_url(self):
+        datos = self._datos_preferencia()
+
+        self.assertEqual(datos['back_urls'], {
+            'success': 'https://app.test/pago/resultado?estado=exito',
+            'failure': 'https://app.test/pago/resultado?estado=fallo',
+            'pending': 'https://app.test/pago/resultado?estado=pendiente',
+        })
+        self.assertEqual(datos['auto_return'], 'approved')
+        self.assertEqual(datos['notification_url'], 'https://api.test/api/pagos/webhook/')
+
+    @override_settings(
+        MERCADOPAGO_ACCESS_TOKEN='TEST-token',
+        FRONTEND_URL='http://localhost:4200', BACKEND_PUBLIC_URL='',
+    )
+    def test_en_local_no_manda_auto_return_ni_notification_url(self):
+        # MP rechaza auto_return con back_urls locales y no puede llamar a
+        # localhost: sin URLs públicas la preferencia igual tiene que crearse.
+        datos = self._datos_preferencia()
+
         self.assertIn('back_urls', datos)
-        self.assertIn('notification_url', datos)
+        self.assertNotIn('auto_return', datos)
+        self.assertNotIn('notification_url', datos)
