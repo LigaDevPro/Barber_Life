@@ -1,0 +1,185 @@
+"""
+Test de autenticación, RoleCheckMiddleware y permisos por rol.
+
+Casos importantes: registro/login/refresh, el middleware JWT (token ausente,
+inválido o expirado; rutas públicas; lectura pública de catálogos; `/me/`
+siempre privado) y el 403 por rol a nivel vista.
+"""
+from datetime import timedelta
+
+import jwt as pyjwt
+from django.conf import settings
+from django.urls import reverse
+from django.utils import timezone
+
+from gestion.models import Cliente, Usuario
+
+from .base import BarberLifeTestCase
+
+
+class RegisterTests(BarberLifeTestCase):
+    def payload(self, **extra):
+        data = {
+            'email': 'nuevo@test.com',
+            'password': 'Clave-segura-987',
+            'password_confirm': 'Clave-segura-987',
+        }
+        data.update(extra)
+        return data
+
+    def test_registro_ok_crea_cliente_y_fuerza_rol_cliente(self):
+        # Aunque el body mande rol=admin, la cuenta nace como cliente.
+        resp = self.client.post(
+            reverse('auth-register'), self.payload(rol='admin'), format='json',
+        )
+
+        self.assertEqual(resp.status_code, 201)
+        usuario = Usuario.objects.get(email='nuevo@test.com')
+        self.assertEqual(usuario.rol, Usuario.Rol.CLIENTE)
+        self.assertTrue(Cliente.objects.filter(usuario=usuario).exists())
+        self.assertEqual(len(self.notificaciones_de(usuario, 'bienvenida')), 1)
+
+    def test_registro_rechaza_email_duplicado_y_passwords_distintas(self):
+        self.crear_usuario(email='nuevo@test.com')
+
+        with self.subTest('email duplicado (sin distinguir mayúsculas)'):
+            resp = self.client.post(
+                reverse('auth-register'), self.payload(email='NUEVO@test.com'), format='json',
+            )
+            self.assertEqual(resp.status_code, 400)
+            self.assertIn('email', resp.data)
+
+        with self.subTest('passwords distintas'):
+            resp = self.client.post(
+                reverse('auth-register'),
+                self.payload(email='otro@test.com', password_confirm='Otra-clave-123'),
+                format='json',
+            )
+            self.assertEqual(resp.status_code, 400)
+            self.assertIn('password_confirm', resp.data)
+            self.assertFalse(Usuario.objects.filter(email='otro@test.com').exists())
+
+
+class LoginRefreshTests(BarberLifeTestCase):
+    def login(self, email, password=None):
+        return self.client.post(
+            reverse('auth-login'),
+            {'email': email, 'password': password or self.PASSWORD},
+            format='json',
+        )
+
+    def test_login_ok_devuelve_tokens_y_rol_y_el_access_sirve(self):
+        barbero = self.crear_barbero()
+
+        resp = self.login(barbero.usuario.email)
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.data['access'])
+        self.assertTrue(resp.data['refresh'])
+        self.assertEqual(resp.data['usuario']['rol'], 'barbero')
+
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {resp.data['access']}")
+        self.assertEqual(self.client.get(reverse('auth-me')).status_code, 200)
+
+    def test_login_rechaza_credenciales_malas_y_usuario_inactivo(self):
+        cliente = self.crear_cliente()
+        inactivo = self.crear_cliente(estado=Usuario.Estado.INACTIVO)
+
+        casos = {
+            'password incorrecta': self.login(cliente.usuario.email, 'otra-clave'),
+            'email inexistente': self.login('no-existe@test.com'),
+            'usuario inactivo': self.login(inactivo.usuario.email),
+        }
+        for nombre, resp in casos.items():
+            with self.subTest(nombre):
+                self.assertEqual(resp.status_code, 400)
+                self.assertNotIn('access', resp.data)
+
+    def test_refresh_devuelve_nuevo_access(self):
+        cliente = self.crear_cliente()
+        refresh = self.login(cliente.usuario.email).data['refresh']
+
+        resp = self.client.post(reverse('auth-refresh'), {'refresh': refresh}, format='json')
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.data['access'])
+
+
+class RoleCheckMiddlewareTests(BarberLifeTestCase):
+    def test_ruta_protegida_sin_token_es_401(self):
+        for nombre in ('auth-me', 'turnos-list', 'dashboard', 'pagos-list', 'notificaciones-list'):
+            with self.subTest(ruta=nombre):
+                self.assertEqual(self.client.get(reverse(nombre)).status_code, 401)
+
+    def test_token_invalido_firma_ajena_o_expirado_es_401(self):
+        usuario = self.crear_usuario()
+        casos = {
+            'basura': 'esto.no.es.un.jwt',
+            'firma ajena': pyjwt.encode(
+                {'user_id': usuario.id, 'exp': timezone.now() + timedelta(hours=1)},
+                'otra-secret-key', algorithm='HS256',
+            ),
+            'expirado': pyjwt.encode(
+                {'user_id': usuario.id, 'token_type': 'access',
+                 'exp': timezone.now() - timedelta(minutes=1)},
+                settings.SECRET_KEY, algorithm='HS256',
+            ),
+        }
+        for nombre, token in casos.items():
+            with self.subTest(nombre):
+                self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
+                self.assertEqual(self.client.get(reverse('auth-me')).status_code, 401)
+
+    def test_rutas_publicas_no_exigen_token(self):
+        # Alcanza con que el middleware no corte con su 401: el resto lo
+        # resuelve cada vista (el webhook responde 200 aunque venga vacío).
+        for nombre in ('auth-register', 'auth-login', 'auth-refresh', 'pagos-webhook'):
+            with self.subTest(ruta=nombre):
+                resp = self.client.post(reverse(nombre), {}, format='json')
+                self.assertNotEqual(resp.status_code, 401)
+
+    def test_catalogos_lectura_publica_pero_escritura_exige_token(self):
+        urls = ('/api/barberos/', '/api/servicios/', '/api/barbero-servicio/', '/api/resenas/')
+        for url in urls:
+            with self.subTest(url=url, metodo='get'):
+                self.assertEqual(self.client.get(url).status_code, 200)
+            for metodo in ('post', 'patch', 'delete'):
+                with self.subTest(url=url, metodo=metodo):
+                    resp = getattr(self.client, metodo)(url, {}, format='json')
+                    self.assertEqual(resp.status_code, 401)
+
+    def test_me_es_privado_aunque_comparta_prefijo_publico(self):
+        with self.subTest('sin token'):
+            self.assertEqual(self.client.get('/api/barberos/me/').status_code, 401)
+
+        with self.subTest('con token de barbero'):
+            self.autenticar(self.crear_barbero().usuario)
+            self.assertEqual(self.client.get(reverse('barberos-me')).status_code, 200)
+
+
+class PermisosPorRolTests(BarberLifeTestCase):
+    def test_cliente_recibe_403_en_endpoints_de_barbero_y_admin(self):
+        self.autenticar(self.crear_cliente().usuario)
+
+        casos = (
+            ('get', reverse('dashboard')),
+            ('get', reverse('turnos-list')),
+            ('post', reverse('servicios-list')),
+        )
+        for metodo, url in casos:
+            with self.subTest(metodo=metodo, url=url):
+                resp = getattr(self.client, metodo)(url, {}, format='json')
+                self.assertEqual(resp.status_code, 403)
+
+    def test_barbero_no_crea_servicios_ni_reserva_como_cliente(self):
+        self.autenticar(self.crear_barbero().usuario)
+
+        casos = (
+            ('post', reverse('servicios-list')),
+            ('post', reverse('turnos-list')),
+            ('get', reverse('pagos-list')),
+        )
+        for metodo, url in casos:
+            with self.subTest(metodo=metodo, url=url):
+                resp = getattr(self.client, metodo)(url, {}, format='json')
+                self.assertEqual(resp.status_code, 403)
