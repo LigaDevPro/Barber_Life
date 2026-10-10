@@ -44,6 +44,12 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard(['cliente'])],
   },
   {
+    path: 'pago/resultado',
+    loadComponent: () =>
+      import('./features/pago-resultado/pago-resultado.component').then((m) => m.PagoResultadoComponent),
+    canActivate: [authGuard, roleGuard(['cliente'])],
+  },
+  {
     path: 'catalogo',
     loadComponent: () => import('./features/catalogo/catalogo.component').then((m) => m.CatalogoComponent),
     canActivate: [authGuard, roleGuard(['barbero', 'admin'])],
