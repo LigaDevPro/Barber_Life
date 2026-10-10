@@ -148,13 +148,10 @@ class BarberoServicioListCreateView(generics.ListCreateAPIView):
                 raise PermissionDenied('Tu usuario no tiene un perfil de Barbero asociado.')
             data['barbero'] = barbero.id
 
+        # Que el horario sea del mismo barbero lo valida
+        # BarberoServicioSerializer.validate() (aplica también al PATCH).
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-
-        horario = serializer.validated_data.get('horario')
-        barbero = serializer.validated_data.get('barbero')
-        if horario and barbero and horario.barbero_id != barbero.id:
-            raise ValidationError({'horario': 'El horario no pertenece a este barbero.'})
 
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

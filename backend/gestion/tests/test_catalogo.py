@@ -277,10 +277,8 @@ class BarberoServicioTests(CatalogoTestCase):
         ids = [o['id'] for o in self.client.get(self.url_lista).data]
         self.assertNotIn(self.oferta.id, ids)
 
-    @unittest.expectedFailure
     def test_patch_no_deberia_permitir_reasignar_la_oferta_a_otro_barbero(self):
-        # BUG (autorización): `barbero` es escribible en el PATCH; un barbero
-        # puede transferir su oferta a otro barbero.
+        # `barbero` no se puede reasignar en el PATCH (autorización).
         self.autenticar(self.barbero.usuario)
 
         resp = self.client.patch(
@@ -291,10 +289,24 @@ class BarberoServicioTests(CatalogoTestCase):
         self.oferta.refresh_from_db()
         self.assertEqual(self.oferta.barbero_id, self.barbero.id)
 
-    @unittest.expectedFailure
+    def test_patch_legitimo_con_su_propio_barbero_y_horario_funciona(self):
+        # El fix no debe bloquear ediciones válidas: reenviar el mismo
+        # `barbero` o moverse a otro horario PROPIO sigue siendo 200.
+        self.autenticar(self.barbero.usuario)
+        otro_horario_propio = self.crear_horario(self.barbero, dia_semana=3)
+
+        resp = self.client.patch(
+            self._url_detalle(self.oferta),
+            {'barbero': self.barbero.id, 'horario': otro_horario_propio.id},
+            format='json',
+        )
+
+        self.assertEqual(resp.status_code, 200)
+        self.oferta.refresh_from_db()
+        self.assertEqual(self.oferta.horario_id, otro_horario_propio.id)
+
     def test_patch_no_deberia_permitir_cambiar_a_horario_de_otro_barbero(self):
-        # BUG: la validación "el horario pertenece al barbero" solo vive en
-        # el POST; el PATCH del detalle no la repite.
+        # La validación "el horario pertenece al barbero" aplica también al PATCH.
         self.autenticar(self.barbero.usuario)
 
         resp = self.client.patch(
