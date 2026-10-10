@@ -38,6 +38,9 @@ class RegisterSerializer(serializers.Serializer):
 
 
 class LoginSerializer(serializers.Serializer):
+    MENSAJE_CREDENCIALES = 'Email o contraseña incorrectos.'
+    MENSAJE_CUENTA_INACTIVA = 'La cuenta está inactiva.'
+
     email = serializers.CharField(max_length=254)
     password = serializers.CharField(write_only=True)
 
@@ -50,6 +53,11 @@ class LoginSerializer(serializers.Serializer):
         )
         if usuario is None:
             raise serializers.ValidationError(self.MENSAJE_CREDENCIALES)
+        # Va DESPUÉS de authenticate(): el mensaje de cuenta inactiva solo se
+        # muestra si la contraseña es correcta, así no sirve para averiguar
+        # si un email existe.
+        if not usuario.is_active:
+            raise serializers.ValidationError(self.MENSAJE_CUENTA_INACTIVA)
         attrs['usuario'] = usuario
         return attrs
 
