@@ -81,19 +81,43 @@ class LoginRefreshTests(BarberLifeTestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {resp.data['access']}")
         self.assertEqual(self.client.get(reverse('auth-me')).status_code, 200)
 
-    def test_login_rechaza_credenciales_malas_y_usuario_inactivo(self):
+    def test_login_con_credenciales_malas_da_mensaje_generico(self):
         cliente = self.crear_cliente()
         inactivo = self.crear_cliente(estado=Usuario.Estado.INACTIVO)
 
         casos = {
             'password incorrecta': self.login(cliente.usuario.email, 'otra-clave'),
             'email inexistente': self.login('no-existe@test.com'),
-            'usuario inactivo': self.login(inactivo.usuario.email),
+            # Sin la contraseña correcta, un inactivo es indistinguible de
+            # cualquier otro: no se filtra que la cuenta existe.
+            'inactivo con password incorrecta': self.login(inactivo.usuario.email, 'otra-clave'),
         }
         for nombre, resp in casos.items():
             with self.subTest(nombre):
                 self.assertEqual(resp.status_code, 400)
                 self.assertNotIn('access', resp.data)
+                self.assertEqual(resp.data['non_field_errors'], ['Email o contraseña incorrectos.'])
+
+    def test_login_de_usuario_inactivo_con_password_correcta_dice_cuenta_inactiva(self):
+        inactivo = self.crear_cliente(estado=Usuario.Estado.INACTIVO)
+
+        resp = self.login(inactivo.usuario.email)
+
+        self.assertEqual(resp.status_code, 400)
+        self.assertNotIn('access', resp.data)
+        self.assertEqual(resp.data['non_field_errors'], ['La cuenta está inactiva.'])
+
+    def test_usuario_inactivo_no_puede_usar_un_token_ya_emitido(self):
+        # El backend ahora deja autenticar a inactivos; esto asegura que la
+        # API siga cerrada para ellos (JWTAuthentication revisa is_active).
+        cliente = self.crear_cliente()
+        self.autenticar(cliente.usuario)
+        self.assertEqual(self.client.get(reverse('auth-me')).status_code, 200)
+
+        cliente.usuario.estado = Usuario.Estado.INACTIVO
+        cliente.usuario.save()
+
+        self.assertEqual(self.client.get(reverse('auth-me')).status_code, 401)
 
     def test_refresh_devuelve_nuevo_access(self):
         cliente = self.crear_cliente()
