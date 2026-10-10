@@ -6,7 +6,6 @@ ownership del barbero, soft delete y las validaciones de negocio clave.
 
 Se corre con:  python manage.py test gestion.tests.test_catalogo
 """
-import unittest
 
 from django.urls import reverse
 
@@ -80,16 +79,25 @@ class ServicioTests(CatalogoTestCase):
         self.activo.refresh_from_db()
         self.assertFalse(self.activo.activo)
 
-    @unittest.expectedFailure
-    def test_precio_negativo_deberia_rechazarse(self):
-        # BUG: ni el modelo ni el serializer validan precio >= 0.
+    def test_rechaza_precio_negativo_y_duracion_cero(self):
+        self.autenticar(self.admin)
+        base = {'nombre': 'Invalido', 'duracion_minutos': 10, 'precio': '1000.00'}
+
+        for campo, valor in (('precio', '-100.00'), ('duracion_minutos', 0), ('duracion_minutos', -5)):
+            with self.subTest(campo=campo, valor=valor):
+                resp = self.client.post(self.url_lista, {**base, campo: valor}, format='json')
+                self.assertEqual(resp.status_code, 400)
+                self.assertIn(campo, resp.data)
+        self.assertFalse(Servicio.objects.filter(nombre='Invalido').exists())
+
+    def test_patch_rechaza_precio_negativo(self):
         self.autenticar(self.admin)
 
-        resp = self.client.post(
-            self.url_lista, {'nombre': 'Gratis', 'duracion_minutos': 10, 'precio': '-100.00'}, format='json',
-        )
+        resp = self.client.patch(self._url_detalle(self.activo), {'precio': '-1'}, format='json')
 
         self.assertEqual(resp.status_code, 400)
+        self.activo.refresh_from_db()
+        self.assertGreaterEqual(self.activo.precio, 0)
 
 
 class HorarioTests(CatalogoTestCase):
@@ -169,16 +177,29 @@ class HorarioTests(CatalogoTestCase):
         self.assertFalse(self.horario.activo)
         self.assertTrue(BarberoServicio.objects.filter(pk=oferta.pk).exists())
 
-    @unittest.expectedFailure
-    def test_hora_fin_menor_o_igual_a_hora_inicio_deberia_rechazarse(self):
-        # BUG: no hay validación de hora_fin > hora_inicio ni en modelo ni serializer.
+    def test_rechaza_rango_horario_invalido_e_intervalo_cero(self):
         self.autenticar(self.barbero.usuario)
 
-        resp = self.client.post(
-            self.url_lista, self._datos(hora_inicio='18:00', hora_fin='09:00'), format='json',
+        casos = (
+            ('hora_fin', {'hora_inicio': '18:00', 'hora_fin': '09:00'}),
+            ('hora_fin', {'hora_inicio': '10:00', 'hora_fin': '10:00'}),
+            ('intervalo_minutos', {'intervalo_minutos': 0}),
         )
+        for campo, extra in casos:
+            with self.subTest(extra=extra):
+                resp = self.client.post(self.url_lista, self._datos(**extra), format='json')
+                self.assertEqual(resp.status_code, 400)
+                self.assertIn(campo, resp.data)
 
-        self.assertEqual(resp.status_code, 400)
+    def test_patch_parcial_no_deja_invertir_el_rango(self):
+        # Viene solo hora_fin: se compara contra la hora_inicio de la instancia.
+        self.autenticar(self.barbero.usuario)
+        self.horario.hora_inicio, self.horario.hora_fin = '09:00', '18:00'
+        self.horario.save()
+        url = self._url_detalle(self.horario)
+
+        self.assertEqual(self.client.patch(url, {'hora_fin': '08:00'}, format='json').status_code, 400)
+        self.assertEqual(self.client.patch(url, {'hora_fin': '20:00'}, format='json').status_code, 200)
 
 
 class BarberoServicioTests(CatalogoTestCase):
@@ -288,6 +309,17 @@ class BarberoServicioTests(CatalogoTestCase):
         self.assertIn(resp.status_code, (400, 403))
         self.oferta.refresh_from_db()
         self.assertEqual(self.oferta.barbero_id, self.barbero.id)
+
+    def test_rechaza_precio_personalizado_negativo(self):
+        self.autenticar(self.barbero.usuario)
+
+        resp = self.client.patch(
+            self._url_detalle(self.oferta), {'precio_personalizado': '-50.00'}, format='json',
+        )
+
+        self.assertEqual(resp.status_code, 400)
+        self.oferta.refresh_from_db()
+        self.assertIsNone(self.oferta.precio_personalizado)
 
     def test_patch_legitimo_con_su_propio_barbero_y_horario_funciona(self):
         # El fix no debe bloquear ediciones válidas: reenviar el mismo

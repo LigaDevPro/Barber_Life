@@ -7,6 +7,10 @@ class ServicioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Servicio
         fields = ('id', 'nombre', 'duracion_minutos', 'precio', 'activo')
+        extra_kwargs = {
+            'duracion_minutos': {'min_value': 1},
+            'precio': {'min_value': 0},
+        }
 
 
 class HorarioSerializer(serializers.ModelSerializer):
@@ -20,7 +24,22 @@ class HorarioSerializer(serializers.ModelSerializer):
         )
         # barbero no es required acá: cuando lo crea un barbero (no admin), la
         # vista lo inyecta en perform_create() desde request.user, no del body.
-        extra_kwargs = {'barbero': {'required': False}}
+        extra_kwargs = {
+            'barbero': {'required': False},
+            'intervalo_minutos': {'min_value': 1},
+        }
+
+    def validate(self, attrs):
+        # En un PATCH parcial puede venir solo uno de los dos extremos: el
+        # otro se toma de la instancia, para no dejar pasar un rango inverso.
+        instancia = self.instance
+        hora_inicio = attrs.get('hora_inicio') or (instancia.hora_inicio if instancia else None)
+        hora_fin = attrs.get('hora_fin') or (instancia.hora_fin if instancia else None)
+        if hora_inicio is not None and hora_fin is not None and hora_fin <= hora_inicio:
+            raise serializers.ValidationError(
+                {'hora_fin': 'La hora de fin tiene que ser posterior a la hora de inicio.'}
+            )
+        return attrs
 
 
 class BarberoServicioSerializer(serializers.ModelSerializer):
@@ -34,6 +53,7 @@ class BarberoServicioSerializer(serializers.ModelSerializer):
             'precio_personalizado', 'precio', 'activo', 'fecha_creacion',
         )
         read_only_fields = ('fecha_creacion',)
+        extra_kwargs = {'precio_personalizado': {'min_value': 0}}
         # OJO: `barbero` participa del unique_together del modelo, así que DRF
         # fuerza required=True acá sin importar extra_kwargs — por eso la vista
         # inyecta `barbero` en request.data antes de is_valid(), en vez de
