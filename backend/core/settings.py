@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 load_dotenv()
 
@@ -25,9 +26,17 @@ def env_bool(key, default=True):
     return raw.strip().lower() in ('1', 'true', 'yes', 'on')
 
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-key-change-in-production')
+DEBUG = env_bool('DEBUG', False)
 
-DEBUG = env_bool('DEBUG', True)
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'dev-only-insecure-key'
+    else:
+        raise ImproperlyConfigured(
+            'Falta DJANGO_SECRET_KEY. Copiá backend/.env.example a backend/.env '
+            'o definí la variable de entorno.'
+        )
 
 ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', 'localhost,127.0.0.1,backend')
 
@@ -83,7 +92,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('POSTGRES_DB', 'barberlife'),
         'USER': os.environ.get('POSTGRES_USER', 'barberlife'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'barberlife'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'barberlife' if DEBUG else ''),
         'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
