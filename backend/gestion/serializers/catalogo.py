@@ -41,3 +41,24 @@ class BarberoServicioSerializer(serializers.ModelSerializer):
 
     def get_precio(self, obj):
         return obj.precio_final()
+
+    def validate(self, attrs):
+        # Corre tanto en POST como en PATCH. Antes esta regla vivía solo en
+        # BarberoServicioListCreateView.create(), y el PATCH del detalle
+        # quedaba sin protección.
+        instancia = self.instance
+
+        if instancia is not None:
+            nuevo_barbero = attrs.get('barbero')
+            if nuevo_barbero is not None and nuevo_barbero.id != instancia.barbero_id:
+                raise serializers.ValidationError(
+                    {'barbero': 'No se puede reasignar una oferta a otro barbero.'}
+                )
+
+        barbero = attrs.get('barbero') or (instancia.barbero if instancia else None)
+        horario = attrs.get('horario') or (instancia.horario if instancia else None)
+        if barbero is not None and horario is not None and horario.barbero_id != barbero.id:
+            raise serializers.ValidationError(
+                {'horario': 'El horario no pertenece a este barbero.'}
+            )
+        return attrs
