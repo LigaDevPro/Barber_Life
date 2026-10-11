@@ -156,3 +156,10 @@ CANCELACION_LIMITE_HORAS = int(os.environ.get('CANCELACION_LIMITE_HORAS', '2'))
 # Mercado Pago (ya lo tenés instalado — clave lista para Sprint 3, CU-06;
 # todavía no hay ninguna vista que la use en este sprint)
 MERCADOPAGO_ACCESS_TOKEN = os.environ.get('MERCADOPAGO_ACCESS_TOKEN', '')
+
+# URL base del frontend: a donde Mercado Pago devuelve al usuario al terminar el pago
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:4200')
+
+# URL publica del backend, para que Mercado Pago llame al webhook (/api/pagos/webhook/).
+# En desarrollo hay que exponerla con un tunel (ngrok, cloudflared). Si queda vacia, no se envia notification_url.
+BACKEND_PUBLIC_URL = os.environ.get('BACKEND_PUBLIC_URL', '')
