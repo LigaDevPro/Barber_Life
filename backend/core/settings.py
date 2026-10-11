@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 load_dotenv()
 
@@ -25,9 +26,17 @@ def env_bool(key, default=True):
     return raw.strip().lower() in ('1', 'true', 'yes', 'on')
 
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-key-change-in-production')
+DEBUG = env_bool('DEBUG', False)
 
-DEBUG = env_bool('DEBUG', True)
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'dev-only-insecure-key'
+    else:
+        raise ImproperlyConfigured(
+            'Falta DJANGO_SECRET_KEY. Copiá backend/.env.example a backend/.env '
+            'o definí la variable de entorno.'
+        )
 
 ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', 'localhost,127.0.0.1,backend')
 
@@ -83,13 +92,21 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('POSTGRES_DB', 'barberlife'),
         'USER': os.environ.get('POSTGRES_USER', 'barberlife'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'barberlife'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'barberlife' if DEBUG else ''),
         'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 
 AUTH_USER_MODEL = 'gestion.Usuario'
+
+# Con el ModelBackend por defecto, authenticate() devuelve None para un
+# usuario inactivo y el login no puede distinguirlo de una contraseña
+# incorrecta. AllowAllUsersModelBackend deja pasar a los inactivos: el
+# LoginSerializer los rechaza después, y solo con la contraseña correcta, con
+# el mensaje 'La cuenta está inactiva.'. La API sigue cerrada para ellos
+# porque JWTAuthentication revisa is_active en cada request.
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.AllowAllUsersModelBackend']
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -136,16 +153,6 @@ MONGO_DB_NAME = os.environ.get('MONGO_DB_NAME', 'barberlife_nosql')
 # Ventana de cancelación autónoma del cliente (RBAC - restricciones críticas, wiki)
 CANCELACION_LIMITE_HORAS = int(os.environ.get('CANCELACION_LIMITE_HORAS', '2'))
 
-# Mercado Pago (Checkout Pro, CU-06).
+# Mercado Pago (ya lo tenés instalado — clave lista para Sprint 3, CU-06;
+# todavía no hay ninguna vista que la use en este sprint)
 MERCADOPAGO_ACCESS_TOKEN = os.environ.get('MERCADOPAGO_ACCESS_TOKEN', '')
-
-# URL base del frontend: a donde Mercado Pago devuelve al usuario al terminar
-# el pago (back_urls). Ver gestion/mercadopago_client.crear_preferencia().
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:4200')
-
-# URL PÚBLICA del backend, para que Mercado Pago pueda llamar al webhook
-# (/api/pagos/webhook/). Mercado Pago no puede alcanzar `localhost`: en
-# desarrollo hay que exponer el backend con un túnel (ngrok, cloudflared) y
-# poner esa URL acá. Si queda vacío, la preferencia se crea sin
-# notification_url (el pago funciona, pero el turno no se confirma solo).
-BACKEND_PUBLIC_URL = os.environ.get('BACKEND_PUBLIC_URL', '')
