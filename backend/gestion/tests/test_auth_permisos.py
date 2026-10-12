@@ -163,7 +163,7 @@ class RoleCheckMiddlewareTests(BarberLifeTestCase):
                 self.assertNotEqual(resp.status_code, 401)
 
     def test_catalogos_lectura_publica_pero_escritura_exige_token(self):
-        urls = ('/api/barberos/', '/api/servicios/', '/api/barbero-servicio/', '/api/resenas/')
+        urls = tuple(reverse(n) for n in ('barberos-list', 'servicios-list', 'barbero-servicio-list', 'resenas-list'))
         for url in urls:
             with self.subTest(url=url, metodo='get'):
                 self.assertEqual(self.client.get(url).status_code, 200)
@@ -174,7 +174,7 @@ class RoleCheckMiddlewareTests(BarberLifeTestCase):
 
     def test_me_es_privado_aunque_comparta_prefijo_publico(self):
         with self.subTest('sin token'):
-            self.assertEqual(self.client.get('/api/barberos/me/').status_code, 401)
+            self.assertEqual(self.client.get(reverse('barberos-me')).status_code, 401)
 
         with self.subTest('con token de barbero'):
             self.autenticar(self.crear_barbero().usuario)
