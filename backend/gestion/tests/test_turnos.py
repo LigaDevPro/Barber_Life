@@ -209,6 +209,20 @@ class CambioEstadoTurnoTests(TurnosBase):
         pago.refresh_from_db()
         self.assertEqual(pago.estado, Pago.Estado.REEMBOLSADO)
 
+    def test_estado_invalido_devuelve_400_con_mensaje_propio(self):
+        """TA-BE-105 | HU US09 / RF11 | TEST-T-006 | Regresión del bug #49."""
+        # Arrange
+        self.autenticar(self.barbero.usuario)
+
+        # Act
+        resp = self.patch('INVALID_STATUS')
+
+        # Assert
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn('Estado inválido', str(resp.data['estado'][0]))
+        self.turno.refresh_from_db()
+        self.assertEqual(self.turno.estado, Turno.Estado.PENDIENTE)
+
 
 # ---------------------------------------------------------------------------
 # PATCH /api/turnos/<id>/cancelar/

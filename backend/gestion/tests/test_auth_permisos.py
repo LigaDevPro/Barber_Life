@@ -107,6 +107,19 @@ class LoginRefreshTests(BarberLifeTestCase):
         self.assertNotIn('access', resp.data)
         self.assertEqual(resp.data['non_field_errors'], ['La cuenta está inactiva.'])
 
+    def test_login_acepta_email_con_tilde(self):
+        """TA-BE-104 | HU US05 / RF21 | TEST-L-001 | Regresión del bug #47."""
+        # Arrange
+        usuario = self.crear_usuario(email='usuario.maría@barberlife.com')
+
+        # Act
+        resp = self.login('usuario.maría@barberlife.com')
+
+        # Assert
+        self.assertEqual(resp.status_code, 200, resp.data)
+        self.assertIn('access', resp.data)
+        self.assertEqual(resp.data['usuario']['email'], usuario.email)
+
     def test_usuario_inactivo_no_puede_usar_un_token_ya_emitido(self):
         # El backend ahora deja autenticar a inactivos; esto asegura que la
         # API siga cerrada para ellos (JWTAuthentication revisa is_active).
