@@ -21,19 +21,19 @@ def test_tc_turno_01_cliente_solicita_un_turno_pagando_en_el_local(page, base_ur
     # Act
     solicitud.elegir_servicio('Corte de pelo')
     solicitud.elegir_primer_barbero()
-    solicitud.elegir_ultimo_dia_y_primer_horario()
     solicitud.pagar_en_el_local()
-    solicitud.confirmar()
+    solicitud.reservar_primer_horario_disponible()
 
     # Assert
     assert solicitud.titulo_de_confirmacion() == 'Solicitaste tu turno'
 
 
-@pytest.mark.xfail(reason='BUG: la pantalla ofrece horarios de hoy que ya pasaron y el backend responde 400', strict=True)
 def test_tc_turno_02_no_ofrece_horarios_que_ya_pasaron(page, base_url, cliente_nuevo):
-    """TC-TURNO-02 · HU Solicitar turno · no se pueden elegir horarios en el pasado."""
-    # Arrange
-    ahora = datetime.now()
+    """TC-TURNO-02 · HU Solicitar turno · para hoy solo se ofrecen horarios futuros."""
+    # Arrange: el reloj del navegador queda fijo hoy a las 14:00, así el test
+    # no depende de la hora real en la que se ejecuta.
+    ahora = datetime.now().replace(hour=14, minute=0, second=0, microsecond=0)
+    page.clock.set_fixed_time(ahora)
     solicitud = LoginPage(page, base_url).abrir().iniciar_sesion_como_cliente(
         cliente_nuevo['email'], cliente_nuevo['password'],
     ).ir_a_solicitar_turno()
@@ -44,7 +44,8 @@ def test_tc_turno_02_no_ofrece_horarios_que_ya_pasaron(page, base_url, cliente_n
     horarios = solicitud.horarios_ofrecidos_hoy(ahora.day)
 
     # Assert
-    if not horarios:
+    if horarios is None:
         pytest.skip('Hoy no es un día con horarios cargados')
-    ya_pasados = [h for h in horarios if h < ahora.strftime('%H:%M')]
+    assert horarios, 'Hoy deberían quedar horarios después de las 14:00'
+    ya_pasados = [h for h in horarios if h <= ahora.strftime('%H:%M')]
     assert ya_pasados == [], f'Se ofrecen horarios pasados: {ya_pasados}'
