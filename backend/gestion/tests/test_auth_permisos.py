@@ -107,6 +107,19 @@ class LoginRefreshTests(BarberLifeTestCase):
         self.assertNotIn('access', resp.data)
         self.assertEqual(resp.data['non_field_errors'], ['La cuenta está inactiva.'])
 
+    def test_login_acepta_email_con_tilde(self):
+        """TA-BE-104 | HU US05 / RF21 | TEST-L-001 | Regresión del bug #47."""
+        # Arrange
+        usuario = self.crear_usuario(email='usuario.maría@barberlife.com')
+
+        # Act
+        resp = self.login('usuario.maría@barberlife.com')
+
+        # Assert
+        self.assertEqual(resp.status_code, 200, resp.data)
+        self.assertIn('access', resp.data)
+        self.assertEqual(resp.data['usuario']['email'], usuario.email)
+
     def test_usuario_inactivo_no_puede_usar_un_token_ya_emitido(self):
         # El backend ahora deja autenticar a inactivos; esto asegura que la
         # API siga cerrada para ellos (JWTAuthentication revisa is_active).
@@ -163,7 +176,7 @@ class RoleCheckMiddlewareTests(BarberLifeTestCase):
                 self.assertNotEqual(resp.status_code, 401)
 
     def test_catalogos_lectura_publica_pero_escritura_exige_token(self):
-        urls = ('/api/barberos/', '/api/servicios/', '/api/barbero-servicio/', '/api/resenas/')
+        urls = tuple(reverse(n) for n in ('barberos-list', 'servicios-list', 'barbero-servicio-list', 'resenas-list'))
         for url in urls:
             with self.subTest(url=url, metodo='get'):
                 self.assertEqual(self.client.get(url).status_code, 200)
@@ -174,7 +187,7 @@ class RoleCheckMiddlewareTests(BarberLifeTestCase):
 
     def test_me_es_privado_aunque_comparta_prefijo_publico(self):
         with self.subTest('sin token'):
-            self.assertEqual(self.client.get('/api/barberos/me/').status_code, 401)
+            self.assertEqual(self.client.get(reverse('barberos-me')).status_code, 401)
 
         with self.subTest('con token de barbero'):
             self.autenticar(self.crear_barbero().usuario)

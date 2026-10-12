@@ -56,7 +56,7 @@ class BarberosPublicosTests(BarberLifeTestCase):
         activos = [self.crear_barbero() for _ in range(9)]  # más que PAGE_SIZE (7)
         self.crear_barbero(activo=False)
 
-        resp = self.client.get('/api/barberos/')
+        resp = self.client.get(reverse('barberos-list'))
 
         self.assertEqual(resp.status_code, 200)
         self.assertIsInstance(resp.data, list)
@@ -82,7 +82,7 @@ class BarberosPublicosTests(BarberLifeTestCase):
         inactivo = self.crear_barbero(activo=False)
 
         self.assertEqual(self.client.get(reverse('barberos-detail', args=[inactivo.id])).status_code, 404)
-        self.assertEqual(self.client.get('/api/barberos/999999/').status_code, 404)
+        self.assertEqual(self.client.get(reverse('barberos-detail', args=[999999])).status_code, 404)
 
     def test_detalle_no_tiene_n_mas_1(self):
         barbero = self.crear_barbero()

@@ -13,8 +13,8 @@ from gestion.models import Resena, Turno
 
 from .base import BarberLifeTestCase
 
-URL_NOTIFICACIONES = '/api/notificaciones/'
-URL_RESENAS = '/api/resenas/'
+URL_NOTIFICACIONES = reverse('notificaciones-list')
+URL_RESENAS = reverse('resenas-list')
 
 
 class NotificacionesTests(BarberLifeTestCase):
