@@ -21,10 +21,11 @@
         [class.bl-input--error]="form.get('email')?.invalid && form.get('email')?.touched"
         type="email"
         placeholder="Ingresa tu email"
+        data-testid="login-email"
         formControlName="email"
       />
       @if (form.get('email')?.invalid && form.get('email')?.touched) {
-        <span class="bl-error-text">Ingresá un email válido.</span>
+        <span class="bl-error-text" data-testid="login-email-error">Ingresá un email válido.</span>
       }
 
       <input
@@ -32,17 +33,18 @@
         [class.bl-input--error]="form.get('password')?.invalid && form.get('password')?.touched"
         type="password"
         placeholder="Ingresa tu contraseña"
+        data-testid="login-password"
         formControlName="password"
       />
       @if (form.get('password')?.invalid && form.get('password')?.touched) {
-        <span class="bl-error-text">La contraseña es obligatoria.</span>
+        <span class="bl-error-text" data-testid="login-password-error">La contraseña es obligatoria.</span>
       }
 
       @if (errorMsg()) {
-        <span class="bl-error-text">{{ errorMsg() }}</span>
+        <span class="bl-error-text" role="alert" data-testid="login-error">{{ errorMsg() }}</span>
       }
 
-      <button class="bl-btn bl-btn--primary" type="submit" [disabled]="loading()">
+      <button class="bl-btn bl-btn--primary" type="submit" [disabled]="loading()" data-testid="login-submit">
         {{ loading() ? 'Ingresando...' : 'Inicia sesión' }}
       </button>
     </form>
