@@ -6,7 +6,7 @@ Flujos críticos de la SPA Angular contra la app real (AUT-E2E).
 |---|---|---|
 | `tests/test_autenticacion.py` | Login exitoso + 4 logins inválidos parametrizados | TC-LOGIN-01/02 |
 | `tests/test_catalogo_servicios.py` | CRUD de servicios (alta, edición, baja lógica) | TC-CATALOGO-01 |
-| `tests/test_reserva_turno.py` | Reserva de turno + bug conocido (horarios pasados) | TC-TURNO-01/02 |
+| `tests/test_reserva_turno.py` | Reserva de turno + no ofrecer horarios que ya pasaron | TC-TURNO-01/02 |
 
 ## Requisitos
 
