@@ -4,11 +4,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LogoComponent } from '../../../shared/logo/logo.component';
+import { AuthHeroComponent } from '../../../shared/auth-hero/auth-hero.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LogoComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LogoComponent, AuthHeroComponent],
   templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {

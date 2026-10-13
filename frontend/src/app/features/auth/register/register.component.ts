@@ -10,6 +10,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LogoComponent } from '../../../shared/logo/logo.component';
+import { AuthHeroComponent } from '../../../shared/auth-hero/auth-hero.component';
 
 function passwordsMatch(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password')?.value;
@@ -20,7 +21,7 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LogoComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LogoComponent, AuthHeroComponent],
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {

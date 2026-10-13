@@ -1,16 +1,16 @@
-<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
+<div class="min-h-screen bg-bl-bg">
   <bl-topbar (logout)="logout()" />
 
-  <main class="p-5">
+  <main class="bl-container p-5 lg:max-w-150 lg:px-0 lg:py-10">
     <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Mi perfil</p>
-    <h1 class="mt-1 mb-5 text-2xl font-bold">Tus datos</h1>
+    <h1 class="mt-1 mb-5 text-2xl font-bold lg:text-[34px]">Tus datos</h1>
 
     @if (loading()) {
       <p class="text-[13.5px] text-bl-text-muted">Cargando perfil...</p>
     } @else {
       @if (errorMsg()) {
         <div
-          class="mb-3.5 rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger"
+          class="mb-3.5 rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger-text"
         >
           {{ errorMsg() }}
         </div>
@@ -27,7 +27,7 @@
         <form
           [formGroup]="clienteForm"
           (ngSubmit)="guardarCliente()"
-          class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4"
+          class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4 lg:p-6"
         >
           <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
             Teléfono
@@ -45,7 +45,7 @@
         <form
           [formGroup]="barberoForm"
           (ngSubmit)="guardarBarbero()"
-          class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4"
+          class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4 lg:p-6"
         >
           <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
             Foto de perfil (URL)
