@@ -1,10 +1,10 @@
-<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
+<div class="min-h-screen bg-bl-bg">
   <bl-topbar (logout)="logout()" />
 
-  <main class="flex flex-col gap-4 p-5">
+  <main class="bl-container flex flex-col gap-4 p-5 lg:max-w-150 lg:px-0 lg:py-10">
     <div class="flex flex-col gap-1">
       <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Notificaciones</p>
-      <h1 class="m-0 text-2xl font-bold">Tus avisos</h1>
+      <h1 class="m-0 text-2xl font-bold lg:text-[34px]">Tus avisos</h1>
     </div>
 
     <div class="flex gap-2">
@@ -13,8 +13,8 @@
         (click)="cambiarFiltro(false)"
         [class]="
           !soloNoLeidas()
-            ? 'h-9 cursor-pointer rounded-full border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
-            : 'h-9 cursor-pointer rounded-full border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+            ? 'h-9 cursor-pointer rounded-chip border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
+            : 'h-9 cursor-pointer rounded-chip border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
         "
       >
         Todas
@@ -24,8 +24,8 @@
         (click)="cambiarFiltro(true)"
         [class]="
           soloNoLeidas()
-            ? 'h-9 cursor-pointer rounded-full border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
-            : 'h-9 cursor-pointer rounded-full border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+            ? 'h-9 cursor-pointer rounded-chip border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
+            : 'h-9 cursor-pointer rounded-chip border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
         "
       >
         No leídas
@@ -33,7 +33,7 @@
     </div>
 
     @if (errorMsg()) {
-      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger">
+      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger-text">
         {{ errorMsg() }}
       </div>
     }
