@@ -1,24 +1,24 @@
-<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
+<div class="min-h-screen bg-bl-bg">
   <bl-topbar (logout)="logout()" />
 
-  <main class="flex flex-col gap-5 p-5">
-    <div class="flex flex-col gap-1">
+  <main class="bl-container flex flex-col gap-5 p-5 lg:grid lg:grid-cols-[1fr_380px] lg:gap-x-6 lg:gap-y-5 lg:px-0 lg:py-10">
+    <div class="flex flex-col gap-1 lg:col-span-2">
       <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Reservar</p>
-      <h1 class="m-0 text-2xl font-bold">Solicitar turno</h1>
+      <h1 class="m-0 text-2xl font-bold lg:text-[34px]">Solicitar turno</h1>
       <p class="m-0 text-[13.5px] text-bl-text-muted">
         Elegí el servicio, con quién y cuándo. Te lleva menos de un minuto.
       </p>
     </div>
 
     @if (cargando()) {
-      <p class="text-[13.5px] text-bl-text-muted">Cargando...</p>
+      <p class="text-[13.5px] text-bl-text-muted lg:col-span-2">Cargando...</p>
     } @else if (errorCarga()) {
-      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger">
+      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger-text lg:col-span-2">
         {{ errorCarga() }}
       </div>
     } @else if (turnoCreado(); as t) {
       <!-- Éxito -->
-      <div class="flex flex-col items-center gap-5 rounded-card border border-bl-border bg-bl-surface p-6 text-center">
+      <div class="flex flex-col items-center gap-5 rounded-card border border-bl-border bg-bl-surface p-6 text-center lg:col-span-2 lg:mx-auto lg:w-full lg:max-w-150">
         <span class="flex h-14 w-14 items-center justify-center rounded-full bg-bl-accent">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
             <path stroke="white" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" d="M20 6 9 17l-5-5" />
@@ -59,13 +59,13 @@
       </div>
     } @else {
       @if (errorMsg()) {
-        <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger">
+        <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger-text lg:col-span-2">
           {{ errorMsg() }}
         </div>
       }
 
       <!-- Paso 1: Servicio -->
-      <section class="flex flex-col gap-3.5 rounded-card border border-bl-border bg-bl-surface p-4">
+      <section class="flex flex-col gap-3.5 rounded-card border border-bl-border bg-bl-surface p-4 lg:col-start-1 lg:p-6">
         <div class="flex items-center gap-2.5">
           <span class="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-bl-accent text-[12.5px] font-bold text-white">1</span>
           <h2 class="m-0 text-[15px] font-bold">Servicio</h2>
@@ -73,7 +73,7 @@
         @if (servicios().length === 0) {
           <p class="text-[13px] text-bl-text-muted">No hay servicios disponibles.</p>
         } @else {
-          <div class="flex flex-col gap-2.5">
+          <div class="flex flex-col gap-2.5 lg:grid lg:grid-cols-3 lg:gap-3">
             @for (s of servicios(); track s.id) {
               <button
                 type="button"
@@ -97,7 +97,7 @@
       </section>
 
       <!-- Paso 2: Barbero -->
-      <section class="flex flex-col gap-3.5 rounded-card border border-bl-border bg-bl-surface p-4">
+      <section class="flex flex-col gap-3.5 rounded-card border border-bl-border bg-bl-surface p-4 lg:col-start-1 lg:p-6">
         <div class="flex items-center gap-2.5">
           <span class="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-bl-accent text-[12.5px] font-bold text-white">2</span>
           <h2 class="m-0 text-[15px] font-bold">Barbero</h2>
@@ -107,7 +107,7 @@
             {{ servicioId() ? 'Ningún barbero ofrece este servicio.' : 'Elegí primero un servicio.' }}
           </p>
         } @else {
-          <div class="flex flex-col gap-2.5">
+          <div class="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3">
             @for (b of barberosDisponibles(); track b.id) {
               <button
                 type="button"
@@ -119,10 +119,18 @@
                     : 'flex h-16 cursor-pointer items-center gap-3 rounded-field border border-bl-border bg-transparent px-4 text-left text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
                 "
               >
-                <span class="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-bl-surface-2 text-[13px] font-semibold text-bl-accent">
+                <span class="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-bl-surface-2 text-[13px] font-semibold text-bl-accent-3">
                   {{ b.nombre.slice(0, 2).toUpperCase() }}
                 </span>
-                <span class="text-[14px] font-semibold">{{ b.nombre }}</span>
+                <span class="flex-1 text-[14px] font-semibold">{{ b.nombre }}</span>
+                @if (precioDeBarbero(b); as precio) {
+                  <span class="flex flex-col items-end gap-0.5" data-testid="turno-barbero-precio">
+                    <span class="text-[14px] font-semibold">${{ precio }}</span>
+                    <span class="text-[12px] font-normal text-bl-text-muted">
+                      {{ servicioSeleccionado()?.nombre }} · {{ servicioSeleccionado()?.duracion_minutos }} min
+                    </span>
+                  </span>
+                }
               </button>
             }
           </div>
@@ -130,7 +138,7 @@
       </section>
 
       <!-- Paso 3: Fecha y hora -->
-      <section class="flex flex-col gap-4 rounded-card border border-bl-border bg-bl-surface p-4">
+      <section class="flex flex-col gap-4 rounded-card border border-bl-border bg-bl-surface p-4 lg:col-start-1 lg:p-6">
         <div class="flex items-center gap-2.5">
           <span class="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-bl-accent text-[12.5px] font-bold text-white">3</span>
           <h2 class="m-0 text-[15px] font-bold">Fecha y hora</h2>
@@ -144,7 +152,7 @@
             @if (diasDisponibles().length === 0) {
               <p class="text-[13px] text-bl-text-muted">Este barbero no tiene horarios cargados.</p>
             } @else {
-              <div class="grid grid-cols-3 gap-2">
+              <div class="grid grid-cols-3 gap-2 lg:grid-cols-6">
                 @for (d of diasDisponibles(); track d.iso) {
                   <button
                     type="button"
@@ -170,7 +178,7 @@
               @if (horariosDisponibles().length === 0) {
                 <p class="text-[13px] text-bl-text-muted">No hay horarios para ese día.</p>
               } @else {
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-3 gap-2 lg:grid-cols-6">
                   @for (h of horariosDisponibles(); track h) {
                     <button
                       type="button"
@@ -193,12 +201,12 @@
       </section>
 
       <!-- Paso 4: Forma de pago -->
-      <section class="flex flex-col gap-3.5 rounded-card border border-bl-border bg-bl-surface p-4">
+      <section class="flex flex-col gap-3.5 rounded-card border border-bl-border bg-bl-surface p-4 lg:col-start-1 lg:p-6">
         <div class="flex items-center gap-2.5">
           <span class="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-bl-accent text-[12.5px] font-bold text-white">4</span>
           <h2 class="m-0 text-[15px] font-bold">Forma de pago</h2>
         </div>
-        <div class="flex flex-col gap-2.5">
+        <div class="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3">
           <button
             type="button"
             (click)="elegirPago('efectivo')"
@@ -229,7 +237,7 @@
       </section>
 
       <!-- Resumen -->
-      <aside class="flex flex-col gap-4 rounded-card border border-bl-border bg-bl-surface p-4">
+      <aside class="flex flex-col gap-4 rounded-card border border-bl-border bg-bl-surface p-4 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-4 lg:row-start-2 lg:self-start lg:p-6">
         <h2 class="m-0 text-[15px] font-bold">Resumen del turno</h2>
         <div class="flex flex-col gap-2.5 text-[13.5px]">
           <div class="flex justify-between gap-4"><span class="text-bl-text-muted">Servicio</span><span class="text-right font-semibold">{{ servicioSeleccionado()?.nombre ?? '—' }}</span></div>
