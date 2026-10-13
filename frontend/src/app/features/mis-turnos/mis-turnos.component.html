@@ -1,11 +1,11 @@
-<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
+<div class="min-h-screen bg-bl-bg">
   <bl-topbar (logout)="logout()" />
 
-  <main class="flex flex-col gap-4 p-5">
+  <main class="bl-container flex flex-col gap-4 p-5 lg:px-0 lg:py-10">
     <div class="flex items-center justify-between">
       <div class="flex flex-col gap-1">
         <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Reservas</p>
-        <h1 class="m-0 text-2xl font-bold">Mis turnos</h1>
+        <h1 class="m-0 text-2xl font-bold lg:text-[34px]">Mis turnos</h1>
       </div>
       <a
         routerLink="/solicitar-turno"
@@ -16,7 +16,7 @@
     </div>
 
     @if (errorMsg()) {
-      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger">
+      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger-text">
         {{ errorMsg() }}
       </div>
     }
@@ -25,8 +25,11 @@
       <p class="text-[13.5px] text-bl-text-muted">Cargando turnos...</p>
     } @else if (pagina(); as p) {
       @if (p.results.length === 0) {
-        <div class="flex flex-col items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-6 text-center">
-          <p class="m-0 text-[13.5px] text-bl-text-muted">Todavía no reservaste ningún turno.</p>
+        <div class="flex flex-col items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-6 text-center lg:py-12">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" class="text-bl-text-muted" aria-hidden="true">
+            <path stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
+          </svg>
+          <p class="m-0 text-[13.5px] text-bl-text-muted lg:text-[16px] lg:text-bl-text">Todavía no reservaste ningún turno.</p>
           <a routerLink="/solicitar-turno" class="bl-btn bl-btn--primary w-auto normal-case no-underline">
             Solicitar turno
           </a>
@@ -34,22 +37,23 @@
       } @else {
         <div class="flex flex-col gap-3">
           @for (t of p.results; track t.id) {
-            <article class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4">
-              <div class="flex items-start justify-between gap-3">
+            <article class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4 lg:grid lg:grid-cols-[1fr_7rem_6rem_7rem] lg:items-center lg:gap-6 lg:px-6 lg:py-4">
+              <div class="flex items-start justify-between gap-3 lg:contents">
                 <div class="flex flex-col gap-0.5">
                   <span class="text-[15px] font-semibold">{{ t.servicio_nombre }}</span>
                   <span class="text-[12.5px] text-bl-text-muted">{{ t.fecha }} · {{ t.hora }}</span>
                 </div>
                 <span [class]="estadoClasses(t.estado)">{{ t.estado }}</span>
               </div>
-              <div class="flex items-center justify-between gap-3">
-                <span class="text-[14px] font-semibold">${{ t.precio_total }}</span>
+              <div class="flex items-center justify-between gap-3 lg:contents">
+                <span class="text-[14px] font-semibold lg:col-start-3 lg:row-start-1 lg:text-right">${{ t.precio_total }}</span>
                 @if (t.puede_cancelar) {
                   <button
                     type="button"
-                    class="bl-btn w-auto text-bl-danger normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
+                    data-testid="cancelar-turno"
+                    class="bl-btn w-auto lg:col-start-4 lg:row-start-1 lg:w-full border-bl-danger bg-transparent px-5 font-medium tracking-normal text-bl-danger-text normal-case transition-colors duration-150 ease-linear hover:bg-bl-danger/15"
                     [disabled]="cancelandoId() === t.id"
-                    (click)="cancelar(t)"
+                    (click)="pedirConfirmacion(t)"
                   >
                     {{ cancelandoId() === t.id ? 'Cancelando...' : 'Cancelar' }}
                   </button>
@@ -59,7 +63,7 @@
           }
         </div>
 
-        <div class="mt-2 flex flex-col items-center gap-2.5">
+        <div class="mt-2 flex flex-col items-center gap-2.5 lg:flex-row lg:justify-between">
           <span class="text-[11.5px] text-bl-text-muted">{{ p.count }} turno{{ p.count === 1 ? '' : 's' }} en total</span>
           @if (p.num_pages > 1) {
             <div class="flex gap-1.5">
@@ -82,4 +86,44 @@
       }
     }
   </main>
+
+  @if (turnoACancelar(); as t) {
+    <div
+      class="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-5 sm:items-center"
+      (click)="cerrarConfirmacion()"
+    >
+      <div
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="cancelar-titulo"
+        aria-describedby="cancelar-detalle"
+        data-testid="dialogo-cancelar"
+        class="w-full max-w-90 rounded-card border border-bl-border bg-bl-surface p-5"
+        (click)="$event.stopPropagation()"
+      >
+        <h2 id="cancelar-titulo" class="m-0 mb-1.5 text-[20px] font-bold">¿Cancelar este turno?</h2>
+        <p id="cancelar-detalle" class="m-0 mb-4 text-[13.5px] text-bl-text-muted">
+          {{ t.servicio_nombre }} · {{ t.fecha }} · {{ t.hora }}. Esta acción no se puede deshacer.
+        </p>
+        <div class="flex flex-col gap-2.5">
+          <button
+            type="button"
+            data-testid="confirmar-cancelar"
+            class="bl-btn border-bl-danger bg-bl-danger text-white"
+            (click)="confirmarCancelacion()"
+          >
+            Sí, cancelar turno
+          </button>
+          <button
+            type="button"
+            data-testid="volver-cancelar"
+            class="bl-btn bg-transparent font-medium tracking-normal text-bl-text normal-case hover:bg-bl-surface-2"
+            (click)="cerrarConfirmacion()"
+          >
+            Volver
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
