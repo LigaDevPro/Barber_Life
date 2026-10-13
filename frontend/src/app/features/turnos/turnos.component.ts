@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { PanelService } from '../../core/auth/panel.service';
@@ -13,10 +13,10 @@ const ICONOS_SERVICIO: Record<string, string> = {
 };
 
 const ESTADO_CLASSES: Record<string, string> = {
-  pendiente: 'bg-[rgba(224,197,111,0.15)] text-bl-warning',
-  confirmado: 'bg-[rgba(111,170,224,0.15)] text-[#6faae0]',
-  completado: 'bg-[rgba(111,224,154,0.15)] text-bl-success',
-  cancelado: 'bg-[rgba(224,111,111,0.15)] text-bl-danger',
+  pendiente: 'bg-bl-warning/15 text-bl-warning',
+  confirmado: 'bg-bl-info/15 text-bl-info',
+  completado: 'bg-bl-success/15 text-bl-success',
+  cancelado: 'bg-bl-danger/15 text-bl-danger-text',
 };
 
 @Component({
@@ -32,6 +32,34 @@ export class TurnosComponent implements OnInit {
   errorMsg = signal<string | null>(null);
   menuAbierto = signal<number | null>(null);
   paginaActual = signal(1);
+
+  /** Filtros (Mejora 4 de Figma: «Hoy», «Mañana», «Esta semana» y selector de fecha): rango rápido, fecha puntual, estado y búsqueda. */
+  readonly rangos = [
+    { valor: 'todos', etiqueta: 'Todos' },
+    { valor: 'hoy', etiqueta: 'Hoy' },
+    { valor: 'manana', etiqueta: 'Mañana' },
+    { valor: 'semana', etiqueta: 'Esta semana' },
+  ] as const;
+  rango = signal<'todos' | 'hoy' | 'manana' | 'semana'>('hoy');
+  fechaSeleccionada = signal('');
+  selectorFechaAbierto = signal(false);
+
+  /** Resultados de la página actual con el filtro de fecha aplicado. */
+  resultadosFiltrados = computed<TurnoResumen[]>(() => {
+    const p = this.pagina();
+    if (!p) return [];
+    const fecha = this.fechaSeleccionada();
+    const rango = this.rango();
+    return p.results.filter((t) => {
+      if (fecha) return t.fecha === fecha;
+      if (rango === 'todos') return true;
+      const hoy = this.iso(new Date());
+      if (rango === 'hoy') return t.fecha === hoy;
+      if (rango === 'manana') return t.fecha === this.iso(this.sumarDias(new Date(), 1));
+      const lunes = this.sumarDias(new Date(), -((new Date().getDay() + 6) % 7));
+      return t.fecha >= this.iso(lunes) && t.fecha <= this.iso(this.sumarDias(lunes, 6));
+    });
+  });
 
   constructor(
     private panelService: PanelService,
@@ -65,6 +93,34 @@ export class TurnosComponent implements OnInit {
         this.errorMsg.set(err?.error?.detail || 'No se pudieron cargar los turnos.');
       },
     });
+  }
+
+  /** Tocar el chip activo lo apaga y vuelve a mostrar todos los turnos. */
+  elegirRango(valor: 'todos' | 'hoy' | 'manana' | 'semana'): void {
+    this.rango.set(this.rango() === valor && !this.fechaSeleccionada() ? 'todos' : valor);
+    this.fechaSeleccionada.set('');
+    this.selectorFechaAbierto.set(false);
+  }
+
+  toggleSelectorFecha(): void {
+    this.selectorFechaAbierto.update((v) => !v);
+  }
+
+  elegirFecha(valor: string): void {
+    this.fechaSeleccionada.set(valor);
+    if (valor) this.rango.set('todos');
+  }
+
+  private iso(d: Date): string {
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${d.getFullYear()}-${m}-${dd}`;
+  }
+
+  private sumarDias(d: Date, n: number): Date {
+    const r = new Date(d);
+    r.setDate(r.getDate() + n);
+    return r;
   }
 
   irAPagina(page: number): void {
@@ -101,7 +157,7 @@ export class TurnosComponent implements OnInit {
   }
 
   estadoClasses(estado: string): string {
-    return `mt-1 inline-block rounded-full px-2 py-0.5 text-[10.5px] capitalize ${ESTADO_CLASSES[estado] ?? ''}`;
+    return `mt-1 inline-block rounded-badge px-2.5 py-0.75 text-[10.5px] capitalize ${ESTADO_CLASSES[estado] ?? ''}`;
   }
 
   rangoTexto(): string {
