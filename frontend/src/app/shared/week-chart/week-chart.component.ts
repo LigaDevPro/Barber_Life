@@ -7,7 +7,7 @@ import { TurnoPorDia } from '../../core/models/models';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <svg [attr.viewBox]="'0 0 320 110'" class="block h-22.5 w-full lg:h-56" preserveAspectRatio="none">
+    <svg [attr.viewBox]="'0 0 320 110'" class="block h-22.5 w-full" preserveAspectRatio="none">
       <polyline
         [attr.points]="linePoints()"
         fill="none"
@@ -19,8 +19,8 @@ import { TurnoPorDia } from '../../core/models/models';
       <polygon [attr.points]="areaPoints()" fill="url(#chart-fill)" opacity="0.35" />
       <defs>
         <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" style="stop-color: var(--color-bl-accent)" />
-          <stop offset="100%" style="stop-color: var(--color-bl-accent)" stop-opacity="0" />
+          <stop offset="0%" stop-color="#8b6fe0" />
+          <stop offset="100%" stop-color="#8b6fe0" stop-opacity="0" />
         </linearGradient>
       </defs>
       @for (p of points(); track $index) {
