@@ -28,10 +28,13 @@ class CrearPagoTests(PagoBaseCase):
     url = reverse('pagos-list')
 
     def test_cliente_crea_pago_y_recibe_init_point(self):
+        # Arrange
         self.autenticar(self.cliente.usuario)
 
+        # Act
         resp = self.client.post(self.url, {'turno': self.turno.id}, format='json')
 
+        # Assert
         self.assertEqual(resp.status_code, 201)
         self.assertEqual(resp.data['init_point'], 'https://mp.test/checkout/pref-test-123')
         pago = Pago.objects.get(turno=self.turno)
@@ -40,45 +43,58 @@ class CrearPagoTests(PagoBaseCase):
         self.assertEqual(str(pago.monto_total), '5000.00')
 
     def test_monto_usa_precio_personalizado_de_la_oferta(self):
+        # Arrange
         oferta = self.esc['oferta']
         oferta.precio_personalizado = '7777.00'
         oferta.save()
         self.autenticar(self.cliente.usuario)
 
+        # Act
         self.client.post(self.url, {'turno': self.turno.id}, format='json')
 
+        # Assert
         self.assertEqual(str(Pago.objects.get(turno=self.turno).monto_total), '7777.00')
 
     def test_turno_de_otro_cliente_es_403(self):
+        # Arrange
         self.autenticar(self.crear_cliente().usuario)
 
+        # Act
         resp = self.client.post(self.url, {'turno': self.turno.id}, format='json')
 
+        # Assert
         self.assertEqual(resp.status_code, 403)
         self.assertFalse(Pago.objects.filter(turno=self.turno).exists())
         self.mp_crear_preferencia.assert_not_called()
 
     def test_turno_que_ya_tiene_pago_es_400(self):
+        # Arrange
         self.crear_pago(self.turno)
         self.autenticar(self.cliente.usuario)
 
+        # Act
         resp = self.client.post(self.url, {'turno': self.turno.id}, format='json')
 
+        # Assert
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(Pago.objects.filter(turno=self.turno).count(), 1)
 
     def test_error_de_mercado_pago_es_502_y_no_deja_el_pago(self):
+        # Arrange
         self.mp_crear_preferencia.side_effect = MercadoPagoError('boom')
         self.autenticar(self.cliente.usuario)
 
+        # Act
         resp = self.client.post(self.url, {'turno': self.turno.id}, format='json')
 
+        # Assert
         self.assertEqual(resp.status_code, 502)
         self.assertFalse(Pago.objects.filter(turno=self.turno).exists())
 
 
 class ListarPagosTests(PagoBaseCase):
     def test_cliente_ve_solo_sus_pagos(self):
+        # Arrange
         propio = self.crear_pago(self.turno)
         otro = self.crear_cliente()
         turno_ajeno = self.crear_turno(
@@ -88,8 +104,10 @@ class ListarPagosTests(PagoBaseCase):
         self.crear_pago(turno_ajeno)
         self.autenticar(self.cliente.usuario)
 
+        # Act
         resp = self.client.get(reverse('pagos-list'))
 
+        # Assert
         self.assertEqual(resp.status_code, 200)
         self.assertEqual([p['id'] for p in resp.data], [propio.id])
 
@@ -112,9 +130,11 @@ class WebhookTests(PagoBaseCase):
         self.pago.refresh_from_db()
 
     def test_aprobado_confirma_turno_notifica_y_guarda_id_real(self):
+        # Act
         # Sin token: el webhook es público (lo llama Mercado Pago).
         resp = self._notificar()
 
+        # Assert
         self.assertEqual(resp.status_code, 200)
         self._recargar()
         self.assertEqual(self.pago.estado, Pago.Estado.APROBADO)
@@ -124,46 +144,59 @@ class WebhookTests(PagoBaseCase):
         self.assertEqual(len(self.notificaciones_de(self.cliente.usuario, 'pago_aprobado')), 1)
 
     def test_rechazado_cancela_el_turno(self):
+        # Arrange
         self.mp_obtener_pago.return_value['status'] = 'rejected'
 
+        # Act
         self._notificar()
 
+        # Assert
         self._recargar()
         self.assertEqual(self.pago.estado, Pago.Estado.RECHAZADO)
         self.assertEqual(self.turno.estado, Turno.Estado.CANCELADO)
         self.assertEqual(len(self.notificaciones_de(self.cliente.usuario, 'pago_rechazado')), 1)
 
     def test_reintento_de_mp_no_duplica_la_notificacion(self):
+        # Act
         self._notificar()
         self._notificar()
 
+        # Assert
         self._recargar()
         self.assertEqual(self.pago.estado, Pago.Estado.APROBADO)
         self.assertEqual(len(self.notificaciones_de(self.cliente.usuario, 'pago_aprobado')), 1)
 
     def test_notificacion_que_no_es_de_pago_se_ignora(self):
+        # Act
         resp = self.client.post(self.url, {'type': 'merchant_order', 'data': {'id': '1'}}, format='json')
 
+        # Assert
         self.assertEqual(resp.status_code, 200)
         self.mp_obtener_pago.assert_not_called()
         self._recargar()
         self.assertEqual(self.pago.estado, Pago.Estado.PENDIENTE)
 
     def test_turno_inexistente_responde_200_sin_tocar_nada(self):
+        # Arrange
         self.mp_obtener_pago.return_value['external_reference'] = '999999'
 
+        # Act
         resp = self._notificar()
 
+        # Assert
         self.assertEqual(resp.status_code, 200)
         self._recargar()
         self.assertEqual(self.pago.estado, Pago.Estado.PENDIENTE)
 
     def test_turno_cancelado_no_se_reabre_al_aprobarse_el_pago(self):
+        # Arrange
         self.turno.estado = Turno.Estado.CANCELADO
         self.turno.save()
 
+        # Act
         self._notificar()
 
+        # Assert
         self._recargar()
         self.assertEqual(self.turno.estado, Turno.Estado.CANCELADO)
         self.assertEqual(self.notificaciones_de(self.cliente.usuario, 'pago_aprobado'), [])
@@ -180,27 +213,34 @@ class MercadoPagoClientTests(PagoBaseCase):
 
     @override_settings(MERCADOPAGO_ACCESS_TOKEN='')
     def test_sin_token_levanta_error_sin_llamar_al_sdk(self):
+        # Arrange
         sdk_cls, _ = self._sdk()
 
+        # Act & Assert
         with self.assertRaises(MercadoPagoError):
             crear_preferencia(self.turno)
         sdk_cls.assert_not_called()
 
     @override_settings(MERCADOPAGO_ACCESS_TOKEN='TEST-token')
     def test_status_inesperado_de_mp_levanta_error(self):
+        # Arrange
         _, sdk = self._sdk()
         sdk.payment.return_value.get.return_value = {'status': 404, 'response': {}}
 
+        # Act & Assert
         with self.assertRaises(MercadoPagoError):
             obtener_pago('5')
 
     @override_settings(MERCADOPAGO_ACCESS_TOKEN='TEST-token')
     def test_preferencia_lleva_external_reference_y_precio(self):
+        # Arrange
         _, sdk = self._sdk()
         sdk.preference.return_value.create.return_value = {'status': 201, 'response': {'id': 'pref-1'}}
 
+        # Act
         crear_preferencia(self.turno)
 
+        # Assert
         datos = sdk.preference.return_value.create.call_args.args[0]
         self.assertEqual(datos['external_reference'], str(self.turno.id))
         self.assertEqual(datos['items'][0]['unit_price'], 5000.0)
@@ -216,8 +256,10 @@ class MercadoPagoClientTests(PagoBaseCase):
         FRONTEND_URL='https://app.test/', BACKEND_PUBLIC_URL='https://api.test/',
     )
     def test_preferencia_envia_back_urls_auto_return_y_notification_url(self):
+        # Act
         datos = self._datos_preferencia()
 
+        # Assert
         self.assertEqual(datos['back_urls'], {
             'success': 'https://app.test/pago/resultado?estado=exito',
             'failure': 'https://app.test/pago/resultado?estado=fallo',
@@ -231,10 +273,12 @@ class MercadoPagoClientTests(PagoBaseCase):
         FRONTEND_URL='http://localhost:4200', BACKEND_PUBLIC_URL='',
     )
     def test_en_local_no_manda_auto_return_ni_notification_url(self):
+        # Act
         # MP rechaza auto_return con back_urls locales y no puede llamar a
         # localhost: sin URLs públicas la preferencia igual tiene que crearse.
         datos = self._datos_preferencia()
 
+        # Assert
         self.assertIn('back_urls', datos)
         self.assertNotIn('auto_return', datos)
         self.assertNotIn('notification_url', datos)
