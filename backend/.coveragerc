@@ -1,0 +1,11 @@
+[run]
+source = gestion
+omit =
+    gestion/migrations/*
+    gestion/tests/*
+    gestion/management/*
+    gestion/admin.py
+
+[report]
+show_missing = True
+skip_covered = False

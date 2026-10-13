@@ -70,25 +70,26 @@
           <form
             [formGroup]="formServicio"
             (ngSubmit)="guardarServicio()"
+            data-testid="servicio-form"
             class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4"
           >
             <h2 class="m-0 text-[15px] font-bold">{{ editandoServicioId() ? 'Editar servicio' : 'Nuevo servicio' }}</h2>
             <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
               Nombre
-              <input class="bl-input" type="text" formControlName="nombre" placeholder="Corte de pelo" />
+              <input class="bl-input" type="text" formControlName="nombre" placeholder="Corte de pelo" data-testid="servicio-nombre" />
             </label>
             <div class="flex gap-3">
               <label class="flex flex-1 flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
                 Duración (min)
-                <input class="bl-input" type="number" formControlName="duracion_minutos" min="1" />
+                <input class="bl-input" type="number" formControlName="duracion_minutos" min="1" data-testid="servicio-duracion" />
               </label>
               <label class="flex flex-1 flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
                 Precio
-                <input class="bl-input" type="text" inputmode="decimal" formControlName="precio" placeholder="15.00" />
+                <input class="bl-input" type="text" inputmode="decimal" formControlName="precio" placeholder="15.00" data-testid="servicio-precio" />
               </label>
             </div>
             <div class="flex gap-2.5">
-              <button class="bl-btn bl-btn--primary normal-case" type="submit" [disabled]="guardandoServicio()">
+              <button class="bl-btn bl-btn--primary normal-case" type="submit" [disabled]="guardandoServicio()" data-testid="servicio-guardar">
                 {{ guardandoServicio() ? 'Guardando...' : editandoServicioId() ? 'Guardar cambios' : 'Crear servicio' }}
               </button>
               @if (editandoServicioId()) {
@@ -106,7 +107,7 @@
 
         <div class="flex flex-col gap-2.5">
           @for (s of servicios(); track s.id) {
-            <div class="flex items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-4">
+            <div class="flex items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-4" data-testid="servicio-item">
               <div class="flex flex-1 flex-col gap-0.5">
                 <span class="text-[14.5px] font-semibold">{{ s.nombre }}</span>
                 <span class="text-[12.5px] text-bl-text-muted">{{ s.duracion_minutos }} min · ${{ s.precio }}</span>
@@ -119,6 +120,7 @@
                   type="button"
                   class="bl-btn w-auto text-bl-text normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
                   (click)="editarServicio(s)"
+                  data-testid="servicio-editar"
                 >
                   Editar
                 </button>
@@ -127,6 +129,7 @@
                   class="bl-btn w-auto normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
                   [class.text-bl-danger]="s.activo"
                   (click)="toggleServicio(s)"
+                  data-testid="servicio-toggle"
                 >
                   {{ s.activo ? 'Desactivar' : 'Activar' }}
                 </button>

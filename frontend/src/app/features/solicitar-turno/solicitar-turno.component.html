@@ -25,7 +25,7 @@
           </svg>
         </span>
         <div class="flex flex-col items-center gap-2">
-          <h2 class="m-0 text-[22px] font-bold">Solicitaste tu turno</h2>
+          <h2 class="m-0 text-[22px] font-bold" data-testid="turno-exito">Solicitaste tu turno</h2>
           <span class="rounded-full border border-bl-border px-2.5 py-1 text-xs font-medium capitalize">{{
             t.estado
           }}</span>
@@ -78,6 +78,7 @@
               <button
                 type="button"
                 (click)="elegirServicio(s.id)"
+                data-testid="turno-servicio"
                 [class]="
                   servicioSeleccionado()?.id === s.id
                     ? 'flex h-16 cursor-pointer items-center justify-between gap-3 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'
@@ -111,6 +112,7 @@
               <button
                 type="button"
                 (click)="elegirBarbero(b.id)"
+                data-testid="turno-barbero"
                 [class]="
                   barberoSeleccionado()?.id === b.id
                     ? 'flex h-16 cursor-pointer items-center gap-3 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'
@@ -147,6 +149,7 @@
                   <button
                     type="button"
                     (click)="elegirDia(d.iso)"
+                    data-testid="turno-dia"
                     [class]="
                       diaIso() === d.iso
                         ? 'flex h-15 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-field bg-bl-accent text-white transition-opacity duration-150 ease-linear hover:opacity-90'
@@ -172,6 +175,7 @@
                     <button
                       type="button"
                       (click)="elegirHora(h)"
+                      data-testid="turno-hora"
                       [class]="
                         hora() === h
                           ? 'h-11 cursor-pointer rounded-field bg-bl-accent text-[13.5px] font-medium text-white transition-opacity duration-150 ease-linear hover:opacity-90'
@@ -198,6 +202,7 @@
           <button
             type="button"
             (click)="elegirPago('efectivo')"
+            data-testid="turno-pago-efectivo"
             [class]="
               formaPago() === 'efectivo'
                 ? 'flex h-16 cursor-pointer flex-col justify-center gap-0.5 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'
@@ -210,6 +215,7 @@
           <button
             type="button"
             (click)="elegirPago('mercado_pago')"
+            data-testid="turno-pago-mercado-pago"
             [class]="
               formaPago() === 'mercado_pago'
                 ? 'flex h-16 cursor-pointer flex-col justify-center gap-0.5 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'
@@ -237,7 +243,7 @@
           <span class="text-[14px] font-semibold">Total</span>
           <span class="text-[22px] font-bold">{{ servicioSeleccionado() ? '$' + servicioSeleccionado()!.precio : '—' }}</span>
         </div>
-        <button type="button" class="bl-btn bl-btn--primary normal-case" [disabled]="!listoParaConfirmar()" (click)="confirmar()">
+        <button type="button" class="bl-btn bl-btn--primary normal-case" [disabled]="!listoParaConfirmar()" (click)="confirmar()" data-testid="turno-confirmar">
           {{ enviando() ? 'Confirmando...' : 'Confirmar turno' }}
         </button>
         <p class="m-0 text-center text-xs text-bl-text-muted">Tu turno queda pendiente hasta que la barbería lo confirme.</p>
