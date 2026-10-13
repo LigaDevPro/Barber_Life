@@ -71,6 +71,15 @@ export class SolicitarTurnoComponent implements OnInit {
     return this.barberos().filter((b) => b.servicios_ofrecidos.some((so) => so.servicio === servicioId));
   });
 
+  /** Mejora 3 de Figma: precio del servicio elegido para cada barbero (su precio
+   * propio si lo definió; si no, el del catálogo). */
+  precioDeBarbero(b: BarberoDetail): string | null {
+    const servicio = this.servicioSeleccionado();
+    if (!servicio) return null;
+    const ofrecido = b.servicios_ofrecidos.find((so) => so.servicio === servicio.id);
+    return ofrecido?.precio ?? servicio.precio;
+  }
+
   diasDisponibles = computed<DiaOpcion[]>(() => {
     const barbero = this.barberoSeleccionado();
     if (!barbero) return [];
