@@ -44,13 +44,16 @@ class TurnosBase(BarberLifeTestCase):
 
 class ReservaTurnoTests(TurnosBase):
     def test_reserva_ok_calcula_hora_fin_y_notifica_al_barbero(self):
+        # Arrange
         esc = self.escenario_reservable()
         esc['servicio'].duracion_minutos = 45
         esc['servicio'].save()
         self.autenticar(esc['cliente'].usuario)
 
+        # Act
         resp = self.reservar(esc)
 
+        # Assert
         self.assertEqual(resp.status_code, 201, resp.data)
         turno = Turno.objects.get(pk=resp.data['id'])
         self.assertEqual(turno.hora_fin, time(10, 45))
@@ -59,85 +62,113 @@ class ReservaTurnoTests(TurnosBase):
         self.assertEqual(len(self.notificaciones_de(esc['barbero'].usuario, 'nuevo_turno')), 1)
 
     def test_admin_sin_perfil_cliente_recibe_400_no_500(self):
+        # Arrange
         esc = self.escenario_reservable()
         self.autenticar(self.crear_admin())
 
+        # Act
         resp = self.reservar(esc)
 
+        # Assert
         self.assertEqual(resp.status_code, 400)
         self.assertIn('detail', resp.data)
 
     def test_barbero_o_servicio_inactivo(self):
+        # Arrange
         esc = self.escenario_reservable()
         self.autenticar(esc['cliente'].usuario)
 
         esc['barbero'].activo = False
         esc['barbero'].save()
+
+        # Act
         resp = self.reservar(esc)
+
+        # Assert
         self.assertEqual(resp.status_code, 400)
         self.assertIn('barbero', resp.data)
 
+        # Arrange
         esc['barbero'].activo = True
         esc['barbero'].save()
         esc['servicio'].activo = False
         esc['servicio'].save()
+
+        # Act
         resp = self.reservar(esc)
+
+        # Assert
         self.assertEqual(resp.status_code, 400)
         self.assertIn('servicio', resp.data)
 
     def test_fecha_en_el_pasado(self):
+        # Arrange
         esc = self.escenario_reservable()
         pasada = date.today() - timedelta(days=6)
         horario = self.crear_horario(esc['barbero'], dia_semana=pasada.isoweekday())
         self.crear_oferta(esc['barbero'], esc['servicio'], horario)
         self.autenticar(esc['cliente'].usuario)
 
+        # Act
         resp = self.reservar(esc, fecha_turno=pasada.isoformat())
 
+        # Assert
         self.assertEqual(resp.status_code, 400)
         self.assertIn('fecha_turno', resp.data)
 
     def test_turno_que_cruza_medianoche(self):
+        # Arrange
         esc = self.escenario_reservable()
         esc['servicio'].duracion_minutos = 60
         esc['servicio'].save()
         self.autenticar(esc['cliente'].usuario)
 
+        # Act
         resp = self.reservar(esc, hora_inicio='23:30')
 
+        # Assert
         self.assertEqual(resp.status_code, 400)
         self.assertIn('hora_inicio', resp.data)
 
     def test_barbero_no_ofrece_el_servicio(self):
+        # Arrange
         esc = self.escenario_reservable()
         otro_servicio = self.crear_servicio()
         self.autenticar(esc['cliente'].usuario)
 
+        # Act
         resp = self.reservar(esc, servicio=otro_servicio.id)
 
+        # Assert
         self.assertEqual(resp.status_code, 400)
         self.assertIn('servicio', resp.data)
 
     def test_solapamiento_con_turno_existente(self):
+        # Arrange
         esc = self.escenario_reservable()
         otro = self.crear_cliente()
         self.crear_turno(otro, esc['barbero'], esc['servicio'], esc['fecha'], hora_inicio=time(10, 0))
         self.autenticar(esc['cliente'].usuario)
 
+        # Act
         resp = self.reservar(esc, hora_inicio='10:15')
 
+        # Assert
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(Turno.objects.count(), 1)
 
     def test_create_bloquea_la_fila_del_barbero(self):
         """Protección contra la race condition (TOCTOU): la creación tiene
         que hacer SELECT ... FOR UPDATE sobre Barbero, no sobre Turno."""
+        # Arrange
         esc = self.escenario_reservable()
         self.autenticar(esc['cliente'].usuario)
 
+        # Act
         with CaptureQueriesContext(connection) as ctx:
             resp = self.reservar(esc)
 
+        # Assert
         self.assertEqual(resp.status_code, 201, resp.data)
         locks = [q['sql'] for q in ctx.captured_queries if 'FOR UPDATE' in q['sql']]
         self.assertEqual(len(locks), 1, locks)
@@ -160,18 +191,24 @@ class ListadosTurnosTests(TurnosBase):
         self.turno_b = self.crear_turno(self.cliente_b, self.barbero_b, self.servicio)
 
     def test_barbero_ve_solo_su_agenda_aunque_pase_otro_id(self):
+        # Arrange
         self.autenticar(self.barbero_a.usuario)
 
+        # Act
         resp = self.client.get(reverse('turnos-list'), {'barbero': self.barbero_b.id})
 
+        # Assert
         self.assertEqual(resp.status_code, 200)
         self.assertEqual({t['id'] for t in resp.data['results']}, {self.turno_a.id})
 
     def test_mis_turnos_aisla_por_cliente(self):
+        # Arrange
         self.autenticar(self.cliente_a.usuario)
 
+        # Act
         resp = self.client.get(reverse('turnos-mis-turnos'))
 
+        # Assert
         self.assertEqual(resp.status_code, 200)
         self.assertEqual({t['id'] for t in resp.data['results']}, {self.turno_a.id})
 
@@ -191,20 +228,26 @@ class CambioEstadoTurnoTests(TurnosBase):
         return self.client.patch(reverse('turnos-detail', args=[self.turno.id]), {'estado': estado}, format='json')
 
     def test_barbero_ajeno_recibe_403(self):
+        # Arrange
         self.autenticar(self.crear_barbero().usuario)
 
+        # Act
         resp = self.patch('confirmado')
 
+        # Assert
         self.assertEqual(resp.status_code, 403)
         self.turno.refresh_from_db()
         self.assertEqual(self.turno.estado, Turno.Estado.PENDIENTE)
 
     def test_cancelar_por_patch_sincroniza_el_pago_a_reembolsado(self):
+        # Arrange
         pago = self.crear_pago(self.turno, estado=Pago.Estado.APROBADO)
         self.autenticar(self.barbero.usuario)
 
+        # Act
         resp = self.patch('cancelado')
 
+        # Assert
         self.assertEqual(resp.status_code, 200, resp.data)
         pago.refresh_from_db()
         self.assertEqual(pago.estado, Pago.Estado.REEMBOLSADO)
@@ -241,45 +284,58 @@ class CancelarTurnoTests(TurnosBase):
         return self.client.patch(reverse('turnos-cancelar', args=[self.turno.id]))
 
     def test_cliente_duenio_dentro_de_la_ventana(self):
+        # Arrange
         self.congelar_ahora(self.fecha, time(9, 0))  # faltan 3hs > 2hs
         self.autenticar(self.cliente.usuario)
 
+        # Act
         resp = self.cancelar()
 
+        # Assert
         self.assertEqual(resp.status_code, 200, resp.data)
         self.turno.refresh_from_db()
         self.assertEqual(self.turno.estado, Turno.Estado.CANCELADO)
         self.assertEqual(len(self.notificaciones_de(self.barbero.usuario, 'turno_cancelado')), 1)
 
     def test_fuera_de_la_ventana_devuelve_403(self):
+        # Arrange
         self.congelar_ahora(self.fecha, time(11, 0))  # falta 1h < 2hs
         self.autenticar(self.cliente.usuario)
 
+        # Act
         resp = self.cancelar()
 
+        # Assert
         self.assertEqual(resp.status_code, 403)
         self.turno.refresh_from_db()
         self.assertEqual(self.turno.estado, Turno.Estado.PENDIENTE)
 
     def test_turno_ya_pagado_devuelve_403_para_el_cliente(self):
+        # Arrange
         self.crear_pago(self.turno, estado=Pago.Estado.APROBADO)
         self.congelar_ahora(self.fecha, time(9, 0))
         self.autenticar(self.cliente.usuario)
 
+        # Act & Assert
         self.assertEqual(self.cancelar().status_code, 403)
         self.turno.refresh_from_db()
         self.assertEqual(self.turno.estado, Turno.Estado.PENDIENTE)
 
     def test_cliente_ajeno_recibe_403(self):
+        # Arrange
         self.congelar_ahora(self.fecha, time(9, 0))
         self.autenticar(self.crear_cliente().usuario)
 
+        # Act & Assert
         self.assertEqual(self.cancelar().status_code, 403)
         self.turno.refresh_from_db()
         self.assertEqual(self.turno.estado, Turno.Estado.PENDIENTE)
 
     def test_turno_completado_o_cancelado_devuelve_400_incluso_al_admin(self):
+        # Arrange
         admin = self.crear_admin()
+
+        # Act & Assert
         for estado in (Turno.Estado.COMPLETADO, Turno.Estado.CANCELADO):
             self.turno.estado = estado
             self.turno.save()
@@ -290,12 +346,15 @@ class CancelarTurnoTests(TurnosBase):
             self.assertEqual(self.cancelar().status_code, 400, estado)
 
     def test_admin_cancela_fuera_de_ventana_y_sincroniza_el_pago(self):
+        # Arrange
         pago = self.crear_pago(self.turno, estado=Pago.Estado.APROBADO)
         self.congelar_ahora(self.fecha, time(11, 30))  # falta 30', ya pagado
         self.autenticar(self.crear_admin())
 
+        # Act
         resp = self.cancelar()
 
+        # Assert
         self.assertEqual(resp.status_code, 200, resp.data)
         self.turno.refresh_from_db()
         pago.refresh_from_db()
@@ -309,6 +368,7 @@ class CancelarTurnoTests(TurnosBase):
 
 class ServiciosMasSolicitadosTests(TurnosBase):
     def test_ranking_ordenado_sin_cancelados_y_acotado_al_barbero(self):
+        # Arrange
         barbero_a = self.crear_barbero()
         barbero_b = self.crear_barbero()
         cliente = self.crear_cliente()
@@ -322,7 +382,9 @@ class ServiciosMasSolicitadosTests(TurnosBase):
         self.crear_turno(cliente, barbero_b, barba, hora_inicio=time(9, 0))
         self.autenticar(barbero_a.usuario)
 
+        # Act
         resp = self.client.get(reverse('servicios-mas-solicitados'))
 
+        # Assert
         self.assertEqual(resp.status_code, 200)
         self.assertEqual([(r['nombre'], r['cantidad']) for r in resp.data], [('Corte', 3), ('Barba', 1)])
