@@ -29,7 +29,7 @@ const CONTENIDO: Record<Resultado, Contenido> = {
     titulo: 'No se pudo completar el pago',
     mensaje:
       'El pago no se realizó y la reserva puede haberse cancelado. Podés revisar el estado en Mis turnos o volver a reservar.',
-    clasesTitulo: 'text-bl-danger',
+    clasesTitulo: 'text-bl-danger-text',
   },
 };
 
