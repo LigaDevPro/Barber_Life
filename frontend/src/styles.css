@@ -2,29 +2,24 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Paleta de la guía de estilos vigente en Figma ("Guía de estilos · UI Kit") */
-  --color-bl-bg: #313338;
-  --color-bl-surface: #2b2d31;
-  --color-bl-surface-2: #1e1f22;
-  --color-bl-border: #3f4147;
-  --color-bl-text: #f2f3f5;
-  --color-bl-text-muted: #949ba4;
-  --color-bl-accent: #5865f2;
-  --color-bl-accent-2: #4752c4;
-  --color-bl-accent-3: #949cf7;
-  --color-bl-blue: #00a8fc;
-  --color-bl-info: #00a8fc;
-  --color-bl-danger: #ed4245;
-  /* Texto/borde de errores y acciones destructivas sobre fondo oscuro (contraste AA 5.01:1) */
-  --color-bl-danger-text: #ff7a7c;
-  --color-bl-success: #57f287;
-  --color-bl-warning: #fee75c;
+  --color-bl-bg: #0b0b10;
+  --color-bl-surface: #16161e;
+  --color-bl-surface-2: #1c1c26;
+  --color-bl-border: #2a2a36;
+  --color-bl-text: #f5f5f7;
+  --color-bl-text-muted: #808080;
+  --color-bl-accent: #6c4eff;
+  --color-bl-accent-2: #856dff;
+  --color-bl-accent-3: #ada2ff;
+  --color-bl-blue: #3a68ff;
+  --color-bl-blue-2: #5b82ff;
+  --color-bl-blue-3: #7f9dff;
+  --color-bl-danger: #e06f6f;
+  --color-bl-success: #6fdc9a;
+  --color-bl-warning: #e0c56f;
 
   --radius-card: 14px;
   --radius-field: 8px;
-  --radius-chip: 18px;
-  --radius-badge: 10px;
-  --radius-tile: 10px;
 
   --font-display: 'Syne', system-ui, -apple-system, sans-serif;
 }
@@ -41,10 +36,6 @@
     height: 100%;
   }
 
-  html {
-    color-scheme: dark;
-  }
-
   body {
     margin: 0;
     font-family: var(--font-display);
@@ -58,12 +49,6 @@
   select,
   textarea {
     font-family: inherit;
-  }
-
-  /* Foco visible para navegación por teclado (WCAG 2.4.7) */
-  :focus-visible {
-    outline: 2px solid var(--color-bl-accent-3);
-    outline-offset: 2px;
   }
 }
 
@@ -108,28 +93,8 @@
     @apply flex items-center justify-center gap-2.5 bg-transparent font-medium tracking-normal text-bl-text normal-case;
   }
 
-  /* Contenedor de página: columna angosta en celular, 1200px en escritorio (Figma 1440px). */
-  .bl-container {
-    @apply mx-auto w-full max-w-120 lg:max-w-300;
-  }
-
-  /* Panel de marca de login/registro en escritorio (degradé de la guía de Figma). */
-  .bl-hero-gradient {
-    background: linear-gradient(
-      135deg,
-      var(--color-bl-accent) 0%,
-      color-mix(in srgb, var(--color-bl-accent-2) 35%, var(--color-bl-surface-2)) 55%,
-      color-mix(in srgb, var(--color-bl-accent-2) 20%, var(--color-bl-surface-2)) 100%
-    );
-  }
-
-  /* Tarjeta destacada "Todo en un solo lugar". */
-  .bl-accent-gradient {
-    background: linear-gradient(135deg, var(--color-bl-accent-3) 0%, var(--color-bl-accent) 70%);
-  }
-
   .bl-error-text {
-    @apply -mt-1 text-[12.5px] text-bl-danger-text;
+    @apply -mt-1 text-[12.5px] text-bl-danger;
   }
 
   .bl-divider {

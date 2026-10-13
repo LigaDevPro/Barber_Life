@@ -11,7 +11,7 @@ class RegisterSerializer(serializers.Serializer):
     + confirmación. El rol se asigna 'cliente' por defecto — cuentas de
     barbero/administrador las da de alta el Administrador (CU-02, panel /admin/),
     igual que en un sistema real donde el staff no se autoregistra."""
-    email = serializers.EmailField(max_length=150)
+    email = serializers.EmailField()
     password = serializers.CharField(write_only=True, validators=[validate_password])
     password_confirm = serializers.CharField(write_only=True)
 
@@ -38,26 +38,15 @@ class RegisterSerializer(serializers.Serializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    MENSAJE_CREDENCIALES = 'Email o contraseña incorrectos.'
-    MENSAJE_CUENTA_INACTIVA = 'La cuenta está inactiva.'
-
-    email = serializers.CharField(max_length=254)
+    email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        email = attrs['email'].strip()
-        candidato = Usuario.objects.filter(email__iexact=email).first()
-        usuario = authenticate(
-            username=candidato.username if candidato else email,
-            password=attrs['password'],
-        )
+        usuario = authenticate(username=attrs['email'], password=attrs['password'])
         if usuario is None:
-            raise serializers.ValidationError(self.MENSAJE_CREDENCIALES)
-        # Va DESPUÉS de authenticate(): el mensaje de cuenta inactiva solo se
-        # muestra si la contraseña es correcta, así no sirve para averiguar
-        # si un email existe.
+            raise serializers.ValidationError('Email o contraseña incorrectos.')
         if not usuario.is_active:
-            raise serializers.ValidationError(self.MENSAJE_CUENTA_INACTIVA)
+            raise serializers.ValidationError('La cuenta está inactiva.')
         attrs['usuario'] = usuario
         return attrs
 

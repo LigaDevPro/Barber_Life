@@ -23,14 +23,6 @@ interface DiaOpcion {
 const DOW_CORTO = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 const PASOS_A_SEGUIR = 14;
 
-/** YYYY-MM-DD en hora local. `toISOString()` devuelve UTC y, de noche en
- * Argentina (UTC-3), ya marca el día siguiente. */
-function isoLocal(fecha: Date): string {
-  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-  const dia = String(fecha.getDate()).padStart(2, '0');
-  return `${fecha.getFullYear()}-${mes}-${dia}`;
-}
-
 @Component({
   selector: 'app-solicitar-turno',
   standalone: true,
@@ -84,7 +76,7 @@ export class SolicitarTurnoComponent implements OnInit {
       const isoWeekday = fecha.getDay() === 0 ? 7 : fecha.getDay();
       if (!diasConHorario.has(isoWeekday)) continue;
 
-      const iso = isoLocal(fecha);
+      const iso = fecha.toISOString().slice(0, 10);
       opciones.push({
         iso,
         diaSemana: isoWeekday,
@@ -100,8 +92,7 @@ export class SolicitarTurnoComponent implements OnInit {
    * barbero ese día con la duración del servicio — mismo criterio que ya
    * valida `TurnoCreateSerializer.validate()` en el backend (barbero +
    * servicio + horario activo + rango horario), así un slot que se ve acá
-   * disponible casi siempre pasa la validación del servidor. Para hoy se
-   * descartan los horarios que ya pasaron (el backend los rechaza). */
+   * disponible casi siempre pasa la validación del servidor. */
   horariosDisponibles = computed<string[]>(() => {
     const barbero = this.barberoSeleccionado();
     const servicio = this.servicioSeleccionado();
@@ -112,9 +103,6 @@ export class SolicitarTurnoComponent implements OnInit {
     const idsHorarioQueOfrecenServicio = new Set(
       barbero.servicios_ofrecidos.filter((so) => so.servicio === servicio.id).map((so) => so.horario),
     );
-
-    const ahora = new Date();
-    const minutosYaPasados = dia.iso === isoLocal(ahora) ? ahora.getHours() * 60 + ahora.getMinutes() : -1;
 
     const slots: string[] = [];
     for (const horario of barbero.horarios) {
@@ -130,7 +118,7 @@ export class SolicitarTurnoComponent implements OnInit {
         const hh = String(Math.floor(minutos / 60)).padStart(2, '0');
         const mm = String(minutos % 60).padStart(2, '0');
         const slot = `${hh}:${mm}`;
-        if (minutos > minutosYaPasados && !slots.includes(slot)) slots.push(slot);
+        if (!slots.includes(slot)) slots.push(slot);
         minutos += horario.intervalo_minutos;
       }
     }
