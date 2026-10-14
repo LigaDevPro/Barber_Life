@@ -44,12 +44,12 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
       <div class="bl-container relative flex items-center justify-between px-5 py-4 lg:px-0 lg:py-3.5">
         @if (logoPath(); as path) {
           <a [routerLink]="path" class="flex items-center gap-2 text-[15px] font-bold text-bl-text no-underline">
-            <bl-logo [size]="28" />
+            <bl-logo [size]="28" [decorativo]="true" />
             <span>Barber Life</span>
           </a>
         } @else {
           <span class="flex items-center gap-2 text-[15px] font-bold text-bl-text">
-            <bl-logo [size]="28" />
+            <bl-logo [size]="28" [decorativo]="true" />
             <span>Barber Life</span>
           </span>
         }
@@ -70,7 +70,7 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
 
           <a
             routerLink="/notificaciones"
-            aria-label="Notificaciones"
+            [attr.aria-label]="unreadCount() > 0 ? 'Notificaciones, ' + (unreadCount() > 9 ? 'más de 9' : unreadCount()) + ' sin leer' : 'Notificaciones'"
             class="relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl-text no-underline transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -84,7 +84,8 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
             </svg>
             @if (unreadCount() > 0) {
               <span
-                class="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-bl-danger px-1 text-[10px] font-bold text-white"
+                class="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-bl-danger px-1 text-[10px] font-bold text-bl-on-danger"
+                aria-hidden="true"
               >
                 {{ unreadCount() > 9 ? '9+' : unreadCount() }}
               </span>
@@ -109,7 +110,7 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
             type="button"
             data-testid="avatar-menu"
             (click)="toggle()"
-            aria-label="Menú de usuario"
+            [attr.aria-label]="iniciales() + ', menú de usuario'"
           >
             {{ iniciales() }}
           </button>
