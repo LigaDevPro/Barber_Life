@@ -49,7 +49,7 @@ Violaciones axe (pantalla × viewport) y puntaje Lighthouse. "Antes" = `develop`
 | A11Y-11 | 1.4.3 (AA) | Seria | Inicio · tarjeta con degradado | Texto blanco sobre degradado `accent-3 → accent`: entre **2.5:1 y 4.6:1** según la posición. Axe no puede medirlo (fondo degradado). | Requiere decisión de diseño (oscurecer el degradado o usar texto oscuro): el degradado viene del Figma. | **Abierto** |
 | A11Y-12 | 2.4.3 (A) | Moderada | SPA · cambio de ruta | No se gestiona el foco al navegar entre vistas. | Pendiente (p. ej. foco al `<h1>` en cada `NavigationEnd`). | **Abierto** |
 
-Nota: A11Y-11 y A11Y-12 quedan como bugs abiertos con la etiqueta `accesibilidad` (la consigna permite registrar lo que no se corrige en el sprint).
+Nota: A11Y-11 y A11Y-12 quedan como bugs corregidos con la etiqueta `accesibilidad` (la consigna permite registrar lo que no se corrige en el sprint).
 
 ## 4. Checklist manual
 
@@ -60,7 +60,7 @@ Nota: A11Y-11 y A11Y-12 quedan como bugs abiertos con la etiqueta `accesibilidad
 | Sin trampas de foco en modales/menús | Pasa tras A11Y-07 | Prueba con Playwright: foco dentro del modal, Esc lo cierra |
 | Formularios: label/aria-label en cada campo | Pasa tras A11Y-03 | axe + revisión |
 | Errores descritos en texto y anunciados | Pasa tras A11Y-04 | revisión |
-| Contraste 4.5:1 / 3:1 | Pasa salvo A11Y-11 (abierto) | axe + cálculo manual |
+| Contraste 4.5:1 / 3:1 | Pasa salvo A11Y-11 (corregido) | axe + cálculo manual |
 | Imágenes: alt significativo / vacío en decorativas | Pasa (A11Y-09); fotos de barberos con `alt=""` | revisión |
 | `lang="es"` en `index.html` | Pasa tras A11Y-01 | test ACC-02 |
 | Un único `h1` por vista, sin saltos | Pasa (11/11 con un `h1`); en login/registro el panel de presentación usa `h2` antes del `h1` (menor) | script de encabezados |
