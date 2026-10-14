@@ -17,6 +17,8 @@
   --color-bl-danger: #ed4245;
   /* Texto/borde de errores y acciones destructivas sobre fondo oscuro (contraste AA 5.01:1) */
   --color-bl-danger-text: #ff7a7c;
+  /* Texto sobre fondos de peligro: negro da 5.46:1 sobre #ed4245 (el blanco solo 3.84:1, WCAG 1.4.3). */
+  --color-bl-on-danger: #000000;
   --color-bl-success: #57f287;
   --color-bl-warning: #fee75c;
 
