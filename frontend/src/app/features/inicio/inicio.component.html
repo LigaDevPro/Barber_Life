@@ -153,6 +153,7 @@
               <button
                 type="button"
                 (click)="abrirBarbero(b)"
+                data-testid="inicio-barbero"
                 class="flex cursor-pointer flex-col items-start gap-3 rounded-card border border-bl-border bg-bl-surface p-4 text-left text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
               >
                 @if (b.foto_perfil_url) {
@@ -193,6 +194,9 @@
     <div
       role="dialog"
       aria-modal="true"
+      aria-label="Perfil del barbero"
+      blDialogFocus
+      (blDialogClose)="cerrarModal()"
       class="mx-auto flex w-full max-w-120 flex-col gap-5 rounded-t-2xl border-t border-bl-border bg-bl-surface p-5 pb-6 lg:max-w-130 lg:rounded-card lg:border"
       (click)="$event.stopPropagation()"
     >

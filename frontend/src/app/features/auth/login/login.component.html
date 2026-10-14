@@ -1,7 +1,7 @@
 <div class="min-h-screen lg:grid lg:grid-cols-2">
-  <bl-auth-hero class="hidden lg:block" />
+  <aside class="hidden lg:block" aria-label="Presentación de Barber Life"><bl-auth-hero /></aside>
 
-  <div
+  <main
     class="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_50%_0%,var(--color-bl-surface)_0%,var(--color-bl-bg)_60%)] p-6 lg:bg-bl-bg lg:bg-none"
   >
   <div class="flex w-full max-w-95 flex-col items-center gap-1.5 text-center lg:max-w-105">
@@ -24,11 +24,15 @@
         [class.bl-input--error]="form.get('email')?.invalid && form.get('email')?.touched"
         type="email"
         placeholder="Ingresa tu email"
+        aria-label="Email"
+        autocomplete="email"
+        [attr.aria-invalid]="form.get('email')?.invalid && form.get('email')?.touched ? true : null"
+        aria-describedby="login-email-error"
         data-testid="login-email"
         formControlName="email"
       />
       @if (form.get('email')?.invalid && form.get('email')?.touched) {
-        <span class="bl-error-text" data-testid="login-email-error">Ingresá un email válido.</span>
+        <span class="bl-error-text" id="login-email-error" role="alert" data-testid="login-email-error">Ingresá un email válido.</span>
       }
 
       <input
@@ -36,11 +40,15 @@
         [class.bl-input--error]="form.get('password')?.invalid && form.get('password')?.touched"
         type="password"
         placeholder="Ingresa tu contraseña"
+        aria-label="Contraseña"
+        autocomplete="current-password"
+        [attr.aria-invalid]="form.get('password')?.invalid && form.get('password')?.touched ? true : null"
+        aria-describedby="login-password-error"
         data-testid="login-password"
         formControlName="password"
       />
       @if (form.get('password')?.invalid && form.get('password')?.touched) {
-        <span class="bl-error-text" data-testid="login-password-error">La contraseña es obligatoria.</span>
+        <span class="bl-error-text" id="login-password-error" role="alert" data-testid="login-password-error">La contraseña es obligatoria.</span>
       }
 
       @if (errorMsg()) {
@@ -78,7 +86,7 @@
           d="M9 3.55c1.3 0 2.5.45 3.4 1.35l2.55-2.55C13.4.85 11.4 0 9 0 5.55 0 2.55 2.05 1.05 4.85l3 2.3C4.75 5.05 6.7 3.55 9 3.55Z"
         />
       </svg>
-      Sign in with Google
+      <span lang="en">Sign in with Google</span>
     </button>
 
     <p class="mt-4.5 text-[13.5px] text-bl-text-muted">
@@ -88,5 +96,5 @@
       >
     </p>
   </div>
-  </div>
+  </main>
 </div>
