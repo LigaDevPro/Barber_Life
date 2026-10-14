@@ -95,6 +95,8 @@
       <div
         role="alertdialog"
         aria-modal="true"
+        blDialogFocus
+        (blDialogClose)="cerrarConfirmacion()"
         aria-labelledby="cancelar-titulo"
         aria-describedby="cancelar-detalle"
         data-testid="dialogo-cancelar"
@@ -109,7 +111,7 @@
           <button
             type="button"
             data-testid="confirmar-cancelar"
-            class="bl-btn border-bl-danger bg-bl-danger text-white"
+            class="bl-btn border-bl-danger bg-bl-danger text-bl-on-danger"
             (click)="confirmarCancelacion()"
           >
             Sí, cancelar turno

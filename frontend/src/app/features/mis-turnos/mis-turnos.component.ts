@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { TurnoService } from '../../core/services/turno.service';
 import { Pagina, TurnoResumen } from '../../core/models/models';
+import { DialogFocusDirective } from '../../shared/dialog-focus/dialog-focus.directive';
 import { TopbarComponent } from '../../shared/topbar/topbar.component';
 
 const ESTADO_CLASSES: Record<string, string> = {
@@ -16,7 +17,7 @@ const ESTADO_CLASSES: Record<string, string> = {
 @Component({
   selector: 'app-mis-turnos',
   standalone: true,
-  imports: [CommonModule, RouterLink, TopbarComponent],
+  imports: [CommonModule, RouterLink, TopbarComponent, DialogFocusDirective],
   templateUrl: './mis-turnos.component.html',
 })
 export class MisTurnosComponent implements OnInit {
