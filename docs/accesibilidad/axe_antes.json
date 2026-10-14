@@ -1,0 +1,1058 @@
+[
+ {
+  "vp": "desktop",
+  "pantalla": "login",
+  "url": "http://127.0.0.1:4200/login",
+  "title": "Barber Life",
+  "id": "landmark-one-main",
+  "impact": "moderate",
+  "help": "Document should have one main landmark",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<html lang=\"en\" data-beasties-container=\"\">",
+  "target": [
+   "html"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "login",
+  "url": "http://127.0.0.1:4200/login",
+  "title": "Barber Life",
+  "id": "region",
+  "impact": "moderate",
+  "help": "All page content should be contained by landmarks",
+  "tags": [],
+  "nodes": 7,
+  "ejemplo": "<bl-auth-hero class=\"hidden lg:block\">",
+  "target": [
+   "bl-auth-hero"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "login",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/login",
+  "title": "Barber Life",
+  "passes": 25,
+  "violations": 2
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "register",
+  "url": "http://127.0.0.1:4200/register",
+  "title": "Barber Life",
+  "id": "landmark-one-main",
+  "impact": "moderate",
+  "help": "Document should have one main landmark",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<html lang=\"en\" data-beasties-container=\"\">",
+  "target": [
+   "html"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "register",
+  "url": "http://127.0.0.1:4200/register",
+  "title": "Barber Life",
+  "id": "region",
+  "impact": "moderate",
+  "help": "All page content should be contained by landmarks",
+  "tags": [],
+  "nodes": 8,
+  "ejemplo": "<bl-auth-hero class=\"hidden lg:block\">",
+  "target": [
+   "bl-auth-hero"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "register",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/register",
+  "title": "Barber Life",
+  "passes": 25,
+  "violations": 2
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "inicio",
+  "url": "http://127.0.0.1:4200/inicio",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "inicio",
+  "url": "http://127.0.0.1:4200/inicio",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 2,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "inicio",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/inicio",
+  "title": "Barber Life",
+  "passes": 28,
+  "violations": 2
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "solicitar-turno",
+  "url": "http://127.0.0.1:4200/solicitar-turno",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "solicitar-turno",
+  "url": "http://127.0.0.1:4200/solicitar-turno",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 2,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "solicitar-turno",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/solicitar-turno",
+  "title": "Barber Life",
+  "passes": 28,
+  "violations": 2
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "mis-turnos",
+  "url": "http://127.0.0.1:4200/mis-turnos",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "mis-turnos",
+  "url": "http://127.0.0.1:4200/mis-turnos",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 2,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "mis-turnos",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/mis-turnos",
+  "title": "Barber Life",
+  "passes": 29,
+  "violations": 2
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "perfil-cliente",
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "perfil-cliente",
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 2,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "perfil-cliente",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "passes": 31,
+  "violations": 2
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "notificaciones",
+  "url": "http://127.0.0.1:4200/notificaciones",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "notificaciones",
+  "url": "http://127.0.0.1:4200/notificaciones",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 2,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "notificaciones",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/notificaciones",
+  "title": "Barber Life",
+  "passes": 30,
+  "violations": 2
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "dashboard",
+  "url": "http://127.0.0.1:4200/dashboard",
+  "title": "Barber Life",
+  "id": "color-contrast",
+  "impact": "serious",
+  "help": "Elements must meet minimum color contrast ratio thresholds",
+  "tags": [
+   "wcag2aa",
+   "wcag143"
+  ],
+  "nodes": 1,
+  "ejemplo": "<span class=\"absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-bl-danger px-1 text-[10px] font-bold text-white\"> 9+ </sp",
+  "target": [
+   ".absolute"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "dashboard",
+  "url": "http://127.0.0.1:4200/dashboard",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "dashboard",
+  "url": "http://127.0.0.1:4200/dashboard",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 2,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "dashboard",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/dashboard",
+  "title": "Barber Life",
+  "passes": 30,
+  "violations": 3
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "gestion-turnos",
+  "url": "http://127.0.0.1:4200/turnos",
+  "title": "Barber Life",
+  "id": "color-contrast",
+  "impact": "serious",
+  "help": "Elements must meet minimum color contrast ratio thresholds",
+  "tags": [
+   "wcag2aa",
+   "wcag143"
+  ],
+  "nodes": 1,
+  "ejemplo": "<span class=\"absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-bl-danger px-1 text-[10px] font-bold text-white\"> 9+ </sp",
+  "target": [
+   ".absolute"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "gestion-turnos",
+  "url": "http://127.0.0.1:4200/turnos",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "gestion-turnos",
+  "url": "http://127.0.0.1:4200/turnos",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 2,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "gestion-turnos",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/turnos",
+  "title": "Barber Life",
+  "passes": 34,
+  "violations": 3
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "catalogo",
+  "url": "http://127.0.0.1:4200/catalogo",
+  "title": "Barber Life",
+  "id": "color-contrast",
+  "impact": "serious",
+  "help": "Elements must meet minimum color contrast ratio thresholds",
+  "tags": [
+   "wcag2aa",
+   "wcag143"
+  ],
+  "nodes": 1,
+  "ejemplo": "<span class=\"absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-bl-danger px-1 text-[10px] font-bold text-white\"> 9+ </sp",
+  "target": [
+   ".absolute"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "catalogo",
+  "url": "http://127.0.0.1:4200/catalogo",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "catalogo",
+  "url": "http://127.0.0.1:4200/catalogo",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 2,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "catalogo",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/catalogo",
+  "title": "Barber Life",
+  "passes": 28,
+  "violations": 3
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "perfil-barbero",
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "id": "color-contrast",
+  "impact": "serious",
+  "help": "Elements must meet minimum color contrast ratio thresholds",
+  "tags": [
+   "wcag2aa",
+   "wcag143"
+  ],
+  "nodes": 1,
+  "ejemplo": "<span class=\"absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-bl-danger px-1 text-[10px] font-bold text-white\"> 9+ </sp",
+  "target": [
+   ".absolute"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "perfil-barbero",
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "perfil-barbero",
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 2,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "perfil-barbero",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "passes": 31,
+  "violations": 3
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "login",
+  "url": "http://127.0.0.1:4200/login",
+  "title": "Barber Life",
+  "id": "landmark-one-main",
+  "impact": "moderate",
+  "help": "Document should have one main landmark",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<html lang=\"en\" data-beasties-container=\"\">",
+  "target": [
+   "html"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "login",
+  "url": "http://127.0.0.1:4200/login",
+  "title": "Barber Life",
+  "id": "region",
+  "impact": "moderate",
+  "help": "All page content should be contained by landmarks",
+  "tags": [],
+  "nodes": 7,
+  "ejemplo": "<bl-logo class=\"lg:hidden\"><img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 72px; height: 72px;\"></bl-logo>",
+  "target": [
+   ".lg\\:hidden"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "login",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/login",
+  "title": "Barber Life",
+  "passes": 23,
+  "violations": 2
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "register",
+  "url": "http://127.0.0.1:4200/register",
+  "title": "Barber Life",
+  "id": "landmark-one-main",
+  "impact": "moderate",
+  "help": "Document should have one main landmark",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<html lang=\"en\" data-beasties-container=\"\">",
+  "target": [
+   "html"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "register",
+  "url": "http://127.0.0.1:4200/register",
+  "title": "Barber Life",
+  "id": "region",
+  "impact": "moderate",
+  "help": "All page content should be contained by landmarks",
+  "tags": [],
+  "nodes": 8,
+  "ejemplo": "<bl-logo class=\"lg:hidden\"><img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 58px; height: 58px;\"></bl-logo>",
+  "target": [
+   ".lg\\:hidden"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "register",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/register",
+  "title": "Barber Life",
+  "passes": 23,
+  "violations": 2
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "inicio",
+  "url": "http://127.0.0.1:4200/inicio",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "inicio",
+  "url": "http://127.0.0.1:4200/inicio",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 1,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "inicio",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/inicio",
+  "title": "Barber Life",
+  "passes": 28,
+  "violations": 2
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "solicitar-turno",
+  "url": "http://127.0.0.1:4200/solicitar-turno",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "solicitar-turno",
+  "url": "http://127.0.0.1:4200/solicitar-turno",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 1,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "solicitar-turno",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/solicitar-turno",
+  "title": "Barber Life",
+  "passes": 28,
+  "violations": 2
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "mis-turnos",
+  "url": "http://127.0.0.1:4200/mis-turnos",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "mis-turnos",
+  "url": "http://127.0.0.1:4200/mis-turnos",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 1,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "mis-turnos",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/mis-turnos",
+  "title": "Barber Life",
+  "passes": 29,
+  "violations": 2
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "perfil-cliente",
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "perfil-cliente",
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 1,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "perfil-cliente",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "passes": 31,
+  "violations": 2
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "notificaciones",
+  "url": "http://127.0.0.1:4200/notificaciones",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "notificaciones",
+  "url": "http://127.0.0.1:4200/notificaciones",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 1,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "notificaciones",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/notificaciones",
+  "title": "Barber Life",
+  "passes": 30,
+  "violations": 2
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "dashboard",
+  "url": "http://127.0.0.1:4200/dashboard",
+  "title": "Barber Life",
+  "id": "color-contrast",
+  "impact": "serious",
+  "help": "Elements must meet minimum color contrast ratio thresholds",
+  "tags": [
+   "wcag2aa",
+   "wcag143"
+  ],
+  "nodes": 1,
+  "ejemplo": "<span class=\"absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-bl-danger px-1 text-[10px] font-bold text-white\"> 9+ </sp",
+  "target": [
+   ".absolute"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "dashboard",
+  "url": "http://127.0.0.1:4200/dashboard",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "dashboard",
+  "url": "http://127.0.0.1:4200/dashboard",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 1,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "dashboard",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/dashboard",
+  "title": "Barber Life",
+  "passes": 30,
+  "violations": 3
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "gestion-turnos",
+  "url": "http://127.0.0.1:4200/turnos",
+  "title": "Barber Life",
+  "id": "color-contrast",
+  "impact": "serious",
+  "help": "Elements must meet minimum color contrast ratio thresholds",
+  "tags": [
+   "wcag2aa",
+   "wcag143"
+  ],
+  "nodes": 1,
+  "ejemplo": "<span class=\"absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-bl-danger px-1 text-[10px] font-bold text-white\"> 9+ </sp",
+  "target": [
+   ".absolute"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "gestion-turnos",
+  "url": "http://127.0.0.1:4200/turnos",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "gestion-turnos",
+  "url": "http://127.0.0.1:4200/turnos",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 1,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "gestion-turnos",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/turnos",
+  "title": "Barber Life",
+  "passes": 34,
+  "violations": 3
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "catalogo",
+  "url": "http://127.0.0.1:4200/catalogo",
+  "title": "Barber Life",
+  "id": "color-contrast",
+  "impact": "serious",
+  "help": "Elements must meet minimum color contrast ratio thresholds",
+  "tags": [
+   "wcag2aa",
+   "wcag143"
+  ],
+  "nodes": 1,
+  "ejemplo": "<span class=\"absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-bl-danger px-1 text-[10px] font-bold text-white\"> 9+ </sp",
+  "target": [
+   ".absolute"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "catalogo",
+  "url": "http://127.0.0.1:4200/catalogo",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "catalogo",
+  "url": "http://127.0.0.1:4200/catalogo",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 1,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "catalogo",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/catalogo",
+  "title": "Barber Life",
+  "passes": 28,
+  "violations": 3
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "perfil-barbero",
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "id": "color-contrast",
+  "impact": "serious",
+  "help": "Elements must meet minimum color contrast ratio thresholds",
+  "tags": [
+   "wcag2aa",
+   "wcag143"
+  ],
+  "nodes": 1,
+  "ejemplo": "<span class=\"absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-bl-danger px-1 text-[10px] font-bold text-white\"> 9+ </sp",
+  "target": [
+   ".absolute"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "perfil-barbero",
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "id": "image-redundant-alt",
+  "impact": "minor",
+  "help": "Alternative text of images should not be repeated as text",
+  "tags": [],
+  "nodes": 1,
+  "ejemplo": "<img src=\"img/logo.png\" alt=\"Barber Life\" class=\"object-contain\" style=\"width: 28px; height: 28px;\">",
+  "target": [
+   "img"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "perfil-barbero",
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "id": "label-content-name-mismatch",
+  "impact": "serious",
+  "help": "Elements must have their visible text as part of their accessible name",
+  "tags": [
+   "wcag21a",
+   "wcag253"
+  ],
+  "nodes": 1,
+  "ejemplo": "<a routerlink=\"/notificaciones\" aria-label=\"Notificaciones\" class=\"relative flex cursor-pointer rounded-field border border-bl-border bg-transparent p-2 text-bl",
+  "target": [
+   "a[routerlink=\"/notificaciones\"]"
+  ]
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "perfil-barbero",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Barber Life",
+  "passes": 31,
+  "violations": 3
+ }
+]
