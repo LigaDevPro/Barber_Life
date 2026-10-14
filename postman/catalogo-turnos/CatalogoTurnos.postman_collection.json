@@ -1,0 +1,1711 @@
+{
+  "info": {
+    "name": "Barber Life - API 2: Catálogo y Turnos",
+    "description": "Servicios, horarios, oferta barbero-servicio y ciclo de vida de turnos (reserva, solapamiento, pasado, estado, cancelación). Autocontenida: hace su propio setup y limpia al final. Requiere seed_demo.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 Setup (usuarios y tokens)",
+      "item": [
+        {
+          "name": "Setup: Registro cliente OK",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Mensaje de cuenta creada\", () => pm.expect(pm.response.json().detail).to.include(\"Cuenta creada\"));"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const ts = Date.now();",
+                  "pm.collectionVariables.set(\"emailCliente\", `cliente.${ts}@mail.com`);",
+                  "pm.collectionVariables.set(\"passCliente\", \"Cliente#2026x\");",
+                  "const d = new Date(); d.setDate(d.getDate() + 3);",
+                  "pm.collectionVariables.set(\"fechaTurno\", d.toISOString().slice(0,10));",
+                  "pm.collectionVariables.set(\"diaSemana\", String(d.getDay() === 0 ? 7 : d.getDay()));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"email\": \"{{emailCliente}}\",\n  \"password\": \"{{passCliente}}\",\n  \"password_confirm\": \"{{passCliente}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Setup: Login cliente OK",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Devuelve access, refresh y usuario\", () => { pm.expect(j).to.have.keys(\"access\",\"refresh\",\"usuario\"); });",
+                  "pm.test(\"Rol cliente\", () => pm.expect(j.usuario.rol).to.eql(\"cliente\"));",
+                  "pm.collectionVariables.set(\"tokenCliente\", j.access);",
+                  "pm.collectionVariables.set(\"refreshCliente\", j.refresh);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"email\": \"{{emailCliente}}\",\n  \"password\": \"{{passCliente}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Setup: Login admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Rol admin\", () => pm.expect(j.usuario.rol).to.eql(\"admin\"));",
+                  "pm.collectionVariables.set(\"tokenAdmin\", j.access);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPass}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Setup: Login barbero",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Rol barbero\", () => pm.expect(j.usuario.rol).to.eql(\"barbero\"));",
+                  "pm.collectionVariables.set(\"tokenBarbero\", j.access);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"email\": \"{{barberoEmail}}\",\n  \"password\": \"{{barberoPass}}\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 Catálogo (servicios, horarios, oferta)",
+      "item": [
+        {
+          "name": "Servicios: listar (público)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Es un array\", () => pm.expect(pm.response.json()).to.be.an(\"array\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/servicios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servicios",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Servicio: crear como admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Campos del servicio\", () => pm.expect(j).to.include.keys(\"id\",\"nombre\",\"duracion_minutos\",\"precio\",\"activo\"));",
+                  "pm.collectionVariables.set(\"servicioId\", j.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servicios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servicios",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"nombre\": \"Servicio QA {{$timestamp}}\",\n  \"duracion_minutos\": 30,\n  \"precio\": \"7500.00\",\n  \"activo\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Servicio: crear como cliente -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servicios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servicios",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"nombre\": \"Hack\",\n  \"duracion_minutos\": 30,\n  \"precio\": \"1\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Servicio: crear sin token -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servicios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servicios",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"nombre\": \"Hack\",\n  \"duracion_minutos\": 30,\n  \"precio\": \"1\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Servicio: duración 0 -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servicios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servicios",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"nombre\": \"Malo\",\n  \"duracion_minutos\": 0,\n  \"precio\": \"100\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Servicio: precio negativo -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servicios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servicios",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"nombre\": \"Malo\",\n  \"duracion_minutos\": 30,\n  \"precio\": \"-5\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Servicio: editar precio (PATCH)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Precio actualizado\", () => pm.expect(Number(pm.response.json().precio)).to.eql(9000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servicios/{{servicioId}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servicios",
+                "{{servicioId}}",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"precio\": \"9000.00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Barberos: listar y tomar uno",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "const lista = Array.isArray(j) ? j : j.results;",
+                  "pm.test(\"Hay al menos un barbero\", () => pm.expect(lista.length).to.be.above(0));",
+                  "pm.collectionVariables.set(\"barberoId\", lista[0].id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/barberos/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "barberos",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Horario: crear como admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.collectionVariables.set(\"horarioId\", j.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/horarios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "horarios",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"barbero\": \"{{barberoId}}\",\n  \"dia_semana\": \"{{diaSemana}}\",\n  \"hora_inicio\": \"08:00:00\",\n  \"hora_fin\": \"20:00:00\",\n  \"intervalo_minutos\": 30,\n  \"activo\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Horario: hora fin <= inicio -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Error en hora_fin\", () => pm.expect(pm.response.json()).to.have.property(\"hora_fin\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/horarios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "horarios",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"barbero\": \"{{barberoId}}\",\n  \"dia_semana\": 1,\n  \"hora_inicio\": \"18:00:00\",\n  \"hora_fin\": \"09:00:00\",\n  \"intervalo_minutos\": 30\n}"
+            }
+          }
+        },
+        {
+          "name": "Horario: crear como cliente -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/horarios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "horarios",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"dia_semana\": 1,\n  \"hora_inicio\": \"09:00:00\",\n  \"hora_fin\": \"10:00:00\",\n  \"intervalo_minutos\": 30\n}"
+            }
+          }
+        },
+        {
+          "name": "Oferta barbero-servicio: crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Precio final informado (> 0)\", () => pm.expect(Number(pm.response.json().precio)).to.be.above(0));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/barbero-servicio/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "barbero-servicio",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"barbero\": \"{{barberoId}}\",\n  \"servicio\": \"{{servicioId}}\",\n  \"horario\": \"{{horarioId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Oferta barbero-servicio: duplicada -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/barbero-servicio/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "barbero-servicio",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"barbero\": \"{{barberoId}}\",\n  \"servicio\": \"{{servicioId}}\",\n  \"horario\": \"{{horarioId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Oferta: listar por barbero (público)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Incluye el servicio creado\", () => pm.expect(pm.response.json().some(o => o.servicio == pm.collectionVariables.get(\"servicioId\"))).to.be.true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/barbero-servicio/?barbero={{barberoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "barbero-servicio",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "barbero",
+                  "value": "{{barberoId}}"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Turnos",
+      "item": [
+        {
+          "name": "Reservar turno OK (cliente)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Estado inicial pendiente\", () => pm.expect(j.estado).to.eql(\"pendiente\"));",
+                  "pm.collectionVariables.set(\"turnoId\", j.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"barbero\": \"{{barberoId}}\",\n  \"servicio\": \"{{servicioId}}\",\n  \"fecha_turno\": \"{{fechaTurno}}\",\n  \"hora_inicio\": \"10:00:00\",\n  \"observaciones\": \"Reserva automática QA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reservar mismo horario -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"barbero\": \"{{barberoId}}\",\n  \"servicio\": \"{{servicioId}}\",\n  \"fecha_turno\": \"{{fechaTurno}}\",\n  \"hora_inicio\": \"10:00:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reservar en el pasado -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"barbero\": \"{{barberoId}}\",\n  \"servicio\": \"{{servicioId}}\",\n  \"fecha_turno\": \"2020-01-06\",\n  \"hora_inicio\": \"10:00:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reservar fuera del horario del barbero -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"barbero\": \"{{barberoId}}\",\n  \"servicio\": \"{{servicioId}}\",\n  \"fecha_turno\": \"{{fechaTurno}}\",\n  \"hora_inicio\": \"03:00:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reservar sin token -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"barbero\": \"{{barberoId}}\",\n  \"servicio\": \"{{servicioId}}\",\n  \"fecha_turno\": \"{{fechaTurno}}\",\n  \"hora_inicio\": \"11:00:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reservar como barbero -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenBarbero}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"barbero\": \"{{barberoId}}\",\n  \"servicio\": \"{{servicioId}}\",\n  \"fecha_turno\": \"{{fechaTurno}}\",\n  \"hora_inicio\": \"11:00:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reservar sin campos obligatorios -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{}"
+            }
+          }
+        },
+        {
+          "name": "Mis turnos (cliente) incluye el reservado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "const j = pm.response.json();",
+                  "pm.test(\"Paginación estándar\", () => pm.expect(j).to.include.keys(\"count\",\"page\",\"num_pages\",\"results\"));",
+                  "pm.test(\"Contiene el turno\", () => pm.expect(j.results.some(t => t.id == pm.collectionVariables.get(\"turnoId\"))).to.be.true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/mis-turnos/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "mis-turnos",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mis turnos sin token -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/mis-turnos/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "mis-turnos",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Agenda (/turnos/) como cliente -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Agenda como admin -> 200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"page_size 7 máx\", () => pm.expect(pm.response.json().results.length).to.be.at.most(7));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/?barbero={{barberoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "barbero",
+                  "value": "{{barberoId}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Agenda filtrada por estado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Todos pendientes\", () => pm.response.json().results.forEach(t => pm.expect(t.estado).to.eql(\"pendiente\")));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/?estado=pendiente",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "pendiente"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cambiar estado a confirmado (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Estado confirmado\", () => pm.expect(pm.response.json().estado).to.eql(\"confirmado\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/{{turnoId}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "{{turnoId}}",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"estado\": \"confirmado\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Cambiar a estado inválido -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/{{turnoId}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "{{turnoId}}",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"estado\": \"inventado\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Cliente no puede PATCH estado -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/{{turnoId}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "{{turnoId}}",
+                ""
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\n  \"estado\": \"completado\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Servicios más solicitados",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Es un array\", () => pm.expect(pm.response.json()).to.be.an(\"array\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/servicios-mas-solicitados/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "servicios-mas-solicitados",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancelar turno inexistente -> 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/99999999/cancelar/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "99999999",
+                "cancelar",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancelar turno propio (cliente)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Estado cancelado\", () => pm.expect(pm.response.json().estado).to.eql(\"cancelado\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/{{turnoId}}/cancelar/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "{{turnoId}}",
+                "cancelar",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancelar turno ya cancelado -> 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenCliente}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/turnos/{{turnoId}}/cancelar/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "turnos",
+                "{{turnoId}}",
+                "cancelar",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "99 Limpieza",
+      "item": [
+        {
+          "name": "Limpieza: baja lógica del servicio QA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Baja aceptada\", () => pm.expect([200,204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servicios/{{servicioId}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servicios",
+                "{{servicioId}}",
+                ""
+              ]
+            }
+          }
+        },
+        {
+          "name": "Limpieza: baja lógica del horario QA",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Baja aceptada\", () => pm.expect([200,204]).to.include(pm.response.code));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/horarios/{{horarioId}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "horarios",
+                "{{horarioId}}",
+                ""
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000/api"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@barberlife.com"
+    },
+    {
+      "key": "adminPass",
+      "value": "admin1234"
+    },
+    {
+      "key": "barberoEmail",
+      "value": "barbero@barberlife.com"
+    },
+    {
+      "key": "barberoPass",
+      "value": "barbero1234"
+    },
+    {
+      "key": "tokenInvalido",
+      "value": "token.invalido.xxx"
+    }
+  ]
+}
