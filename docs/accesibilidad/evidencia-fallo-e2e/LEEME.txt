@@ -1,2 +1,0 @@
-Fallo real detectado por test_acc_01 contra develop sin correcciones (Dashboard): color-contrast (serious), insignia de notificaciones 3.84:1.
-Ver trace con: playwright show-trace trace.zip
