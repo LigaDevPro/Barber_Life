@@ -8,7 +8,7 @@ Se auditaron las 11 pantallas principales (login, registro, inicio, solicitar tu
 
 | Capa | Herramienta | Cómo |
 |---|---|---|
-| Automática | axe-core 4.x + Playwright (etiquetas wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa y best-practice) | `e2e/tests/test_accesibilidad.py` (ACC-01..03) |
+| Automática | axe-core 4.x + Playwright (etiquetas wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa y best-practice) | `e2e/tests/test_accesibilidad.py` (ACC-01..05) |
 | Automática | Lighthouse 12, categoría Accesibilidad | Informes HTML/JSON en `docs/accesibilidad/lighthouse/` |
 | Manual / semiautomática | Checklist mínimo de la consigna (teclado, formularios, contraste, imágenes, estructura, SPA, zoom/reflow) | Sección 4 |
 
@@ -30,7 +30,7 @@ Violaciones axe (pantalla × viewport) y puntaje Lighthouse. "Antes" = `develop`
 | Catálogo | 3 → 0 | 3 → 0 | 94 → 100 | 100 |
 | Perfil (barbero) | 3 → 0 | 3 → 0 | 94 → 100 | 100 |
 
-**Total axe: 52 violaciones → 0** (22 corridas). **Lighthouse: 94–100 → 100** en las 11 pantallas. El test E2E de accesibilidad pasó de **15 fallos de 33** a **33/33 en verde**; el fallo "antes" quedó registrado con trace, video y captura en `docs/accesibilidad/evidencia-fallo-e2e/`.
+**Total axe: 52 violaciones → 0** (22 corridas). **Lighthouse: 94–100 → 100** en las 11 pantallas. Los tests E2E de accesibilidad pasaron de **15 fallos de 33** a **33/33 en verde**, y los 2 tests de teclado sobre el diálogo (ACC-04 y ACC-05) fallaban antes y pasan después (**35/35** en total). El fallo "antes" quedó registrado con trace, video y captura en `docs/accesibilidad/evidencia-fallo-e2e/`: flujo login → abrir el perfil de un barbero → Esc, donde el diálogo no se cerraba (`test_acc_05`, A11Y-07).
 
 ## 3. Hallazgos y correcciones
 
@@ -46,21 +46,21 @@ Violaciones axe (pantalla × viewport) y puntaje Lighthouse. "Antes" = `develop`
 | A11Y-08 | 1.3.1 (A, best-practice) | Moderada | Login y registro | Sin landmark `<main>`; contenido fuera de landmarks. | `<main>` para el formulario y `<aside>` para el panel de presentación. | Corregido |
 | A11Y-09 | 1.1.1 (A, best-practice) | Leve | Barra superior · logo | `alt="Barber Life"` repite el texto que lo acompaña. | Logo decorativo (`alt=""`) cuando va con el texto. | Corregido |
 | A11Y-10 | 1.4.3 (AA) | Seria | Mis turnos · botón "Sí, cancelar turno" | Texto blanco sobre `#ED4245`: 3.84:1 (detectado por revisión manual del código; axe no lo ve porque el diálogo está cerrado). | Mismo token `--color-bl-on-danger`. | Corregido |
-| A11Y-11 | 1.4.3 (AA) | Seria | Inicio · tarjeta con degradado | Texto blanco sobre degradado `accent-3 → accent`: entre **2.5:1 y 4.6:1** según la posición. Axe no puede medirlo (fondo degradado). | Requiere decisión de diseño (oscurecer el degradado o usar texto oscuro): el degradado viene del Figma. | **Abierto** |
+| A11Y-11 | 1.4.3 (AA) | Seria | Inicio · tarjeta con degradado | Texto blanco sobre degradado `accent-3 → accent`: entre **2.5:1 y 4.6:1** según la posición. Axe no puede medirlo (fondo degradado). | El degradado pasa a `accent → accent-2` (`.bl-accent-gradient` en `styles.css`): el texto blanco queda entre **4.61:1 y 6.42:1** en toda la tarjeta, sin cambiar el texto ni la paleta. | Corregido |
 | A11Y-12 | 2.4.3 (A) | Moderada | SPA · cambio de ruta | No se gestiona el foco al navegar entre vistas. | Pendiente (p. ej. foco al `<h1>` en cada `NavigationEnd`). | **Abierto** |
 
-Nota: A11Y-11 y A11Y-12 quedan como bugs corregidos con la etiqueta `accesibilidad` (la consigna permite registrar lo que no se corrige en el sprint).
+Nota: A11Y-12 queda como bug abierto con la etiqueta `accesibilidad` (la consigna permite registrar lo que no se corrige en el sprint).
 
 ## 4. Checklist manual
 
 | Ítem | Resultado | Evidencia |
 |---|---|---|
-| Teclado: Tab/Shift+Tab/Enter/Espacio/Esc operan toda la funcionalidad | Pasa (modales corregidos, A11Y-07) | Recorrido con Playwright (Tab) en login |
+| Teclado: Tab/Shift+Tab/Enter/Espacio/Esc operan toda la funcionalidad | Pasa (modales corregidos, A11Y-07) | Recorrido con Playwright (Tab) en login y test ACC-04 |
 | Orden de foco lógico y foco visible | Pasa: botones y enlaces con contorno 2 px; campos con borde `accent` (3.6:1 contra el fondo) | Recorrido con Playwright (Tab) en login |
-| Sin trampas de foco en modales/menús | Pasa tras A11Y-07 | Prueba con Playwright: foco dentro del modal, Esc lo cierra |
+| Sin trampas de foco en modales/menús | Pasa tras A11Y-07 | Tests ACC-04 y ACC-05: foco dentro del modal y Esc lo cierra |
 | Formularios: label/aria-label en cada campo | Pasa tras A11Y-03 | axe + revisión |
 | Errores descritos en texto y anunciados | Pasa tras A11Y-04 | revisión |
-| Contraste 4.5:1 / 3:1 | Pasa salvo A11Y-11 (corregido) | axe + cálculo manual |
+| Contraste 4.5:1 / 3:1 | Pasa tras A11Y-10 y A11Y-11 | axe + cálculo manual |
 | Imágenes: alt significativo / vacío en decorativas | Pasa (A11Y-09); fotos de barberos con `alt=""` | revisión |
 | `lang="es"` en `index.html` | Pasa tras A11Y-01 | test ACC-02 |
 | Un único `h1` por vista, sin saltos | Pasa (11/11 con un `h1`); en login/registro el panel de presentación usa `h2` antes del `h1` (menor) | script de encabezados |
@@ -80,6 +80,6 @@ Anotar, por paso, lo que NVDA anuncia: (1) abrir `/login` → título y landmark
 docker compose up
 docker compose exec backend python manage.py seed_demo
 cd e2e && pip install -r requirements.txt && playwright install chromium
-pytest tests/test_accesibilidad.py
+pytest tests/test_accesibilidad.py tests/test_accesibilidad_teclado.py
 ```
 Lighthouse: Chrome DevTools → Lighthouse → Accesibilidad (modo Escritorio y Celular) sobre cada pantalla.
