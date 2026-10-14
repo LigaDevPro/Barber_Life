@@ -127,7 +127,7 @@
 
   /* Tarjeta destacada "Todo en un solo lugar". */
   .bl-accent-gradient {
-    background: linear-gradient(135deg, var(--color-bl-accent-3) 0%, var(--color-bl-accent) 70%);
+    background: linear-gradient(135deg, var(--color-bl-accent) 0%, var(--color-bl-accent-2) 100%);
   }
 
   .bl-error-text {
