@@ -1,4 +1,5 @@
 from .base_page import BasePage
+from playwright.sync_api import Error as PlaywrightError
 
 
 class InicioPage(BasePage):
@@ -32,7 +33,12 @@ class InicioPage(BasePage):
         self._page.keyboard.press('Escape')
 
     def dialogo_esta_abierto(self) -> bool:
-        return self._dialogo.is_visible()
+        """True si el diálogo sigue visible tras esperar hasta 3 s a que se cierre."""
+        try:
+            self._dialogo.wait_for(state='hidden', timeout=3000)
+            return False
+        except PlaywrightError:
+            return True
 
     def foco_esta_dentro_del_dialogo(self) -> bool:
         return self._page.evaluate("!!document.activeElement?.closest('[role=dialog]')")
