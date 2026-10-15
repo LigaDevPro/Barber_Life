@@ -1,7 +1,5 @@
 # Informe de Accesibilidad — Barber Life (Sprint 4)
 
-**Estándar:** WCAG 2.2 nivel AA · **Fecha:** 13/10/2026 · **Versión auditada:** rama `develop` (PR #117 mergeado) · **Meta de la consigna:** 0 violaciones critical/serious, Lighthouse ≥ 90.
-
 ## 1. Alcance y método
 
 Se auditaron las 11 pantallas principales (login, registro, inicio, solicitar turno, mis turnos, perfil de cliente, notificaciones, dashboard, gestión de turnos, catálogo y perfil de barbero), en escritorio (1440 px) y celular (390 px), contra la API real con datos `seed_demo`.
