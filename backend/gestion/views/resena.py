@@ -1,6 +1,6 @@
 from django.db import IntegrityError
 from rest_framework import generics, status
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
@@ -36,6 +36,8 @@ class ResenaListCreateView(generics.ListCreateAPIView):
         qs = Resena.objects.select_related('cliente__usuario', 'barbero__usuario')
         barbero_id = self.request.query_params.get('barbero')
         if barbero_id:
+            if not barbero_id.isdigit():
+                raise ValidationError({'barbero': 'Tiene que ser un id numérico.'})
             qs = qs.filter(barbero_id=barbero_id)
         return qs
 
