@@ -66,6 +66,16 @@ class NotificacionesTests(BarberLifeTestCase):
         self.assertEqual((p1['count'], p1['num_pages'], len(p1['results'])), (10, 2, 7))
         self.assertEqual([n['mensaje'] for n in p2['results']], ['n7', 'n8', 'n9'])
 
+    def test_pagina_inexistente_devuelve_404(self):
+        # Arrange
+        self.nueva_notificacion()
+
+        # Act
+        resp = self.client.get(URL_NOTIFICACIONES, {'page': 999})
+
+        # Assert
+        self.assertEqual(resp.status_code, 404)
+
     def test_filtro_leida(self):
         # Arrange
         self.nueva_notificacion(leida=True, mensaje='leida')
@@ -143,6 +153,14 @@ class ResenasTests(BarberLifeTestCase):
         payload = {'turno': self.turno.id, 'puntaje': 5, 'comentario': 'Impecable'}
         payload.update(extra)
         return self.client.post(URL_RESENAS, payload, format='json')
+
+    def test_filtro_barbero_no_numerico_devuelve_400(self):
+        # Act
+        resp = self.client.get(URL_RESENAS, {'barbero': 'abc'})
+
+        # Assert
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn('barbero', resp.data)
 
     def test_listado_publico_filtrado_por_barbero(self):
         # Arrange

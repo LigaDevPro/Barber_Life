@@ -1,6 +1,6 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 
+from ..permissions import EsCliente
 from .mixins import PerfilPropioMixin
 from ..serializers import ClienteMeSerializer
 
@@ -13,7 +13,7 @@ class ClienteMeView(PerfilPropioMixin, generics.RetrieveUpdateAPIView):
     """GET/PATCH /api/clientes/me/ — el cliente autenticado ve y edita su
     propio perfil (fecha_nacimiento, telefono). No expone ningún dato de
     otros clientes: el objeto sale siempre de request.user, nunca de la URL."""
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (EsCliente,)
     serializer_class = ClienteMeSerializer
     http_method_names = ['get', 'patch']
     perfil_attr = 'cliente'

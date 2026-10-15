@@ -52,9 +52,9 @@ class PerfilClienteTests(BarberLifeTestCase):
         for usuario in (self.crear_barbero().usuario, self.crear_admin()):
             with self.subTest(rol=usuario.rol):
                 self.autenticar(usuario)
-                self.assertEqual(self.client.get(self.url).status_code, 404)
+                self.assertEqual(self.client.get(self.url).status_code, 403)
                 self.assertEqual(
-                    self.client.patch(self.url, {'telefono': '1'}, format='json').status_code, 404,
+                    self.client.patch(self.url, {'telefono': '1'}, format='json').status_code, 403,
                 )
 
 
@@ -160,7 +160,7 @@ class PerfilBarberoTests(BarberLifeTestCase):
         self.autenticar(self.crear_cliente().usuario)
 
         # Act & Assert
-        self.assertEqual(self.client.get(self.url).status_code, 404)
+        self.assertEqual(self.client.get(self.url).status_code, 403)
         self.assertEqual(
-            self.client.patch(self.url, {'foto_perfil_url': 'https://a.b/c'}, format='json').status_code, 404,
+            self.client.patch(self.url, {'foto_perfil_url': 'https://a.b/c'}, format='json').status_code, 403,
         )

@@ -1,6 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
+from ..permissions import EsBarbero
 from .mixins import PerfilPropioMixin
 from ..models import Barbero
 from ..serializers import BarberoPublicSerializer, BarberoDetailSerializer, BarberoMeSerializer
@@ -32,7 +33,7 @@ class BarberoDetailView(generics.RetrieveAPIView):
 class BarberoMeView(PerfilPropioMixin, generics.RetrieveUpdateAPIView):
     """GET/PATCH /api/barberos/me/ — el barbero autenticado ve y edita su
     propio perfil. El objeto sale siempre de request.user, nunca de la URL."""
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (EsBarbero,)
     serializer_class = BarberoMeSerializer
     http_method_names = ['get', 'patch']
     perfil_attr = 'barbero'
