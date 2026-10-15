@@ -67,6 +67,12 @@
     outline: 2px solid var(--color-bl-accent-3);
     outline-offset: 2px;
   }
+
+  /* El título al que movemos el foco al cambiar de vista no es interactivo: sin contorno */
+  h1[tabindex='-1']:focus,
+  main[tabindex='-1']:focus {
+    outline: none;
+  }
 }
 
 @layer components {

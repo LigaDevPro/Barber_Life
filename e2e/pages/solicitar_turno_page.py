@@ -60,3 +60,12 @@ class SolicitarTurnoPage(BasePage):
 
     def titulo_de_confirmacion(self) -> str:
         return self._exito.inner_text().strip()
+
+    def servicios_marcados_como_elegidos(self) -> int:
+        """Cantidad de servicios que le avisan al lector de pantalla que están elegidos."""
+        return self._servicios.evaluate_all(
+            "els => els.filter(e => e.getAttribute('aria-pressed') === 'true').length"
+        )
+
+    def pago_en_local_esta_marcado(self) -> bool:
+        return self._pago_en_local.get_attribute('aria-pressed') == 'true'

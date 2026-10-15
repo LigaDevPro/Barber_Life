@@ -79,6 +79,7 @@
                 type="button"
                 (click)="elegirServicio(s.id)"
                 data-testid="turno-servicio"
+                [attr.aria-pressed]="servicioSeleccionado()?.id === s.id"
                 [class]="
                   servicioSeleccionado()?.id === s.id
                     ? 'flex h-16 cursor-pointer items-center justify-between gap-3 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'
@@ -113,6 +114,7 @@
                 type="button"
                 (click)="elegirBarbero(b.id)"
                 data-testid="turno-barbero"
+                [attr.aria-pressed]="barberoSeleccionado()?.id === b.id"
                 [class]="
                   barberoSeleccionado()?.id === b.id
                     ? 'flex h-16 cursor-pointer items-center gap-3 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'
@@ -158,6 +160,7 @@
                     type="button"
                     (click)="elegirDia(d.iso)"
                     data-testid="turno-dia"
+                    [attr.aria-pressed]="diaIso() === d.iso"
                     [class]="
                       diaIso() === d.iso
                         ? 'flex h-15 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-field bg-bl-accent text-white transition-opacity duration-150 ease-linear hover:opacity-90'
@@ -184,6 +187,7 @@
                       type="button"
                       (click)="elegirHora(h)"
                       data-testid="turno-hora"
+                      [attr.aria-pressed]="hora() === h"
                       [class]="
                         hora() === h
                           ? 'h-11 cursor-pointer rounded-field bg-bl-accent text-[13.5px] font-medium text-white transition-opacity duration-150 ease-linear hover:opacity-90'
@@ -211,6 +215,7 @@
             type="button"
             (click)="elegirPago('efectivo')"
             data-testid="turno-pago-efectivo"
+            [attr.aria-pressed]="formaPago() === 'efectivo'"
             [class]="
               formaPago() === 'efectivo'
                 ? 'flex h-16 cursor-pointer flex-col justify-center gap-0.5 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'
@@ -224,6 +229,7 @@
             type="button"
             (click)="elegirPago('mercado_pago')"
             data-testid="turno-pago-mercado-pago"
+            [attr.aria-pressed]="formaPago() === 'mercado_pago'"
             [class]="
               formaPago() === 'mercado_pago'
                 ? 'flex h-16 cursor-pointer flex-col justify-center gap-0.5 rounded-field border border-bl-accent bg-bl-surface-2 px-4 text-left text-bl-text transition-colors duration-150 ease-linear'

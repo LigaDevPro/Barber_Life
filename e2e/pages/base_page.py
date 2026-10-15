@@ -1,4 +1,4 @@
-from playwright.sync_api import Page
+from playwright.sync_api import Error as PlaywrightError, Page
 
 
 class BasePage:
@@ -13,3 +13,11 @@ class BasePage:
         self._page.get_by_role('button', name='Menú').click()
         self._page.get_by_role('link', name=opcion, exact=True).click()
         self._page.wait_for_url(f'**{ruta}')
+
+    def foco_esta_en_el_titulo(self) -> bool:
+        """True si el foco llega al <h1> de la vista (espera hasta 3 s)."""
+        try:
+            self._page.wait_for_function("document.activeElement?.tagName === 'H1'", timeout=3000)
+            return True
+        except PlaywrightError:
+            return False
