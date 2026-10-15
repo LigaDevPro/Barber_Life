@@ -35,3 +35,34 @@ def test_acc_05_escape_cierra_el_dialogo(page, base_url, cliente_nuevo):
 
     # Assert
     assert not inicio.dialogo_esta_abierto()
+
+
+def test_a11y_12_el_foco_pasa_al_titulo_al_cambiar_de_vista(page, base_url, cliente_nuevo):
+    """A11Y-12 · WCAG 2.4.3 · al navegar a otra vista el foco queda en su <h1>."""
+    # Arrange
+    inicio = LoginPage(page, base_url).abrir().iniciar_sesion_como_cliente(
+        cliente_nuevo['email'], cliente_nuevo['password'],
+    )
+
+    # Act
+    solicitud = inicio.ir_a_solicitar_turno()
+
+    # Assert
+    assert solicitud.foco_esta_en_el_titulo()
+
+
+def test_a11y_13_la_opcion_elegida_se_anuncia_como_presionada(page, base_url, cliente_nuevo):
+    """A11Y-13 · WCAG 4.1.2 · el servicio y la forma de pago elegidos exponen aria-pressed."""
+    # Arrange
+    inicio = LoginPage(page, base_url).abrir().iniciar_sesion_como_cliente(
+        cliente_nuevo['email'], cliente_nuevo['password'],
+    )
+    solicitud = inicio.ir_a_solicitar_turno()
+
+    # Act
+    solicitud.elegir_servicio('Corte de pelo')
+    solicitud.pagar_en_el_local()
+
+    # Assert
+    assert solicitud.servicios_marcados_como_elegidos() == 1
+    assert solicitud.pago_en_local_esta_marcado()
