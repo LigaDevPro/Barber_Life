@@ -48,8 +48,9 @@ Violaciones axe (pantalla × viewport) y puntaje Lighthouse. "Antes" = `develop`
 | A11Y-10 | 1.4.3 (AA) | Seria | Mis turnos · botón "Sí, cancelar turno" | Texto blanco sobre `#ED4245`: 3.84:1 (detectado por revisión manual del código; axe no lo ve porque el diálogo está cerrado). | Mismo token `--color-bl-on-danger`. | Corregido |
 | A11Y-11 | 1.4.3 (AA) | Seria | Inicio · tarjeta con degradado | Texto blanco sobre degradado `accent-3 → accent`: entre **2.5:1 y 4.6:1** según la posición. Axe no puede medirlo (fondo degradado). | El degradado pasa a `accent → accent-2` (`.bl-accent-gradient` en `styles.css`): el texto blanco queda entre **4.61:1 y 6.42:1** en toda la tarjeta, sin cambiar el texto ni la paleta. | Corregido |
 | A11Y-12 | 2.4.3 (A) | Moderada | SPA · cambio de ruta | No se gestiona el foco al navegar entre vistas. | Pendiente (p. ej. foco al `<h1>` en cada `NavigationEnd`). | **Abierto** |
+| A11Y-13 | 4.1.2 Nombre, función, valor (A) | Moderada | Solicitar turno · botones de servicio, barbero, día, hora y pago | Con NVDA, al elegir una opción solo se oye el nombre del botón: no se anuncia cuál quedó seleccionada (solo se ve por el borde). Detectado en el recorrido con NVDA. | Pendiente (p. ej. `aria-pressed` o `role="radio"` con `aria-checked`). | **Abierto** |
 
-Nota: A11Y-12 queda como bug abierto con la etiqueta `accesibilidad` (la consigna permite registrar lo que no se corrige en el sprint).
+Nota: A11Y-12 y A11Y-13 quedan como bugs abiertos con la etiqueta `accesibilidad` (la consigna permite registrar lo que no se corrige en el sprint).
 
 ## 4. Checklist manual
 
@@ -69,10 +70,21 @@ Nota: A11Y-12 queda como bug abierto con la etiqueta `accesibilidad` (la consign
 | SPA: título distinto por ruta | Pasa tras A11Y-02 | test ACC-02 |
 | SPA: gestión del foco al navegar | **No cumple** (A11Y-12) | — |
 | Zoom 200 % y reflow a 320 px | Pasa en las 11 pantallas (sin scroll horizontal) | test ACC-03 |
-| Lector de pantalla (NVDA), un flujo crítico completo | **Pendiente**: requiere ejecución manual en Windows; ver plantilla abajo | — |
+| Lector de pantalla (NVDA), un flujo crítico completo | Pasa con observaciones: login → solicitar turno recorrido con NVDA + Chrome; ver detalle abajo (A11Y-12 y estado de selección) | Visor de voz de NVDA, 14/10/2026 |
 
-### Plantilla para el recorrido con NVDA (flujo: login → solicitar turno)
-Anotar, por paso, lo que NVDA anuncia: (1) abrir `/login` → título y landmarks; (2) Tab al campo email → nombre y rol; (3) enviar vacío → ¿anuncia el error?; (4) iniciar sesión → título de la nueva vista; (5) elegir servicio, barbero, día y hora → ¿se anuncia la selección?; (6) confirmar → ¿se anuncia el resultado?
+### Recorrido con NVDA (flujo: login → solicitar turno)
+Lector de pantalla NVDA en Windows con Chrome, solo teclado; lo anunciado se tomó del Visor de voz de NVDA (cliente `seed_demo`, 14/10/2026).
+
+| Paso | Qué se hizo | Lo que anunció NVDA | Resultado |
+|---|---|---|---|
+| 1 | Abrir `/login` | "Iniciar sesión \| Barber Life documento" → "Presentación de Barber Life, complementario región, gráfico Barber Life" → "encabezado nivel 2 Tu turno, sin vueltas." | Bien: título propio y landmarks (`aside`). El panel lateral abre con un `h2` antes del `h1` (menor). |
+| 2 | Tab al campo email | "principal región" → "formulario región" → "Email edición, Ingresa tu email, en blanco, tiene autocompletado" | Bien: nombre, rol y autocompletado. |
+| 3 | Enviar el formulario vacío | "alerta Ingresá un email válido." y "alerta La contraseña es obligatoria."; en cada campo: "entrada inválida, <mensaje>" | Bien: los errores se anuncian solos y quedan asociados al campo (A11Y-03/04). |
+| 4 | Iniciar sesión | "Inicio \| Barber Life - Google Chrome ventana" → "Inicio \| Barber Life documento" → "Barbería y peluquería" | Anuncia el título nuevo, pero no mueve el foco al contenido ni lee el `h1` (A11Y-12). Tab recorre: "Solicitar turno botón", "Ver servicios enlace", "Solicitar botón" ×3 y "RORodrigo Rojas3 servicios botón". |
+| 5 | Ir a Solicitar turno y recorrer la pantalla | "Solicitar turno \| Barber Life documento"; menú "Inicio / Mis turnos / Solicitar turno / Mi perfil / Notificaciones enlace", "CR, menú de usuario botón"; "Barba20 min$10.00 botón", "Coloración60 min$25.00 botón", "Corte de pelo30 min$15.00 botón", "RORodrigo Rojas$10Barba · 20 min botón", "Mié14 botón" …, "09:00 botón" … "18:30 botón", "Pagar en el local Abonás cuando llegás botón", "Mercado Pago Pagá online ahora botón" | Bien: todos los controles tienen nombre y rol. Observaciones: las iniciales del avatar ("RO") se leen junto al nombre; los botones de servicio, día y hora no indican cuál está elegido (sin estado "pulsado"). |
+| 6 | Elegir todo y confirmar | Al elegir: "Barba20 min$10.00 botón", "RORodrigo Rojas$10Barba · 20 min botón", "Jue15 botón", "12:30 botón", "Pagar en el localAbonás cuando llegás botón" (sin indicar cuál queda elegido). Antes de elegir, "Confirmar turno botón, no disponible". Al confirmar: "15/10/2026 · 12:30" → "Te avisamos cuando la barbería confirme tu horario." → "Solicitar otro turno botón" | Bien: el resultado se anuncia (fecha, hora y mensaje) y ofrece "Solicitar otro turno". Falla: al elegir una opción NVDA no anuncia que quedó seleccionada (A11Y-13). |
+
+**Conclusión:** el flujo se puede recorrer completo con lector de pantalla: títulos, landmarks, nombres de campo y errores se anuncian bien. Hallazgos abiertos: foco al cambiar de ruta (A11Y-12) y estado de selección de los botones de servicio, barbero, día, hora y forma de pago (A11Y-13).
 
 ## 5. Reproducir
 
