@@ -33,6 +33,7 @@ services:
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app
+      - media_data:/app/media
     ports:
       - "8000:8000"
     env_file:
@@ -66,3 +67,4 @@ services:
 volumes:
   postgres_data:
   mongo_data:
+  media_data:

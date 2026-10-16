@@ -12,7 +12,7 @@ from .turno import (
     MisTurnosView,
 )
 from .cliente import ClienteMeView
-from .barbero import BarberoListView, BarberoDetailView, BarberoMeView
+from .barbero import BarberoListView, BarberoDetailView, BarberoMeView, BarberoFotoView
 from .catalogo import (
     ServicioListCreateView, ServicioDetailView,
     HorarioListCreateView, HorarioDetailView,
@@ -28,7 +28,7 @@ __all__ = [
     'TurnosListView', 'TurnosExportarView', 'TurnoDetailView', 'TurnoCancelarView', 'ServiciosMasSolicitadosView', 'TurnosPagination',
     'MisTurnosView',
     'ClienteMeView',
-    'BarberoListView', 'BarberoDetailView', 'BarberoMeView',
+    'BarberoListView', 'BarberoDetailView', 'BarberoMeView', 'BarberoFotoView',
     'ServicioListCreateView', 'ServicioDetailView',
     'HorarioListCreateView', 'HorarioDetailView',
     'BarberoServicioListCreateView', 'BarberoServicioDetailView',
