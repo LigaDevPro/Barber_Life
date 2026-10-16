@@ -163,3 +163,20 @@ FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:4200')
 # URL publica del backend, para que Mercado Pago llame al webhook (/api/pagos/webhook/).
 # En desarrollo hay que exponerla con un tunel (ngrok, cloudflared). Si queda vacia, no se envia notification_url.
 BACKEND_PUBLIC_URL = os.environ.get('BACKEND_PUBLIC_URL', '')
+
+# Email (SMTP real o Mailtrap/Mailpit en desarrollo). Sin EMAIL_HOST en modo DEBUG
+# los mails se imprimen en la consola del backend (docker compose logs backend).
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.smtp.EmailBackend' if EMAIL_HOST else (
+        'django.core.mail.backends.console.EmailBackend' if DEBUG
+        else 'django.core.mail.backends.smtp.EmailBackend'
+    ),
+)
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', True)
+EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '10'))
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Barber Life <no-reply@barberlife.local>')
