@@ -8,7 +8,7 @@ archivo.
 from .auth import RegisterView, LoginView, MeView
 from .dashboard import DashboardView
 from .turno import (
-    TurnosListView, TurnoDetailView, TurnoCancelarView, ServiciosMasSolicitadosView, TurnosPagination,
+    TurnosListView, TurnosExportarView, TurnoDetailView, TurnoCancelarView, ServiciosMasSolicitadosView, TurnosPagination,
     MisTurnosView,
 )
 from .cliente import ClienteMeView
@@ -25,7 +25,7 @@ from .resena import ResenaListCreateView
 __all__ = [
     'RegisterView', 'LoginView', 'MeView',
     'DashboardView',
-    'TurnosListView', 'TurnoDetailView', 'TurnoCancelarView', 'ServiciosMasSolicitadosView', 'TurnosPagination',
+    'TurnosListView', 'TurnosExportarView', 'TurnoDetailView', 'TurnoCancelarView', 'ServiciosMasSolicitadosView', 'TurnosPagination',
     'MisTurnosView',
     'ClienteMeView',
     'BarberoListView', 'BarberoDetailView', 'BarberoMeView',
