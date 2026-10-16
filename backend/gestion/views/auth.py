@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..serializers import RegisterSerializer, LoginSerializer, UsuarioMeSerializer
+from ..emails import enviar_bienvenida
 from ..mongo import registrar_notificacion, registrar_evento_log
 
 
@@ -22,6 +23,7 @@ class RegisterView(generics.CreateAPIView):
         usuario = serializer.save()
         registrar_evento_log(usuario.id, 'registro_usuario', {'email': usuario.email})
         registrar_notificacion(usuario.id, 'bienvenida', 'Bienvenido a Barber Life')
+        enviar_bienvenida(usuario)
         return Response(
             {'detail': 'Cuenta creada correctamente. Ya podés iniciar sesión.'},
             status=status.HTTP_201_CREATED,

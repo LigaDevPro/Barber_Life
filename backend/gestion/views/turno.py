@@ -17,6 +17,7 @@ from ..serializers import (
     TurnoListSerializer, TurnoCreateSerializer, TurnoUpdateEstadoSerializer,
     ServicioMasSolicitadoSerializer,
 )
+from ..emails import enviar_turno_reservado, enviar_estado_turno, enviar_turno_cancelado_al_barbero
 from ..mongo import registrar_notificacion, registrar_evento_log
 
 # ---------------------------------------------------------------------------
@@ -124,6 +125,7 @@ class TurnosListView(FiltrosTurnosMixin, generics.ListCreateAPIView):
             f'Tenés un nuevo turno el {turno.fecha_turno:%d/%m} {turno.hora_inicio:%H:%M}.',
         )
         registrar_evento_log(request.user.id, 'creacion_turno', {'turno_id': turno.id})
+        enviar_turno_reservado(turno)
         return Response(TurnoListSerializer(turno).data, status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
@@ -226,6 +228,7 @@ class TurnoDetailView(generics.RetrieveUpdateAPIView):
             f'ahora está {turno.get_estado_display()}.',
         )
         registrar_evento_log(self.request.user.id, 'cambio_estado_turno', {'turno_id': turno.id, 'estado': turno.estado})
+        enviar_estado_turno(turno)
 
 
 class TurnoCancelarView(APIView):
@@ -265,6 +268,7 @@ class TurnoCancelarView(APIView):
             f'El turno del {turno.fecha_turno:%d/%m} {turno.hora_inicio:%H:%M} fue cancelado.',
         )
         registrar_evento_log(usuario.id, 'cancelacion_turno', {'turno_id': turno.id})
+        enviar_turno_cancelado_al_barbero(turno)
         return Response(TurnoListSerializer(turno).data)
 
 
