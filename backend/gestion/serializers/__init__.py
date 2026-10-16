@@ -12,7 +12,7 @@ from .turno import (
 )
 from .cliente import ClienteMeSerializer
 from .barbero import (
-    BarberoPublicSerializer, BarberoDetailSerializer, BarberoMeSerializer,
+    BarberoPublicSerializer, BarberoDetailSerializer, BarberoMeSerializer, FotoPerfilSerializer,
     HorarioInlineSerializer, ServicioOfrecidoInlineSerializer,
 )
 from .catalogo import ServicioSerializer, HorarioSerializer, BarberoServicioSerializer
@@ -25,7 +25,7 @@ __all__ = [
     'TurnoListSerializer', 'TurnoCreateSerializer', 'TurnoUpdateEstadoSerializer',
     'ServicioMasSolicitadoSerializer',
     'ClienteMeSerializer',
-    'BarberoPublicSerializer', 'BarberoDetailSerializer', 'BarberoMeSerializer',
+    'BarberoPublicSerializer', 'BarberoDetailSerializer', 'BarberoMeSerializer', 'FotoPerfilSerializer',
     'HorarioInlineSerializer', 'ServicioOfrecidoInlineSerializer',
     'ServicioSerializer', 'HorarioSerializer', 'BarberoServicioSerializer',
     'PagoSerializer', 'PagoCreateSerializer',

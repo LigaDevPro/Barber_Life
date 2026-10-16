@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from ..models import Barbero, Horario, BarberoServicio
@@ -76,3 +77,28 @@ class BarberoMeSerializer(serializers.ModelSerializer):
         model = Barbero
         fields = ('id', 'foto_perfil_url', 'activo', 'fecha_creacion', 'usuario')
         read_only_fields = ('activo', 'fecha_creacion')
+
+
+class FotoPerfilSerializer(serializers.Serializer):
+    """POST /api/barberos/me/foto/ (multipart/form-data, campo `foto`).
+    Acepta solo JPEG, PNG o WebP reales (Pillow abre el archivo: no alcanza
+    con la extensión ni con el Content-Type) y hasta FOTO_PERFIL_MAX_BYTES."""
+
+    FORMATOS = {'JPEG': 'jpg', 'PNG': 'png', 'WEBP': 'webp'}
+
+    foto = serializers.ImageField(
+        error_messages={
+            'invalid_image': 'El archivo no es una imagen válida (JPEG, PNG o WebP).',
+            'required': 'Mandá la imagen en el campo "foto".',
+            'empty': 'El archivo está vacío.',
+        },
+    )
+
+    def validate_foto(self, archivo):
+        formato = getattr(getattr(archivo, 'image', None), 'format', None)
+        if formato not in self.FORMATOS:
+            raise serializers.ValidationError('Formato no permitido. Usá JPEG, PNG o WebP.')
+        maximo = settings.FOTO_PERFIL_MAX_BYTES
+        if archivo.size > maximo:
+            raise serializers.ValidationError(f'La imagen pesa más de {maximo // (1024 * 1024)} MB.')
+        return archivo

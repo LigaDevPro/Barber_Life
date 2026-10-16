@@ -57,6 +57,10 @@ class Barbero(models.Model):
     """BARBEROS"""
     usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='barbero')
     foto_perfil_url = models.URLField(max_length=500, blank=True, default='')
+    # Archivo subido por el propio barbero (POST /api/barberos/me/foto/). Al
+    # subirlo se completa foto_perfil_url con la URL pública del archivo, así
+    # el resto de la app sigue leyendo un único campo.
+    foto_perfil = models.ImageField(upload_to='barberos/', blank=True, default='')
     activo = models.BooleanField(default=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 

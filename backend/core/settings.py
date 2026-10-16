@@ -121,6 +121,12 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+
+# Archivos subidos por usuarios (fotos de perfil). En Docker montar MEDIA_ROOT
+# en un volumen para que sobrevivan a un rebuild del contenedor.
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.environ.get('MEDIA_ROOT', str(BASE_DIR / 'media'))
+FOTO_PERFIL_MAX_BYTES = int(os.environ.get('FOTO_PERFIL_MAX_BYTES', str(2 * 1024 * 1024)))
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
