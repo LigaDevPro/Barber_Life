@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { PanelService } from '../../core/auth/panel.service';
+import { FiltrosTurnos, PanelService } from '../../core/auth/panel.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { ServicioMasSolicitado, TurnoResumen, TurnosPage } from '../../core/models/models';
 import { TopbarComponent } from '../../shared/topbar/topbar.component';
@@ -33,33 +33,51 @@ export class TurnosComponent implements OnInit {
   menuAbierto = signal<number | null>(null);
   paginaActual = signal(1);
 
-  /** Filtros (Mejora 4 de Figma: «Hoy», «Mañana», «Esta semana» y selector de fecha): rango rápido, fecha puntual, estado y búsqueda. */
+  /** Filtros combinables (todos se aplican en el servidor): rango rápido («Hoy», «Mañana», «Esta semana»), rango de fechas propio, estado y texto. */
   readonly rangos = [
     { valor: 'todos', etiqueta: 'Todos' },
     { valor: 'hoy', etiqueta: 'Hoy' },
     { valor: 'manana', etiqueta: 'Mañana' },
     { valor: 'semana', etiqueta: 'Esta semana' },
   ] as const;
+  readonly estados = [
+    { valor: '', etiqueta: 'Todos los estados' },
+    { valor: 'pendiente', etiqueta: 'Pendiente' },
+    { valor: 'confirmado', etiqueta: 'Confirmado' },
+    { valor: 'completado', etiqueta: 'Completado' },
+    { valor: 'cancelado', etiqueta: 'Cancelado' },
+  ] as const;
   rango = signal<'todos' | 'hoy' | 'manana' | 'semana'>('hoy');
-  fechaSeleccionada = signal('');
+  fechaDesde = signal('');
+  fechaHasta = signal('');
+  estado = signal('');
+  busqueda = signal('');
   selectorFechaAbierto = signal(false);
+  exportando = signal(false);
 
-  /** Resultados de la página actual con el filtro de fecha aplicado. */
-  resultadosFiltrados = computed<TurnoResumen[]>(() => {
-    const p = this.pagina();
-    if (!p) return [];
-    const fecha = this.fechaSeleccionada();
-    const rango = this.rango();
-    return p.results.filter((t) => {
-      if (fecha) return t.fecha === fecha;
-      if (rango === 'todos') return true;
-      const hoy = this.iso(new Date());
-      if (rango === 'hoy') return t.fecha === hoy;
-      if (rango === 'manana') return t.fecha === this.iso(this.sumarDias(new Date(), 1));
+  /** Hay un rango de fechas propio cargado (tiene prioridad sobre los chips). */
+  rangoPropio = computed(() => !!(this.fechaDesde() || this.fechaHasta()));
+
+  /** Resultados de la página actual (el filtrado ya viene hecho por el backend). */
+  resultados = computed<TurnoResumen[]>(() => this.pagina()?.results ?? []);
+
+  /** Traduce el estado de los controles a los parámetros que entiende la API. */
+  private filtros(): FiltrosTurnos {
+    const filtros: FiltrosTurnos = { q: this.busqueda().trim(), estado: this.estado() };
+    if (this.rangoPropio()) {
+      filtros.fechaDesde = this.fechaDesde();
+      filtros.fechaHasta = this.fechaHasta();
+    } else if (this.rango() === 'hoy') {
+      filtros.fechaDesde = filtros.fechaHasta = this.iso(new Date());
+    } else if (this.rango() === 'manana') {
+      filtros.fechaDesde = filtros.fechaHasta = this.iso(this.sumarDias(new Date(), 1));
+    } else if (this.rango() === 'semana') {
       const lunes = this.sumarDias(new Date(), -((new Date().getDay() + 6) % 7));
-      return t.fecha >= this.iso(lunes) && t.fecha <= this.iso(this.sumarDias(lunes, 6));
-    });
-  });
+      filtros.fechaDesde = this.iso(lunes);
+      filtros.fechaHasta = this.iso(this.sumarDias(lunes, 6));
+    }
+    return filtros;
+  }
 
   constructor(
     private panelService: PanelService,
@@ -82,7 +100,7 @@ export class TurnosComponent implements OnInit {
   cargarTurnos(page = 1): void {
     this.loading.set(true);
     this.errorMsg.set(null);
-    this.panelService.getTurnos(page).subscribe({
+    this.panelService.getTurnos(page, this.filtros()).subscribe({
       next: (res) => {
         this.pagina.set(res);
         this.paginaActual.set(page);
@@ -97,18 +115,62 @@ export class TurnosComponent implements OnInit {
 
   /** Tocar el chip activo lo apaga y vuelve a mostrar todos los turnos. */
   elegirRango(valor: 'todos' | 'hoy' | 'manana' | 'semana'): void {
-    this.rango.set(this.rango() === valor && !this.fechaSeleccionada() ? 'todos' : valor);
-    this.fechaSeleccionada.set('');
+    this.rango.set(this.rango() === valor && !this.rangoPropio() ? 'todos' : valor);
+    this.fechaDesde.set('');
+    this.fechaHasta.set('');
     this.selectorFechaAbierto.set(false);
+    this.cargarTurnos();
   }
 
   toggleSelectorFecha(): void {
     this.selectorFechaAbierto.update((v) => !v);
   }
 
-  elegirFecha(valor: string): void {
-    this.fechaSeleccionada.set(valor);
-    if (valor) this.rango.set('todos');
+  elegirFechaDesde(valor: string): void {
+    this.fechaDesde.set(valor);
+    this.cargarTurnos();
+  }
+
+  elegirFechaHasta(valor: string): void {
+    this.fechaHasta.set(valor);
+    this.cargarTurnos();
+  }
+
+  limpiarFechas(): void {
+    this.fechaDesde.set('');
+    this.fechaHasta.set('');
+    this.cargarTurnos();
+  }
+
+  elegirEstado(valor: string): void {
+    this.estado.set(valor);
+    this.cargarTurnos();
+  }
+
+  buscar(valor: string): void {
+    this.busqueda.set(valor);
+    this.cargarTurnos();
+  }
+
+  /** Descarga en CSV los turnos que matchean los filtros activos (no solo la página visible). */
+  exportarCsv(): void {
+    this.exportando.set(true);
+    this.errorMsg.set(null);
+    this.panelService.exportarTurnos(this.filtros()).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const enlace = document.createElement('a');
+        enlace.href = url;
+        enlace.download = 'turnos.csv';
+        enlace.click();
+        URL.revokeObjectURL(url);
+        this.exportando.set(false);
+      },
+      error: () => {
+        this.exportando.set(false);
+        this.errorMsg.set('No se pudo exportar los turnos.');
+      },
+    });
   }
 
   private iso(d: Date): string {
