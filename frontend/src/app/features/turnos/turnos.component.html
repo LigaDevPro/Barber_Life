@@ -22,9 +22,9 @@
             <button
               type="button"
               [attr.data-testid]="'filtro-' + r.valor"
-              [attr.aria-pressed]="rango() === r.valor && !fechaSeleccionada()"
+              [attr.aria-pressed]="rango() === r.valor && !rangoPropio()"
               [class]="
-                rango() === r.valor && !fechaSeleccionada()
+                rango() === r.valor && !rangoPropio()
                   ? 'cursor-pointer rounded-chip border border-bl-text bg-bl-text px-4 py-2 text-[13px] font-semibold text-bl-bg'
                   : 'cursor-pointer rounded-chip border border-bl-border bg-bl-surface-2 px-4 py-2 text-[13px] text-bl-text hover:bg-bl-surface'
               "
@@ -40,7 +40,7 @@
           aria-label="Elegir fecha"
           [attr.aria-expanded]="selectorFechaAbierto()"
           [class]="
-            fechaSeleccionada()
+            rangoPropio()
               ? 'flex cursor-pointer rounded-field border border-bl-text bg-bl-text p-2 text-bl-bg'
               : 'flex cursor-pointer rounded-field border border-bl-border bg-bl-surface-2 p-2 text-bl-text hover:bg-bl-surface'
           "
@@ -59,17 +59,77 @@
       </div>
 
       @if (selectorFechaAbierto()) {
-        <label class="mt-2.5 flex flex-col gap-1 text-[12.5px] text-bl-text-muted">
-          Fecha
+        <div class="mt-2.5 flex flex-wrap items-end gap-3">
+          <label class="flex flex-col gap-1 text-[12.5px] text-bl-text-muted">
+            Desde
+            <input
+              class="bl-input"
+              type="date"
+              data-testid="filtro-fecha"
+              [value]="fechaDesde()"
+              [max]="fechaHasta()"
+              (change)="elegirFechaDesde($any($event.target).value)"
+            />
+          </label>
+          <label class="flex flex-col gap-1 text-[12.5px] text-bl-text-muted">
+            Hasta
+            <input
+              class="bl-input"
+              type="date"
+              data-testid="filtro-fecha-hasta"
+              [value]="fechaHasta()"
+              [min]="fechaDesde()"
+              (change)="elegirFechaHasta($any($event.target).value)"
+            />
+          </label>
+          @if (rangoPropio()) {
+            <button
+              type="button"
+              data-testid="filtro-fecha-limpiar"
+              class="cursor-pointer rounded-chip border border-bl-border bg-bl-surface-2 px-3 py-2 text-[13px] text-bl-text hover:bg-bl-surface"
+              (click)="limpiarFechas()"
+            >
+              Limpiar fechas
+            </button>
+          }
+        </div>
+      }
+
+      <div class="mt-3 flex flex-wrap items-end gap-3">
+        <label class="flex min-w-[200px] flex-1 flex-col gap-1 text-[12.5px] text-bl-text-muted">
+          Buscar
           <input
             class="bl-input"
-            type="date"
-            data-testid="filtro-fecha"
-            [value]="fechaSeleccionada()"
-            (change)="elegirFecha($any($event.target).value)"
+            type="search"
+            data-testid="filtro-busqueda"
+            placeholder="Cliente, servicio o barbero"
+            [value]="busqueda()"
+            (input)="buscar($any($event.target).value)"
           />
         </label>
-      }
+        <label class="flex flex-col gap-1 text-[12.5px] text-bl-text-muted">
+          Estado
+          <select
+            class="bl-input"
+            data-testid="filtro-estado"
+            [value]="estado()"
+            (change)="elegirEstado($any($event.target).value)"
+          >
+            @for (e of estados; track e.valor) {
+              <option [value]="e.valor">{{ e.etiqueta }}</option>
+            }
+          </select>
+        </label>
+        <button
+          type="button"
+          data-testid="exportar-csv"
+          class="cursor-pointer rounded-chip border border-bl-text bg-bl-text px-4 py-2 text-[13px] font-semibold text-bl-bg disabled:cursor-not-allowed disabled:opacity-60"
+          [disabled]="exportando()"
+          (click)="exportarCsv()"
+        >
+          {{ exportando() ? 'Exportando...' : 'Exportar CSV' }}
+        </button>
+      </div>
     </section>
 
     <section class="mb-4.5 rounded-card border border-bl-border bg-bl-surface p-4 lg:col-start-1 lg:row-start-4 lg:p-6">
@@ -111,7 +171,7 @@
       @if (loading()) {
         <p class="text-[13.5px] text-bl-text-muted">Cargando turnos...</p>
       } @else if (pagina(); as p) {
-        @if (resultadosFiltrados().length === 0) {
+        @if (resultados().length === 0) {
           <p class="text-[13.5px] text-bl-text-muted">No hay turnos para los filtros elegidos.</p>
         } @else {
           <table class="w-full border-collapse text-[13px]">
@@ -145,7 +205,7 @@
               </tr>
             </thead>
             <tbody class="[&>tr:last-child>td]:border-b-0">
-              @for (t of resultadosFiltrados(); track t.id) {
+              @for (t of resultados(); track t.id) {
                 <tr>
                   <td class="border-b border-bl-border px-1 py-2.5 align-top">
                     <span class="block">{{ t.hora }}</span>
