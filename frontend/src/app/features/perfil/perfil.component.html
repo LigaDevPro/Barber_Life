@@ -42,24 +42,51 @@
           </button>
         </form>
       } @else if (esBarbero()) {
-        <form
-          [formGroup]="barberoForm"
-          (ngSubmit)="guardarBarbero()"
-          class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4 lg:p-6"
+        <section
+          class="flex flex-col items-center gap-4 rounded-card border border-bl-border bg-bl-surface p-4 sm:flex-row lg:p-6"
+          aria-label="Foto de perfil"
         >
-          <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
-            Foto de perfil (URL)
-            <input
-              class="bl-input"
-              type="url"
-              formControlName="foto_perfil_url"
-              placeholder="https://..."
+          @if (fotoUrl()) {
+            <img
+              [src]="fotoUrl()"
+              alt="Tu foto de perfil"
+              data-testid="foto-preview"
+              class="h-24 w-24 rounded-full border border-bl-border object-cover"
             />
-          </label>
-          <button class="bl-btn bl-btn--primary" type="submit" [disabled]="guardando()">
-            {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
-          </button>
-        </form>
+          } @else {
+            <div
+              data-testid="foto-vacia"
+              class="flex h-24 w-24 items-center justify-center rounded-full border border-bl-border bg-bl-surface-2 text-xs text-bl-text-muted"
+            >
+              Sin foto
+            </div>
+          }
+          <div class="flex flex-col gap-2">
+            <label class="bl-btn bl-btn--primary cursor-pointer text-center">
+              {{ subiendoFoto() ? 'Subiendo...' : fotoUrl() ? 'Cambiar foto' : 'Subir foto' }}
+              <input
+                class="sr-only"
+                type="file"
+                data-testid="foto-input"
+                accept="image/jpeg,image/png,image/webp"
+                [disabled]="subiendoFoto()"
+                (change)="elegirFoto($event)"
+              />
+            </label>
+            @if (fotoUrl()) {
+              <button
+                type="button"
+                class="bl-btn"
+                data-testid="foto-quitar"
+                [disabled]="subiendoFoto()"
+                (click)="quitarFoto()"
+              >
+                Quitar foto
+              </button>
+            }
+            <p class="m-0 text-xs text-bl-text-muted">JPEG, PNG o WebP · hasta {{ maxFotoMb }} MB</p>
+          </div>
+        </section>
       } @else {
         <p class="text-[13.5px] text-bl-text-muted">Tu rol no tiene un perfil editable.</p>
       }
