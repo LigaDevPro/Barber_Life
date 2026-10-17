@@ -62,6 +62,14 @@
 
     <div class="bl-divider w-full">o</div>
 
+    @if (googleHabilitado) {
+      <bl-google-button
+        class="mb-2 block w-full"
+        texto="signin_with"
+        (credencial)="entrarConGoogle($event)"
+        (fallo)="googleNoDisponible()"
+      />
+    } @else {
     <button
       class="bl-btn bl-btn--google mb-2"
       type="button"
@@ -88,6 +96,7 @@
       </svg>
       <span lang="en">Sign in with Google</span>
     </button>
+    }
 
     <p class="mt-4.5 text-[13.5px] text-bl-text-muted">
       ¿No tenés cuenta?

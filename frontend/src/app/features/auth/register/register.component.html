@@ -12,6 +12,14 @@
     <p class="mb-2.5 text-sm text-bl-text-muted">
       Creá tu cuenta para continuar
     </p>
+    @if (googleHabilitado) {
+      <bl-google-button
+        class="mb-1.5 block w-full"
+        texto="signup_with"
+        (credencial)="registrarConGoogle($event)"
+        (fallo)="googleNoDisponible()"
+      />
+    } @else {
     <button class="bl-btn bl-btn--google mb-1.5" type="button" disabled title="Disponible próximamente">
       <svg width="18" height="18" viewBox="0 0 18 18">
         <path
@@ -34,6 +42,7 @@
 
       Sign in with Google
     </button>
+    }
 
     <div class="bl-divider w-full">
       o continúa con
