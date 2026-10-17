@@ -178,6 +178,11 @@ FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:4200')
 # En desarrollo hay que exponerla con un tunel (ngrok, cloudflared). Si queda vacia, no se envia notification_url.
 BACKEND_PUBLIC_URL = os.environ.get('BACKEND_PUBLIC_URL', '')
 
+# Login con Google (OAuth 2.0 / OpenID Connect). Es el "Client ID" de una credencial
+# "ID de cliente de OAuth > Aplicación web" de Google Cloud Console. No es un secreto,
+# pero sin él el endpoint /api/auth/google/ responde 503.
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+
 # Email (SMTP real o Mailtrap/Mailpit en desarrollo). Sin EMAIL_HOST en modo DEBUG
 # los mails se imprimen en la consola del backend (docker compose logs backend).
 EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
