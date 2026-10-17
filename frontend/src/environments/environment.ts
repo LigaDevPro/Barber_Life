@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8000/api',
+  apiUrl: 'https://barber-life.onrender.com/api',
+  wsUrl: 'wss://barber-life.onrender.com/ws/',
 };
