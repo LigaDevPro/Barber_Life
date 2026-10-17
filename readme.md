@@ -277,8 +277,6 @@ La documentación del proyecto (plan de gestión, IEEE 830, requisitos RF/RNF, m
 - Testing e integración (192 pruebas automáticas en el backend)
 - Cierre de documentación y despliegue final
 
-**Limitaciones conocidas:** no hay recuperación de contraseña ni bloqueo por intentos fallidos, no se pueden reprogramar turnos, el alta de barberos/clientes se hace desde el panel de administración de Django y el historial de pagos solo está disponible por API (`GET /api/pagos/`).
-
 ---
 
 <p align="center">
