@@ -19,12 +19,18 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django_asgi_app = get_asgi_application()
 
 from channels.routing import ProtocolTypeRouter, URLRouter  # noqa: E402
-from channels.security.websocket import AllowedHostsOriginValidator  # noqa: E402
+from channels.security.websocket import OriginValidator  # noqa: E402
+from django.conf import settings  # noqa: E402
 
 from gestion.routing import websocket_urlpatterns  # noqa: E402
 
+# Orígenes que pueden abrir el socket: los hosts del backend y los del frontend
+# (CORS_ALLOWED_ORIGINS). En producción el front vive en otro dominio (Vercel),
+# así que validar solo contra ALLOWED_HOSTS rechazaría al propio frontend.
+ORIGENES_WEBSOCKET = [*settings.ALLOWED_HOSTS, *settings.CORS_ALLOWED_ORIGINS]
+
 application = ProtocolTypeRouter({
     'http': django_asgi_app,
-    # Solo acepta conexiones cuyo Origin esté en ALLOWED_HOSTS (evita que otra web abra el socket).
-    'websocket': AllowedHostsOriginValidator(URLRouter(websocket_urlpatterns)),
+    # Cualquier otro Origin se rechaza (evita que otra web abra el socket).
+    'websocket': OriginValidator(URLRouter(websocket_urlpatterns), ORIGENES_WEBSOCKET),
 })

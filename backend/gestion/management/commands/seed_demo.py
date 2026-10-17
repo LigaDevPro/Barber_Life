@@ -8,12 +8,18 @@ Uso:
     python manage.py seed_demo
 """
 import random
+import unicodedata
 from datetime import time, timedelta
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
 from gestion.models import Usuario, Cliente, Barbero, Servicio, Horario, BarberoServicio, Turno, Pago
+
+
+def sin_acentos(texto):
+    """'Pérez' -> 'Perez'. Los emails de login no llevan acentos ni ñ."""
+    return unicodedata.normalize('NFKD', texto).encode('ascii', 'ignore').decode('ascii')
 
 
 class Command(BaseCommand):
@@ -75,7 +81,7 @@ class Command(BaseCommand):
         ]
         clientes = []
         for i, (nombre, apellido) in enumerate(clientes_data):
-            email = f'{nombre.lower()}.{apellido.lower()}{i}@mail.com'
+            email = f'{sin_acentos(nombre).lower()}.{sin_acentos(apellido).lower()}{i}@mail.com'
             user, created = Usuario.objects.get_or_create(
                 username=email,
                 defaults={'email': email, 'rol': Usuario.Rol.CLIENTE, 'first_name': nombre, 'last_name': apellido},
@@ -124,3 +130,4 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS(f'  {creados} turnos de ejemplo creados.'))
         self.stdout.write(self.style.SUCCESS('Listo. Podés loguearte con barbero@barberlife.com / barbero1234'))
+        self.stdout.write(f'  Clientes (clave cliente1234): {", ".join(c.usuario.email for c in clientes)}')
