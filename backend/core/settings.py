@@ -41,6 +41,8 @@ if not SECRET_KEY:
 ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', 'localhost,127.0.0.1,backend')
 
 INSTALLED_APPS = [
+    # daphne va primero: reemplaza a runserver por uno ASGI que además atiende WebSockets.
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'channels',
     'gestion',
 ]
 
@@ -86,6 +89,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
+
+# WebSockets (Django Channels). La capa en memoria alcanza con un solo proceso
+# (runserver/daphne de la entrega); con varios procesos habría que usar Redis.
+CHANNEL_LAYERS = {'default': {'BACKEND': 'channels.layers.InMemoryChannelLayer'}}
 
 DATABASES = {
     'default': {
