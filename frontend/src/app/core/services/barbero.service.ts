@@ -23,4 +23,16 @@ export class BarberoService {
   actualizarMe(payload: Partial<Pick<BarberoMe, 'foto_perfil_url'>>): Observable<BarberoMe> {
     return this.http.patch<BarberoMe>(`${environment.apiUrl}/barberos/me/`, payload);
   }
+
+  /** POST /api/barberos/me/foto/ — multipart, campo `foto`. */
+  subirFoto(archivo: File): Observable<BarberoMe> {
+    const datos = new FormData();
+    datos.append('foto', archivo);
+    return this.http.post<BarberoMe>(`${environment.apiUrl}/barberos/me/foto/`, datos);
+  }
+
+  /** DELETE /api/barberos/me/foto/ */
+  quitarFoto(): Observable<BarberoMe> {
+    return this.http.delete<BarberoMe>(`${environment.apiUrl}/barberos/me/foto/`);
+  }
 }

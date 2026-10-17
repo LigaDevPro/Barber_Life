@@ -33,9 +33,11 @@ export class PerfilComponent implements OnInit {
     fecha_nacimiento: [''],
   });
 
-  barberoForm = this.fb.group({
-    foto_perfil_url: [''],
-  });
+  /** Foto de perfil del barbero (se sube a la API, ya no se pega una URL). */
+  fotoUrl = signal('');
+  subiendoFoto = signal(false);
+  readonly formatosFoto = ['image/jpeg', 'image/png', 'image/webp'];
+  readonly maxFotoMb = 2;
 
   ngOnInit(): void {
     if (this.esCliente()) {
@@ -55,7 +57,7 @@ export class PerfilComponent implements OnInit {
     } else if (this.esBarbero()) {
       this.barberoService.getMe().subscribe({
         next: (b) => {
-          this.barberoForm.patchValue({ foto_perfil_url: b.foto_perfil_url });
+          this.fotoUrl.set(b.foto_perfil_url);
           this.loading.set(false);
         },
         error: () => {
@@ -87,19 +89,49 @@ export class PerfilComponent implements OnInit {
       });
   }
 
-  guardarBarbero(): void {
-    this.guardando.set(true);
+  /** Valida en el cliente (tipo y peso) y sube la foto; el backend vuelve a validar. */
+  elegirFoto(evento: Event): void {
+    const input = evento.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+    input.value = ''; // permite volver a elegir el mismo archivo
+    if (!archivo) return;
     this.errorMsg.set(null);
     this.successMsg.set(null);
-    const { foto_perfil_url } = this.barberoForm.getRawValue();
-    this.barberoService.actualizarMe({ foto_perfil_url: foto_perfil_url ?? '' }).subscribe({
-      next: () => {
-        this.guardando.set(false);
-        this.successMsg.set('Perfil actualizado.');
+    if (!this.formatosFoto.includes(archivo.type)) {
+      this.errorMsg.set('Elegí una imagen JPEG, PNG o WebP.');
+      return;
+    }
+    if (archivo.size > this.maxFotoMb * 1024 * 1024) {
+      this.errorMsg.set(`La imagen no puede pesar más de ${this.maxFotoMb} MB.`);
+      return;
+    }
+    this.subiendoFoto.set(true);
+    this.barberoService.subirFoto(archivo).subscribe({
+      next: (b) => {
+        this.fotoUrl.set(b.foto_perfil_url);
+        this.subiendoFoto.set(false);
+        this.successMsg.set('Foto actualizada.');
       },
       error: (err) => {
-        this.guardando.set(false);
-        this.errorMsg.set(err?.error?.detail || 'No se pudo actualizar tu perfil.');
+        this.subiendoFoto.set(false);
+        this.errorMsg.set(err?.error?.foto?.[0] || err?.error?.detail || 'No se pudo subir la foto.');
+      },
+    });
+  }
+
+  quitarFoto(): void {
+    this.subiendoFoto.set(true);
+    this.errorMsg.set(null);
+    this.successMsg.set(null);
+    this.barberoService.quitarFoto().subscribe({
+      next: () => {
+        this.fotoUrl.set('');
+        this.subiendoFoto.set(false);
+        this.successMsg.set('Foto eliminada.');
+      },
+      error: () => {
+        this.subiendoFoto.set(false);
+        this.errorMsg.set('No se pudo quitar la foto.');
       },
     });
   }
