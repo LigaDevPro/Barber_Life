@@ -14,40 +14,43 @@
 
 ---
 
-## 📋 Descripción
+## Descripción
 
 **Barber Life** es una plataforma web diseñada para digitalizar y optimizar la operación de barberías y peluquerías. Reemplaza los procesos manuales tradicionales — agendas en papel, turnos por WhatsApp, cobros sin registro — con un sistema moderno, escalable y accesible para clientes, barberos y administradores.
 
 ---
 
-## 🎯 Funcionalidades principales
+## Funcionalidades principales
 
-- 📅 Reserva de turnos online con disponibilidad en tiempo real
-- 👤 Gestión de usuarios con roles diferenciados (cliente, barbero, administrador)
-- ✂️ Catálogo de servicios con precios y duraciones
-- 🗓️ Administración de agendas por barbero
-- 💳 Procesamiento de pagos digitales mediante **Mercado Pago**
-- 🔔 Notificaciones automáticas de confirmación y recordatorios
-- ⭐ Sistema de reseñas y calificaciones
-- 📊 Panel de estadísticas y métricas para administradores
+- Reserva y cancelación de turnos online (cancelación hasta 2 horas antes) con validación de disponibilidad
+- Gestión de usuarios con roles diferenciados (cliente, barbero, administrador) y login con correo/contraseña (JWT) o **con Google**
+- Catálogo de servicios con precios y duraciones; horarios y oferta de servicios por barbero
+- Agenda de turnos por barbero con **filtros** (fechas, estado, texto), paginación y **exportación a CSV**
+- Procesamiento de pagos digitales mediante **Mercado Pago**
+- Notificaciones **en tiempo real** (WebSocket) y registro de auditoría en MongoDB
+- Correos de bienvenida y de estado de turnos
+- Foto de perfil del barbero (JPEG/PNG/WebP, hasta 2 MB)
+- Sistema de reseñas y calificaciones
+- Panel de estadísticas, ingresos y ranking de barberos para administradores
 
 ---
 
-## 🏗️ Arquitectura Tecnológica
+## Arquitectura Tecnológica
 
 El proyecto implementa una arquitectura **Cliente-Servidor** separada en dos repositorios:
 
 | Capa | Tecnología | Repositorio |
 |---|---|---|
-| Frontend | Angular + TypeScript | [/frontend](https://github.com/LigaDevPro/Barber_Life/tree/main/frontend) |
-| Backend | Django + Python | [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) |
+| Frontend | Angular 21 + TypeScript + Tailwind | [/frontend](https://github.com/LigaDevPro/Barber_Life/tree/main/frontend) |
+| Backend | Django 6 + Django REST Framework + Channels/Daphne (ASGI) | [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) |
 | Base de datos | PostgreSQL + MongoDB | [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) |
 | Infraestructura | Docker + Docker Compose | [/Raíz](https://github.com/LigaDevPro/Barber_Life/tree/main/) - [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) |
-| Pagos | Mercado Pago API | [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) - [/frontend](https://github.com/LigaDevPro/Barber_Life/tree/main/frontend) |
+| Pagos | Mercado Pago API |
+| Autenticación | JWT (SimpleJWT) + Google Identity Services | [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) - [/frontend](https://github.com/LigaDevPro/Barber_Life/tree/main/frontend) |
 
 ---
 
-## 🚀 Instalación y puesta en marcha
+## Instalación y puesta en marcha
 
 ### Requisitos previos
 
@@ -95,15 +98,33 @@ pip install -r requirements.txt
 Configurar variables de entorno — crear un archivo `.env` en `/backend`:
 
 ```env
-SECRET_KEY=tu_secret_key
+DJANGO_SECRET_KEY=tu_secret_key
 DEBUG=True
-DB_NAME=barberlife
-DB_USER=postgres
-DB_PASSWORD=tu_password
-DB_HOST=localhost
-DB_PORT=5432
+POSTGRES_DB=barberlife
+POSTGRES_USER=barberlife
+POSTGRES_PASSWORD=tu_password
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+MONGO_URI=mongodb://localhost:27017
 MERCADOPAGO_ACCESS_TOKEN=tu_token
+FRONTEND_URL=http://localhost:4200
+
+# Login con Google (opcional): Client ID de OAuth 2.0 (tipo "Aplicación web")
+GOOGLE_CLIENT_ID=tu_client_id.apps.googleusercontent.com
+
+# Correo (opcional): sin EMAIL_HOST los correos se escriben en la consola
+EMAIL_HOST=smtp.ejemplo.com
+EMAIL_PORT=587
+EMAIL_HOST_USER=usuario
+EMAIL_HOST_PASSWORD=clave
+DEFAULT_FROM_EMAIL=Barber Life <no-reply@barberlife.local>
+
+# Opcionales
+MEDIA_ROOT=./media            # donde se guardan las fotos de perfil
+CANCELACION_LIMITE_HORAS=2
 ```
+
+> Los nombres y valores por defecto de todas las variables están en `backend/core/settings.py`.
 
 Aplicar migraciones, cargar datos de demo e iniciar el servidor:
 
@@ -112,6 +133,8 @@ python manage.py migrate
 python manage.py seed_demo
 python manage.py runserver
 ```
+
+> El proyecto usa **Daphne** (ASGI) para atender también las notificaciones en tiempo real por WebSocket (`ws/notificaciones/`); `runserver` ya arranca sobre Daphne.
 
 > El backend requiere PostgreSQL y MongoDB corriendo (ver sección de Docker Compose más abajo si no los tenés instalados localmente).
 
@@ -179,11 +202,19 @@ docker compose exec backend python manage.py seed_demo
 > los generados. Algunos incluyen tildes en el email; si tu navegador/teclado
 > tiene problemas para escribirlas, usá uno de los que no las lleve.
 
+**Ejecutar los tests del backend** (192 pruebas):
+
+```bash
+docker compose exec backend python manage.py test
+```
+
+> Las fotos de perfil se guardan en `MEDIA_ROOT`; en Docker conviene montarlo como volumen para que no se pierdan al recrear el contenedor.
+
 > Si preferís correr el frontend por fuera de Docker (por ejemplo con `pnpm start`), levantá solo el resto de los servicios: `docker compose up --build postgres mongo backend`.
 
 ---
 
-## 🔀 Estructura de trabajo
+## Estructura de trabajo
 
 ### Estrategia de ramas
 
@@ -215,11 +246,16 @@ Esta estrategia se adapta bien a un equipo chico (6 integrantes) donde cada pers
 | Pablo Peralta | Frontend & UX — pantallas y componentes visuales |
 | Rodrigo Rojas | Backend — servicios de autenticación |
 | Miguel Scaccia | Product Owner — estructura inicial del backend y modelos |
-| Fabricio Agustín Gibaut | QA & DevOps — integración de la SPA y routing |
 
 ---
 
-## 👥 Equipo de Desarrollo — LigaDevPro
+## Documentación
+
+La documentación del proyecto (plan de gestión, IEEE 830, requisitos RF/RNF, matriz de trazabilidad, diagrama de Gantt, informe de avances y manual de usuario) se entrega por fuera del repositorio. Las líneas base y la gestión de configuración están descriptas en [`docs/PGC.md`](docs/PGC.md).
+
+---
+
+## Equipo de Desarrollo — LigaDevPro
 
 | Integrante | Rol |
 |---|---|
@@ -228,19 +264,20 @@ Esta estrategia se adapta bien a un equipo chico (6 integrantes) donde cada pers
 | Pablo Peralta | Frontend & UX |
 | Rodrigo Rojas | Backend |
 | Miguel Scaccia | Product Owner |
-| Fabricio Agustín Gibaut | QA & DevOps |
 
 ---
 
-## 📈 Estado del proyecto
+## Estado del proyecto
 
-- ✅ Análisis del problema
-- ✅ Relevamiento de requerimientos
-- ✅ Diseño de arquitectura
-- ✅ Modelado de base de datos
-- 🔄 Desarrollo de funcionalidades
-- 🔄 Testing e integración
-- ⏳ Despliegue final
+- Análisis del problema
+- Relevamiento de requerimientos
+- Diseño de arquitectura
+- Modelado de base de datos
+- Desarrollo de funcionalidades (Sprints 0 a 4)
+- Testing e integración (192 pruebas automáticas en el backend)
+- Cierre de documentación y despliegue final
+
+**Limitaciones conocidas:** no hay recuperación de contraseña ni bloqueo por intentos fallidos, no se pueden reprogramar turnos, el alta de barberos/clientes se hace desde el panel de administración de Django y el historial de pagos solo está disponible por API (`GET /api/pagos/`).
 
 ---
 
