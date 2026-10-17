@@ -7,7 +7,11 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
-Cambios integrados a `develop` (Sprint 4, octubre 2026) que todavía no forman parte de una línea base en `main`.
+Sin cambios pendientes.
+
+## [0.3.0] - 2026-10-17
+
+Cierre del Sprint 4 (octubre 2026): línea base integrada a `main` con las cinco funcionalidades obligatorias de la entrega final y la documentación completa del proyecto.
 
 ### Agregado
 - Backend: filtros de turnos por rango de fechas, estado y texto (combinables), con paginación y mensajes de error ante filtros inválidos.
@@ -29,6 +33,12 @@ Cambios integrados a `develop` (Sprint 4, octubre 2026) que todavía no forman p
 ### Cambiado
 - El backend se ejecuta sobre Daphne (ASGI) para atender también WebSockets.
 - README actualizado con las nuevas funcionalidades, variables de entorno, ejecución de tests y estado del proyecto.
+
+### Limitaciones conocidas
+- No hay recuperación de contraseña ni bloqueo por intentos fallidos de inicio de sesión.
+- No se pueden reprogramar turnos.
+- El alta de barberos y clientes se hace desde el panel de administración de Django.
+- El historial de pagos solo está disponible por API (`GET /api/pagos/`).
 
 ## [0.2.0] - 2026-09-21
 
@@ -85,6 +95,7 @@ la materia.
 - Actualización del README con instrucciones de instalación, estructura de trabajo del equipo y roles.
 - Ajuste de variables de entorno de Docker Compose para la conexión entre servicios.
 
+[Unreleased]: https://github.com/LigaDevPro/Barber_Life/compare/v0.3.0...develop
 [0.3.0]: https://github.com/LigaDevPro/Barber_Life/releases/tag/v0.3.0
 [0.2.0]: https://github.com/LigaDevPro/Barber_Life/releases/tag/v0.2.0
 [0.1.0]: https://github.com/LigaDevPro/Barber_Life/releases/tag/v0.1.0
