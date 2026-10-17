@@ -1,9 +1,11 @@
-import { Component, EventEmitter, OnInit, Output, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, OnInit, Output, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LogoComponent } from '../logo/logo.component';
 import { AuthService } from '../../core/auth/auth.service';
 import { NotificacionService } from '../../core/services/notificacion.service';
+import { NotificacionesTiempoRealService } from '../../core/services/notificaciones-tiempo-real.service';
 import { Rol } from '../../core/models/models';
 
 interface NavItem {
@@ -116,6 +118,17 @@ const NAV_POR_ROL: Record<Rol, NavItem[]> = {
           </button>
         </div>
 
+        @if (aviso(); as texto) {
+          <div
+            role="status"
+            aria-live="polite"
+            data-testid="aviso-notificacion"
+            class="fixed right-5 bottom-5 z-40 max-w-80 rounded-field border border-bl-border bg-bl-surface px-4 py-3 text-[13.5px] text-bl-text shadow-lg"
+          >
+            {{ texto }}
+          </div>
+        }
+
         @if (open()) {
           <nav
             class="absolute top-full right-5 z-20 mt-1 flex min-w-45 flex-col overflow-hidden rounded-field border border-bl-border bg-bl-surface lg:right-0"
@@ -149,6 +162,12 @@ export class TopbarComponent implements OnInit {
 
   private authService = inject(AuthService);
   private notificacionService = inject(NotificacionService);
+  private tiempoReal = inject(NotificacionesTiempoRealService);
+  private destroyRef = inject(DestroyRef);
+  private temporizadorAviso: ReturnType<typeof setTimeout> | null = null;
+
+  /** Texto de la última notificación recibida en vivo (se oculta solo a los 5 s). */
+  aviso = signal<string | null>(null);
 
   navItems = computed<NavItem[]>(() => {
     const usuario = this.authService.currentUser();
@@ -167,6 +186,13 @@ export class TopbarComponent implements OnInit {
   logoPath = computed<string | null>(() => this.navItems()[0]?.path ?? null);
 
   ngOnInit(): void {
+    this.tiempoReal.nueva$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((n) => {
+      this.unreadCount.update((v) => v + 1);
+      this.aviso.set(n.mensaje);
+      if (this.temporizadorAviso) clearTimeout(this.temporizadorAviso);
+      this.temporizadorAviso = setTimeout(() => this.aviso.set(null), 5000);
+    });
+    this.destroyRef.onDestroy(() => this.temporizadorAviso && clearTimeout(this.temporizadorAviso));
     this.notificacionService.listar(1, false).subscribe({
       next: (res) => this.unreadCount.set(res.count),
       error: () => this.unreadCount.set(0),
