@@ -26,16 +26,27 @@ def registrar_notificacion(usuario_id, tipo, mensaje, canal='interna'):
     No rompe el flujo principal si Mongo no está disponible: solo loguea."""
     try:
         db = get_mongo_db()
-        db.notificaciones.insert_one({
+        fecha = __import__('datetime').datetime.utcnow()
+        resultado = db.notificaciones.insert_one({
             'usuario_id': usuario_id,
             'tipo': tipo,
             'mensaje': mensaje,
             'canal': canal,
             'leida': False,
-            'fecha_creacion': __import__('datetime').datetime.utcnow(),
+            'fecha_creacion': fecha,
         })
     except PyMongoError:
-        pass
+        return
+    # Tiempo real: si el usuario tiene el WebSocket abierto, le llega al instante.
+    from .realtime import enviar_notificacion
+    enviar_notificacion(usuario_id, {
+        'id': str(resultado.inserted_id),
+        'tipo': tipo,
+        'mensaje': mensaje,
+        'canal': canal,
+        'leida': False,
+        'fecha_creacion': fecha.isoformat() + 'Z',
+    })
 
 
 def registrar_evento_log(usuario_id, accion, detalle=None):
