@@ -58,6 +58,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # Sirve los estáticos (admin, DRF) sin nginx; va justo después de SecurityMiddleware.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -129,6 +131,12 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+# Destino de `collectstatic` (lo corre el Dockerfile al construir la imagen).
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
+}
 
 # Archivos subidos por usuarios (fotos de perfil). En Docker montar MEDIA_ROOT
 # en un volumen para que sobrevivan a un rebuild del contenedor.
@@ -159,6 +167,15 @@ CORS_ALLOWED_ORIGINS = env_list(
     'CORS_ALLOWED_ORIGINS', 'http://localhost:4200,http://127.0.0.1:4200'
 )
 CORS_ALLOW_CREDENTIALS = True
+
+# Detrás del proxy HTTPS de la plataforma (Railway, Render...): Django ve HTTP plano
+# y necesita confiar en X-Forwarded-Proto para saber que la request original era HTTPS.
+CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS', '')
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = env_bool('SECURE_SSL_REDIRECT', False)
 
 # MongoDB (colecciones no relacionales: notificaciones, eventos_log, analytics_cache)
 MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://localhost:27017')
