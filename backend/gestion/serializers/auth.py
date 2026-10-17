@@ -6,6 +6,16 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from ..models import Usuario, Cliente
 
 
+def tokens_para(usuario):
+    """Misma respuesta que el login con contraseña: access + refresh + datos del usuario."""
+    refresh = RefreshToken.for_user(usuario)
+    return {
+        'access': str(refresh.access_token),
+        'refresh': str(refresh),
+        'usuario': UsuarioMeSerializer(usuario).data,
+    }
+
+
 class RegisterSerializer(serializers.Serializer):
     """Registro público. Coincide con el wireframe de Register: email + password
     + confirmación. El rol se asigna 'cliente' por defecto — cuentas de
@@ -62,13 +72,12 @@ class LoginSerializer(serializers.Serializer):
         return attrs
 
     def tokens(self):
-        usuario = self.validated_data['usuario']
-        refresh = RefreshToken.for_user(usuario)
-        return {
-            'access': str(refresh.access_token),
-            'refresh': str(refresh),
-            'usuario': UsuarioMeSerializer(usuario).data,
-        }
+        return tokens_para(self.validated_data['usuario'])
+
+
+class GoogleLoginSerializer(serializers.Serializer):
+    """POST /api/auth/google/ — `credential` es el ID token que entrega Google."""
+    credential = serializers.CharField(max_length=4096)
 
 
 class UsuarioMeSerializer(serializers.ModelSerializer):

@@ -5,7 +5,7 @@ submódulo vive cada clase. Cada dominio vive en su propio archivo para que
 distintas personas puedan trabajar en paralelo sin pisarse en el mismo
 archivo.
 """
-from .auth import RegisterView, LoginView, MeView
+from .auth import RegisterView, LoginView, GoogleLoginView, MeView
 from .dashboard import DashboardView
 from .turno import (
     TurnosListView, TurnosExportarView, TurnoDetailView, TurnoCancelarView, ServiciosMasSolicitadosView, TurnosPagination,
@@ -23,7 +23,7 @@ from .notificacion import NotificacionListView, NotificacionLeidaView
 from .resena import ResenaListCreateView
 
 __all__ = [
-    'RegisterView', 'LoginView', 'MeView',
+    'RegisterView', 'LoginView', 'GoogleLoginView', 'MeView',
     'DashboardView',
     'TurnosListView', 'TurnosExportarView', 'TurnoDetailView', 'TurnoCancelarView', 'ServiciosMasSolicitadosView', 'TurnosPagination',
     'MisTurnosView',
