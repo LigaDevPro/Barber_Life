@@ -61,6 +61,7 @@ def crear_preferencia(turno):
             'title': f'{turno.servicio.nombre} - Barber Life',
             'quantity': 1,
             'unit_price': float(turno.precio()),
+            'currency_id': 'ARS',
         }],
         'external_reference': str(turno.id),
     }
