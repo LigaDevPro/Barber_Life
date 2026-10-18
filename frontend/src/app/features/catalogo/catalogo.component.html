@@ -1,20 +1,45 @@
-<div class="mx-auto min-h-screen max-w-120 bg-bl-bg">
+<div class="min-h-screen bg-bl-bg">
   <bl-topbar (logout)="logout()" />
 
-  <main class="flex flex-col gap-4 p-5">
-    <div class="flex flex-col gap-1">
+  <main class="bl-container flex flex-col gap-4 p-5 lg:grid lg:grid-cols-[400px_1fr] lg:items-start lg:gap-6 lg:px-0 lg:py-10">
+    @if (aviso(); as a) {
+      <div
+        role="status"
+        data-testid="aviso-exito"
+        class="flex items-center gap-3 rounded-field border border-bl-success bg-bl-success/15 px-4 py-3 lg:col-span-2 lg:justify-self-end lg:min-w-100"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="shrink-0 text-bl-success" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" />
+          <path d="m8 12.5 3 3 5-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div class="flex flex-1 flex-col gap-0.5">
+          <span class="text-[14px] font-semibold text-bl-success">{{ a.titulo }}</span>
+          <span class="text-[12px] text-bl-text">{{ a.detalle }}</span>
+        </div>
+        <button
+          type="button"
+          aria-label="Cerrar aviso"
+          class="cursor-pointer border-0 bg-transparent p-1 text-bl-text-muted hover:text-bl-text"
+          (click)="cerrarAviso()"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+        </button>
+      </div>
+    }
+
+    <div class="flex flex-col gap-1 lg:col-span-2">
       <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Catálogo</p>
-      <h1 class="m-0 text-2xl font-bold">Servicios y disponibilidad</h1>
+      <h1 class="m-0 text-2xl font-bold lg:text-[34px]">Servicios y disponibilidad</h1>
     </div>
 
-    <div class="flex gap-2 overflow-x-auto">
+    <div class="flex gap-2 overflow-x-auto lg:col-span-2">
       <button
         type="button"
         (click)="cambiarTab('servicios')"
         [class]="
           tab() === 'servicios'
-            ? 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
-            : 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+            ? 'h-9 shrink-0 cursor-pointer rounded-chip border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
+            : 'h-9 shrink-0 cursor-pointer rounded-chip border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
         "
       >
         Servicios
@@ -24,8 +49,8 @@
         (click)="cambiarTab('horarios')"
         [class]="
           tab() === 'horarios'
-            ? 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
-            : 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+            ? 'h-9 shrink-0 cursor-pointer rounded-chip border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
+            : 'h-9 shrink-0 cursor-pointer rounded-chip border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
         "
       >
         Horarios
@@ -35,8 +60,8 @@
         (click)="cambiarTab('oferta')"
         [class]="
           tab() === 'oferta'
-            ? 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
-            : 'h-9 shrink-0 cursor-pointer rounded-full border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
+            ? 'h-9 shrink-0 cursor-pointer rounded-chip border border-bl-text bg-bl-text px-4 text-[13px] font-semibold text-bl-bg'
+            : 'h-9 shrink-0 cursor-pointer rounded-chip border border-bl-border bg-transparent px-4 text-[13px] text-bl-text transition-colors duration-150 ease-linear hover:bg-bl-surface-2'
         "
       >
         Mi oferta
@@ -44,7 +69,7 @@
     </div>
 
     @if (errorMsg()) {
-      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger">
+      <div class="rounded-field border border-bl-border px-3 py-2.5 text-[13.5px] text-bl-danger-text lg:col-span-2">
         {{ errorMsg() }}
       </div>
     }
@@ -53,7 +78,7 @@
       <p class="text-[13.5px] text-bl-text-muted">Cargando...</p>
     } @else {
       @if (esAdmin() && tab() !== 'servicios') {
-        <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
+        <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted lg:col-span-2 lg:max-w-100">
           Barbero
           <select class="bl-input" (change)="elegirBarbero($any($event.target).value)">
             <option value="">Elegí un barbero...</option>
@@ -70,25 +95,26 @@
           <form
             [formGroup]="formServicio"
             (ngSubmit)="guardarServicio()"
+            data-testid="servicio-form"
             class="flex flex-col gap-3 rounded-card border border-bl-border bg-bl-surface p-4"
           >
             <h2 class="m-0 text-[15px] font-bold">{{ editandoServicioId() ? 'Editar servicio' : 'Nuevo servicio' }}</h2>
             <label class="flex flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
               Nombre
-              <input class="bl-input" type="text" formControlName="nombre" placeholder="Corte de pelo" />
+              <input class="bl-input" type="text" formControlName="nombre" placeholder="Corte de pelo" data-testid="servicio-nombre" />
             </label>
             <div class="flex gap-3">
               <label class="flex flex-1 flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
                 Duración (min)
-                <input class="bl-input" type="number" formControlName="duracion_minutos" min="1" />
+                <input class="bl-input" type="number" formControlName="duracion_minutos" min="1" data-testid="servicio-duracion" />
               </label>
               <label class="flex flex-1 flex-col gap-1.5 text-[13px] font-medium text-bl-text-muted">
                 Precio
-                <input class="bl-input" type="text" inputmode="decimal" formControlName="precio" placeholder="15.00" />
+                <input class="bl-input" type="text" inputmode="decimal" formControlName="precio" placeholder="15.00" data-testid="servicio-precio" />
               </label>
             </div>
             <div class="flex gap-2.5">
-              <button class="bl-btn bl-btn--primary normal-case" type="submit" [disabled]="guardandoServicio()">
+              <button class="bl-btn bl-btn--primary normal-case" type="submit" [disabled]="guardandoServicio()" data-testid="servicio-guardar">
                 {{ guardandoServicio() ? 'Guardando...' : editandoServicioId() ? 'Guardar cambios' : 'Crear servicio' }}
               </button>
               @if (editandoServicioId()) {
@@ -104,29 +130,31 @@
           </form>
         }
 
-        <div class="flex flex-col gap-2.5">
+        <div class="flex flex-col gap-2.5 lg:col-span-2 lg:[form+&]:col-span-1">
           @for (s of servicios(); track s.id) {
-            <div class="flex items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-4">
+            <div class="flex items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-4" data-testid="servicio-item">
               <div class="flex flex-1 flex-col gap-0.5">
                 <span class="text-[14.5px] font-semibold">{{ s.nombre }}</span>
                 <span class="text-[12.5px] text-bl-text-muted">{{ s.duracion_minutos }} min · ${{ s.precio }}</span>
               </div>
               @if (!s.activo) {
-                <span class="rounded-full border border-bl-border px-2 py-0.5 text-[10.5px] text-bl-text-muted">inactivo</span>
+                <span class="rounded-badge border border-bl-border px-2.5 py-0.75 text-[10.5px] text-bl-text-muted">inactivo</span>
               }
               @if (esAdmin()) {
                 <button
                   type="button"
                   class="bl-btn w-auto text-bl-text normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
                   (click)="editarServicio(s)"
+                  data-testid="servicio-editar"
                 >
                   Editar
                 </button>
                 <button
                   type="button"
                   class="bl-btn w-auto normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
-                  [class.text-bl-danger]="s.activo"
+                  [class.text-bl-danger-text]="s.activo"
                   (click)="toggleServicio(s)"
+                  data-testid="servicio-toggle"
                 >
                   {{ s.activo ? 'Desactivar' : 'Activar' }}
                 </button>
@@ -172,7 +200,7 @@
             </button>
           </form>
 
-          <div class="flex flex-col gap-2.5">
+          <div class="flex flex-col gap-2.5 lg:col-span-2 lg:[form+&]:col-span-1">
             @for (h of horarios(); track h.id) {
               <div class="flex items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-4">
                 <div class="flex flex-1 flex-col gap-0.5">
@@ -182,12 +210,12 @@
                   >
                 </div>
                 @if (!h.activo) {
-                  <span class="rounded-full border border-bl-border px-2 py-0.5 text-[10.5px] text-bl-text-muted">inactivo</span>
+                  <span class="rounded-badge border border-bl-border px-2.5 py-0.75 text-[10.5px] text-bl-text-muted">inactivo</span>
                 }
                 <button
                   type="button"
                   class="bl-btn w-auto normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
-                  [class.text-bl-danger]="h.activo"
+                  [class.text-bl-danger-text]="h.activo"
                   (click)="toggleHorario(h)"
                 >
                   {{ h.activo ? 'Desactivar' : 'Activar' }}
@@ -198,7 +226,7 @@
             }
           </div>
         } @else {
-          <p class="text-[13.5px] text-bl-text-muted">Elegí un barbero para ver y gestionar sus horarios.</p>
+          <p class="text-[13.5px] text-bl-text-muted lg:col-span-2">Elegí un barbero para ver y gestionar sus horarios.</p>
         }
       }
 
@@ -249,7 +277,7 @@
             </button>
           </form>
 
-          <div class="flex flex-col gap-2.5">
+          <div class="flex flex-col gap-2.5 lg:col-span-2 lg:[form+&]:col-span-1">
             @for (o of ofertas(); track o.id) {
               <div class="flex items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-4">
                 <div class="flex flex-1 flex-col gap-0.5">
@@ -257,12 +285,12 @@
                   <span class="text-[12.5px] text-bl-text-muted">${{ o.precio }}</span>
                 </div>
                 @if (!o.activo) {
-                  <span class="rounded-full border border-bl-border px-2 py-0.5 text-[10.5px] text-bl-text-muted">inactivo</span>
+                  <span class="rounded-badge border border-bl-border px-2.5 py-0.75 text-[10.5px] text-bl-text-muted">inactivo</span>
                 }
                 <button
                   type="button"
                   class="bl-btn w-auto normal-case transition-colors duration-150 ease-linear hover:bg-bl-surface-2"
-                  [class.text-bl-danger]="o.activo"
+                  [class.text-bl-danger-text]="o.activo"
                   (click)="toggleOferta(o)"
                 >
                   {{ o.activo ? 'Desactivar' : 'Activar' }}
@@ -273,7 +301,7 @@
             }
           </div>
         } @else {
-          <p class="text-[13.5px] text-bl-text-muted">Elegí un barbero para ver y gestionar su oferta.</p>
+          <p class="text-[13.5px] text-bl-text-muted lg:col-span-2">Elegí un barbero para ver y gestionar su oferta.</p>
         }
       }
     }

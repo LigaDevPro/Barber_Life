@@ -1,7 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { PanelService } from '../../core/auth/panel.service';
+import { FiltrosTurnos, PanelService } from '../../core/auth/panel.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { ServicioMasSolicitado, TurnoResumen, TurnosPage } from '../../core/models/models';
 import { TopbarComponent } from '../../shared/topbar/topbar.component';
@@ -13,10 +13,10 @@ const ICONOS_SERVICIO: Record<string, string> = {
 };
 
 const ESTADO_CLASSES: Record<string, string> = {
-  pendiente: 'bg-[rgba(224,197,111,0.15)] text-bl-warning',
-  confirmado: 'bg-[rgba(111,170,224,0.15)] text-[#6faae0]',
-  completado: 'bg-[rgba(111,224,154,0.15)] text-bl-success',
-  cancelado: 'bg-[rgba(224,111,111,0.15)] text-bl-danger',
+  pendiente: 'bg-bl-warning/15 text-bl-warning',
+  confirmado: 'bg-bl-info/15 text-bl-info',
+  completado: 'bg-bl-success/15 text-bl-success',
+  cancelado: 'bg-bl-danger/15 text-bl-danger-text',
 };
 
 @Component({
@@ -32,6 +32,52 @@ export class TurnosComponent implements OnInit {
   errorMsg = signal<string | null>(null);
   menuAbierto = signal<number | null>(null);
   paginaActual = signal(1);
+
+  /** Filtros combinables (todos se aplican en el servidor): rango rápido («Hoy», «Mañana», «Esta semana»), rango de fechas propio, estado y texto. */
+  readonly rangos = [
+    { valor: 'todos', etiqueta: 'Todos' },
+    { valor: 'hoy', etiqueta: 'Hoy' },
+    { valor: 'manana', etiqueta: 'Mañana' },
+    { valor: 'semana', etiqueta: 'Esta semana' },
+  ] as const;
+  readonly estados = [
+    { valor: '', etiqueta: 'Todos los estados' },
+    { valor: 'pendiente', etiqueta: 'Pendiente' },
+    { valor: 'confirmado', etiqueta: 'Confirmado' },
+    { valor: 'completado', etiqueta: 'Completado' },
+    { valor: 'cancelado', etiqueta: 'Cancelado' },
+  ] as const;
+  rango = signal<'todos' | 'hoy' | 'manana' | 'semana'>('hoy');
+  fechaDesde = signal('');
+  fechaHasta = signal('');
+  estado = signal('');
+  busqueda = signal('');
+  selectorFechaAbierto = signal(false);
+  exportando = signal(false);
+
+  /** Hay un rango de fechas propio cargado (tiene prioridad sobre los chips). */
+  rangoPropio = computed(() => !!(this.fechaDesde() || this.fechaHasta()));
+
+  /** Resultados de la página actual (el filtrado ya viene hecho por el backend). */
+  resultados = computed<TurnoResumen[]>(() => this.pagina()?.results ?? []);
+
+  /** Traduce el estado de los controles a los parámetros que entiende la API. */
+  private filtros(): FiltrosTurnos {
+    const filtros: FiltrosTurnos = { q: this.busqueda().trim(), estado: this.estado() };
+    if (this.rangoPropio()) {
+      filtros.fechaDesde = this.fechaDesde();
+      filtros.fechaHasta = this.fechaHasta();
+    } else if (this.rango() === 'hoy') {
+      filtros.fechaDesde = filtros.fechaHasta = this.iso(new Date());
+    } else if (this.rango() === 'manana') {
+      filtros.fechaDesde = filtros.fechaHasta = this.iso(this.sumarDias(new Date(), 1));
+    } else if (this.rango() === 'semana') {
+      const lunes = this.sumarDias(new Date(), -((new Date().getDay() + 6) % 7));
+      filtros.fechaDesde = this.iso(lunes);
+      filtros.fechaHasta = this.iso(this.sumarDias(lunes, 6));
+    }
+    return filtros;
+  }
 
   constructor(
     private panelService: PanelService,
@@ -54,7 +100,7 @@ export class TurnosComponent implements OnInit {
   cargarTurnos(page = 1): void {
     this.loading.set(true);
     this.errorMsg.set(null);
-    this.panelService.getTurnos(page).subscribe({
+    this.panelService.getTurnos(page, this.filtros()).subscribe({
       next: (res) => {
         this.pagina.set(res);
         this.paginaActual.set(page);
@@ -65,6 +111,78 @@ export class TurnosComponent implements OnInit {
         this.errorMsg.set(err?.error?.detail || 'No se pudieron cargar los turnos.');
       },
     });
+  }
+
+  /** Tocar el chip activo lo apaga y vuelve a mostrar todos los turnos. */
+  elegirRango(valor: 'todos' | 'hoy' | 'manana' | 'semana'): void {
+    this.rango.set(this.rango() === valor && !this.rangoPropio() ? 'todos' : valor);
+    this.fechaDesde.set('');
+    this.fechaHasta.set('');
+    this.selectorFechaAbierto.set(false);
+    this.cargarTurnos();
+  }
+
+  toggleSelectorFecha(): void {
+    this.selectorFechaAbierto.update((v) => !v);
+  }
+
+  elegirFechaDesde(valor: string): void {
+    this.fechaDesde.set(valor);
+    this.cargarTurnos();
+  }
+
+  elegirFechaHasta(valor: string): void {
+    this.fechaHasta.set(valor);
+    this.cargarTurnos();
+  }
+
+  limpiarFechas(): void {
+    this.fechaDesde.set('');
+    this.fechaHasta.set('');
+    this.cargarTurnos();
+  }
+
+  elegirEstado(valor: string): void {
+    this.estado.set(valor);
+    this.cargarTurnos();
+  }
+
+  buscar(valor: string): void {
+    this.busqueda.set(valor);
+    this.cargarTurnos();
+  }
+
+  /** Descarga en CSV los turnos que matchean los filtros activos (no solo la página visible). */
+  exportarCsv(): void {
+    this.exportando.set(true);
+    this.errorMsg.set(null);
+    this.panelService.exportarTurnos(this.filtros()).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const enlace = document.createElement('a');
+        enlace.href = url;
+        enlace.download = 'turnos.csv';
+        enlace.click();
+        URL.revokeObjectURL(url);
+        this.exportando.set(false);
+      },
+      error: () => {
+        this.exportando.set(false);
+        this.errorMsg.set('No se pudo exportar los turnos.');
+      },
+    });
+  }
+
+  private iso(d: Date): string {
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${d.getFullYear()}-${m}-${dd}`;
+  }
+
+  private sumarDias(d: Date, n: number): Date {
+    const r = new Date(d);
+    r.setDate(r.getDate() + n);
+    return r;
   }
 
   irAPagina(page: number): void {
@@ -101,7 +219,7 @@ export class TurnosComponent implements OnInit {
   }
 
   estadoClasses(estado: string): string {
-    return `mt-1 inline-block rounded-full px-2 py-0.5 text-[10.5px] capitalize ${ESTADO_CLASSES[estado] ?? ''}`;
+    return `mt-1 inline-block rounded-badge px-2.5 py-0.75 text-[10.5px] capitalize ${ESTADO_CLASSES[estado] ?? ''}`;
   }
 
   rangoTexto(): string {

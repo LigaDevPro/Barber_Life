@@ -7,13 +7,14 @@ import { AuthService } from '../../core/auth/auth.service';
 import { BarberoService } from '../../core/services/barbero.service';
 import { CatalogoService } from '../../core/services/catalogo.service';
 import { BarberoDetail, ServicioOfrecidoInline, Servicio } from '../../core/models/models';
+import { DialogFocusDirective } from '../../shared/dialog-focus/dialog-focus.directive';
 import { TopbarComponent } from '../../shared/topbar/topbar.component';
 import { iconoServicio } from '../../shared/servicio-icono';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [CommonModule, TopbarComponent],
+  imports: [CommonModule, TopbarComponent, DialogFocusDirective],
   templateUrl: './inicio.component.html',
 })
 export class InicioComponent implements OnInit {
@@ -27,6 +28,11 @@ export class InicioComponent implements OnInit {
   loading = signal(true);
   errorMsg = signal<string | null>(null);
   barberoModal = signal<BarberoDetail | null>(null);
+
+  irAServicios(e: Event): void {
+    e.preventDefault();
+    document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' });
+  }
 
   ngOnInit(): void {
     forkJoin({

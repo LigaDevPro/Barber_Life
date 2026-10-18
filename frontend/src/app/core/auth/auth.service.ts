@@ -29,14 +29,23 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login/`, { email, password }).pipe(
-      tap((res) => {
-        localStorage.setItem(ACCESS_KEY, res.access);
-        localStorage.setItem(REFRESH_KEY, res.refresh);
-        localStorage.setItem(USER_KEY, JSON.stringify(res.usuario));
-        this.currentUser.set(res.usuario);
-      })
-    );
+    return this.http
+      .post<LoginResponse>(`${environment.apiUrl}/auth/login/`, { email, password })
+      .pipe(tap((res) => this.guardarSesion(res)));
+  }
+
+  /** POST /api/auth/google/ — `credencial` es el ID token que entrega Google. */
+  loginConGoogle(credencial: string): Observable<LoginResponse> {
+    return this.http
+      .post<LoginResponse>(`${environment.apiUrl}/auth/google/`, { credential: credencial })
+      .pipe(tap((res) => this.guardarSesion(res)));
+  }
+
+  private guardarSesion(res: LoginResponse): void {
+    localStorage.setItem(ACCESS_KEY, res.access);
+    localStorage.setItem(REFRESH_KEY, res.refresh);
+    localStorage.setItem(USER_KEY, JSON.stringify(res.usuario));
+    this.currentUser.set(res.usuario);
   }
 
   refreshMe(): Observable<Usuario> {

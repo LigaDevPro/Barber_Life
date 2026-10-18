@@ -67,6 +67,8 @@ class NotificacionListView(APIView):
         coleccion = get_mongo_db().notificaciones
         count = coleccion.count_documents(filtro)
         num_pages = max(1, -(-count // page_size))  # ceil(count / page_size)
+        if page > num_pages:
+            raise NotFound('Página inválida.')
 
         docs = (
             coleccion.find(filtro)

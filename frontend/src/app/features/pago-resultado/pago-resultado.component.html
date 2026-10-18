@@ -1,0 +1,26 @@
+<div class="min-h-screen bg-bl-bg">
+  <bl-topbar (logout)="logout()" />
+
+  <main class="bl-container flex flex-col gap-4 p-5 lg:max-w-150 lg:px-0 lg:py-10">
+    <div class="flex flex-col gap-1">
+      <p class="m-0 text-xs tracking-[0.08em] text-bl-text-muted uppercase">Mercado Pago</p>
+      <h1 class="m-0 text-2xl font-bold">Resultado del pago</h1>
+    </div>
+
+    <div class="flex flex-col items-center gap-3 rounded-card border border-bl-border bg-bl-surface p-6 text-center">
+      <h2 class="m-0 text-xl font-bold" [class]="contenido.clasesTitulo">{{ contenido.titulo }}</h2>
+      <p class="m-0 text-[13.5px] text-bl-text-muted">{{ contenido.mensaje }}</p>
+
+      <div class="mt-2 flex w-full flex-col gap-2">
+        <a routerLink="/mis-turnos" class="bl-btn bl-btn--primary w-full normal-case no-underline">
+          Ver mis turnos
+        </a>
+        @if (resultado() === 'fallo') {
+          <a routerLink="/solicitar-turno" class="bl-btn w-full normal-case no-underline">
+            Reservar de nuevo
+          </a>
+        }
+      </div>
+    </div>
+  </main>
+</div>

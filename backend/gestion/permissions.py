@@ -20,6 +20,20 @@ class EsAdministrador(BasePermission):
         return bool(request.user and request.user.is_authenticated and request.user.rol == 'admin')
 
 
+class EsCliente(BasePermission):
+    """Solo rol Cliente. Usado en /clientes/me/: otro rol recibe 403, no 404."""
+
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated and request.user.rol == 'cliente')
+
+
+class EsBarbero(BasePermission):
+    """Solo rol Barbero. Usado en /barberos/me/: otro rol recibe 403, no 404."""
+
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_authenticated and request.user.rol == 'barbero')
+
+
 class EsBarberoOAdmin(BasePermission):
     """Barbero o Administrador. Usado en Dashboard y Gestión de Turnos."""
 

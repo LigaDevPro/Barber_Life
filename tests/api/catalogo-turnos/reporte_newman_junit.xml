@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Barber Life - AUT-API 2: Catálogo y Turnos" tests="49" time="6.590">
+  <testsuite name="00 Setup (usuarios y tokens) / Setup: Registro cliente OK" id="08ee497f-f795-4dbb-8ee5-c9874eeb36f0" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.943">
+    <testcase name="Status 201" time="0.943" classname="00SetupUsuariosYTokensSetupRegistroClienteOk"/>
+    <testcase name="Mensaje de cuenta creada" time="0.943" classname="00SetupUsuariosYTokensSetupRegistroClienteOk"/>
+  </testsuite>
+  <testsuite name="00 Setup (usuarios y tokens) / Setup: Login cliente OK" id="12a5d040-22d2-4bb3-b841-55650ad2a096" timestamp="2026-10-14T00:16:30.179Z" tests="3" failures="0" errors="0" time="0.919">
+    <testcase name="Status 200" time="0.919" classname="00SetupUsuariosYTokensSetupLoginClienteOk"/>
+    <testcase name="Devuelve access, refresh y usuario" time="0.919" classname="00SetupUsuariosYTokensSetupLoginClienteOk"/>
+    <testcase name="Rol cliente" time="0.919" classname="00SetupUsuariosYTokensSetupLoginClienteOk"/>
+  </testsuite>
+  <testsuite name="00 Setup (usuarios y tokens) / Setup: Login admin" id="2a680266-84e9-4917-b6af-14886f963600" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="1.020">
+    <testcase name="Status 200" time="1.020" classname="00SetupUsuariosYTokensSetupLoginAdmin"/>
+    <testcase name="Rol admin" time="1.020" classname="00SetupUsuariosYTokensSetupLoginAdmin"/>
+  </testsuite>
+  <testsuite name="00 Setup (usuarios y tokens) / Setup: Login barbero" id="2f59a912-92c7-47d3-a356-2cb84a5e13f3" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="1.208">
+    <testcase name="Status 200" time="1.208" classname="00SetupUsuariosYTokensSetupLoginBarbero"/>
+    <testcase name="Rol barbero" time="1.208" classname="00SetupUsuariosYTokensSetupLoginBarbero"/>
+  </testsuite>
+  <testsuite name="01 Servicios / Servicio: crear como admin" id="eb1ceeca-48ea-41e9-b02a-9543dc02e3b9" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.055">
+    <testcase name="Status 201" time="0.055" classname="01ServiciosServicioCrearComoAdmin"/>
+    <testcase name="Campos del servicio" time="0.055" classname="01ServiciosServicioCrearComoAdmin"/>
+  </testsuite>
+  <testsuite name="01 Servicios / Servicio: GET detalle (contrato)" id="96de0d97-97ef-418e-88fc-01f5a1d207ad" timestamp="2026-10-14T00:16:30.179Z" tests="6" failures="0" errors="0" time="0.053">
+    <testcase name="Status 200" time="0.053" classname="01ServiciosServicioGetDetalleContrato"/>
+    <testcase name="Contrato: id es number" time="0.053" classname="01ServiciosServicioGetDetalleContrato"/>
+    <testcase name="Contrato: nombre es string" time="0.053" classname="01ServiciosServicioGetDetalleContrato"/>
+    <testcase name="Contrato: duracion_minutos es number" time="0.053" classname="01ServiciosServicioGetDetalleContrato"/>
+    <testcase name="Contrato: precio es string" time="0.053" classname="01ServiciosServicioGetDetalleContrato"/>
+    <testcase name="Contrato: activo es boolean" time="0.053" classname="01ServiciosServicioGetDetalleContrato"/>
+  </testsuite>
+  <testsuite name="01 Servicios / Servicios: listar (público)" id="69224f02-a4cd-45a1-a0d9-2432abc43939" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.054">
+    <testcase name="Status 200" time="0.054" classname="01ServiciosServiciosListarPublico"/>
+    <testcase name="Es un array" time="0.054" classname="01ServiciosServiciosListarPublico"/>
+  </testsuite>
+  <testsuite name="01 Servicios / Servicio: crear como cliente -> 403" id="bb5a81bc-aab3-4caf-9c54-13b293f55d29" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.052">
+    <testcase name="Status 403" time="0.052" classname="01ServiciosServicioCrearComoCliente403"/>
+  </testsuite>
+  <testsuite name="01 Servicios / Servicio: crear sin token -> 401" id="65830a5e-70c1-4229-aca1-221cda3c8480" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.049">
+    <testcase name="Status 401" time="0.049" classname="01ServiciosServicioCrearSinToken401"/>
+  </testsuite>
+  <testsuite name="01 Servicios / Servicio: duración 0 -> 400" id="6eb5f879-d1b9-4a5e-90dd-6110cf70c5a2" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.056">
+    <testcase name="Status 400" time="0.056" classname="01ServiciosServicioDuracion0400"/>
+  </testsuite>
+  <testsuite name="01 Servicios / Servicio: precio negativo -> 400" id="33a091b5-0f44-4b4c-92ad-43da36d36574" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.053">
+    <testcase name="Status 400" time="0.053" classname="01ServiciosServicioPrecioNegativo400"/>
+  </testsuite>
+  <testsuite name="01 Servicios / Servicio: editar precio (PATCH)" id="844df133-0b1f-44c6-98bb-202c59506733" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.057">
+    <testcase name="Status 200" time="0.057" classname="01ServiciosServicioEditarPrecioPatch"/>
+    <testcase name="Precio actualizado" time="0.057" classname="01ServiciosServicioEditarPrecioPatch"/>
+  </testsuite>
+  <testsuite name="02 Barberos (consulta) / Barberos: listar y tomar uno" id="24557e35-e1ee-40c4-9fa7-4915387ebea2" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.050">
+    <testcase name="Status 200" time="0.050" classname="02BarberosConsultaBarberosListarYTomarUno"/>
+    <testcase name="Hay al menos un barbero" time="0.050" classname="02BarberosConsultaBarberosListarYTomarUno"/>
+  </testsuite>
+  <testsuite name="03 Horarios / Horario: crear como admin" id="0cef63a1-6b74-42fd-af79-93a611f7b07e" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.063">
+    <testcase name="Status 201" time="0.063" classname="03HorariosHorarioCrearComoAdmin"/>
+  </testsuite>
+  <testsuite name="03 Horarios / Horario: GET detalle (contrato)" id="a7f11b9e-060f-457c-bc93-9f88ab6dc006" timestamp="2026-10-14T00:16:30.179Z" tests="7" failures="0" errors="0" time="0.054">
+    <testcase name="Status 200" time="0.054" classname="03HorariosHorarioGetDetalleContrato"/>
+    <testcase name="Contrato: id es number" time="0.054" classname="03HorariosHorarioGetDetalleContrato"/>
+    <testcase name="Contrato: dia_semana es number" time="0.054" classname="03HorariosHorarioGetDetalleContrato"/>
+    <testcase name="Contrato: hora_inicio es string" time="0.054" classname="03HorariosHorarioGetDetalleContrato"/>
+    <testcase name="Contrato: hora_fin es string" time="0.054" classname="03HorariosHorarioGetDetalleContrato"/>
+    <testcase name="Contrato: intervalo_minutos es number" time="0.054" classname="03HorariosHorarioGetDetalleContrato"/>
+    <testcase name="Contrato: activo es boolean" time="0.054" classname="03HorariosHorarioGetDetalleContrato"/>
+  </testsuite>
+  <testsuite name="03 Horarios / Horario: PATCH intervalo" id="cdc9cf53-7a38-4cd7-872c-9e47e2e7af2e" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.056">
+    <testcase name="Status 200" time="0.056" classname="03HorariosHorarioPatchIntervalo"/>
+    <testcase name="Intervalo actualizado" time="0.056" classname="03HorariosHorarioPatchIntervalo"/>
+  </testsuite>
+  <testsuite name="03 Horarios / Horario: hora fin &lt;= inicio -> 400" id="0a141208-3c54-4ce8-bc33-c6c774956182" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.054">
+    <testcase name="Status 400" time="0.054" classname="03HorariosHorarioHoraFinLtInicio400"/>
+    <testcase name="Error en hora_fin" time="0.054" classname="03HorariosHorarioHoraFinLtInicio400"/>
+  </testsuite>
+  <testsuite name="03 Horarios / Horario: crear como cliente -> 403" id="8dd18343-bf4d-48b0-9b72-d53d628f182e" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.054">
+    <testcase name="Status 403" time="0.054" classname="03HorariosHorarioCrearComoCliente403"/>
+  </testsuite>
+  <testsuite name="04 Oferta barbero-servicio / Oferta barbero-servicio: crear" id="3b84f4ec-fbc7-4d0b-9aee-fb14195cf5f2" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.057">
+    <testcase name="Status 201" time="0.057" classname="04OfertaBarberoServicioOfertaBarberoServicioCrear"/>
+    <testcase name="Precio final informado (> 0)" time="0.057" classname="04OfertaBarberoServicioOfertaBarberoServicioCrear"/>
+  </testsuite>
+  <testsuite name="04 Oferta barbero-servicio / Oferta: GET detalle (contrato)" id="cb29110a-53c4-4ead-a348-be5b5eaf8681" timestamp="2026-10-14T00:16:30.179Z" tests="6" failures="0" errors="0" time="0.053">
+    <testcase name="Status 200" time="0.053" classname="04OfertaBarberoServicioOfertaGetDetalleContrato"/>
+    <testcase name="Contrato: id es number" time="0.053" classname="04OfertaBarberoServicioOfertaGetDetalleContrato"/>
+    <testcase name="Contrato: barbero es number" time="0.053" classname="04OfertaBarberoServicioOfertaGetDetalleContrato"/>
+    <testcase name="Contrato: servicio es number" time="0.053" classname="04OfertaBarberoServicioOfertaGetDetalleContrato"/>
+    <testcase name="Contrato: horario es number" time="0.053" classname="04OfertaBarberoServicioOfertaGetDetalleContrato"/>
+    <testcase name="Contrato: activo es boolean" time="0.053" classname="04OfertaBarberoServicioOfertaGetDetalleContrato"/>
+  </testsuite>
+  <testsuite name="04 Oferta barbero-servicio / Oferta: PATCH precio personalizado" id="02554ca9-6b93-47d4-a279-060e5bafc5e8" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.056">
+    <testcase name="Status 200" time="0.056" classname="04OfertaBarberoServicioOfertaPatchPrecioPersonalizado"/>
+    <testcase name="Precio final actualizado" time="0.056" classname="04OfertaBarberoServicioOfertaPatchPrecioPersonalizado"/>
+  </testsuite>
+  <testsuite name="04 Oferta barbero-servicio / Oferta barbero-servicio: duplicada -> 400" id="3a752c8e-6e77-4521-84a2-dfe0c5111df1" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.054">
+    <testcase name="Status 400" time="0.054" classname="04OfertaBarberoServicioOfertaBarberoServicioDuplicada400"/>
+  </testsuite>
+  <testsuite name="04 Oferta barbero-servicio / Oferta: listar por barbero (público)" id="bbf19475-2b3d-44b4-853f-7405498543ee" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.055">
+    <testcase name="Status 200" time="0.055" classname="04OfertaBarberoServicioOfertaListarPorBarberoPublico"/>
+    <testcase name="Incluye el servicio creado" time="0.055" classname="04OfertaBarberoServicioOfertaListarPorBarberoPublico"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Reservar turno OK (cliente)" id="f4b07888-54e5-4d44-9a4f-7dcd690678b9" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.065">
+    <testcase name="Status 201" time="0.065" classname="05TurnosReservarTurnoOkCliente"/>
+    <testcase name="Estado inicial pendiente" time="0.065" classname="05TurnosReservarTurnoOkCliente"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Reservar mismo horario -> 400" id="fb7348f1-b8f4-42a6-9644-c412791da73f" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.061">
+    <testcase name="Status 400" time="0.061" classname="05TurnosReservarMismoHorario400"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Reservar en el pasado -> 400" id="d43f790c-5442-495a-9103-9b5585f1fcbc" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.053">
+    <testcase name="Status 400" time="0.053" classname="05TurnosReservarEnElPasado400"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Reservar fuera del horario del barbero -> 400" id="a07632ff-e718-45dd-86ef-a73332434ecd" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.057">
+    <testcase name="Status 400" time="0.057" classname="05TurnosReservarFueraDelHorarioDelBarbero400"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Reservar sin token -> 401" id="2ab61a23-bf2b-4d7a-a583-932dca171238" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.047">
+    <testcase name="Status 401" time="0.047" classname="05TurnosReservarSinToken401"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Reservar como barbero -> 403" id="c6da95b5-e649-43fa-bda8-2b9704038c3d" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.056">
+    <testcase name="Status 403" time="0.056" classname="05TurnosReservarComoBarbero403"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Reservar sin campos obligatorios -> 400" id="01fa5ff0-8146-4600-ad31-88141fb6bd10" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.053">
+    <testcase name="Status 400" time="0.053" classname="05TurnosReservarSinCamposObligatorios400"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Mis turnos (cliente) incluye el reservado" id="ff9f4c8a-b364-45d8-b014-ab6a5a54ddf0" timestamp="2026-10-14T00:16:30.179Z" tests="3" failures="0" errors="0" time="0.065">
+    <testcase name="Status 200" time="0.065" classname="05TurnosMisTurnosClienteIncluyeElReservado"/>
+    <testcase name="Paginación estándar" time="0.065" classname="05TurnosMisTurnosClienteIncluyeElReservado"/>
+    <testcase name="Contiene el turno" time="0.065" classname="05TurnosMisTurnosClienteIncluyeElReservado"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Mis turnos sin token -> 401" id="cedd59fa-26c8-438b-998b-25de4062ed2a" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.046">
+    <testcase name="Status 401" time="0.046" classname="05TurnosMisTurnosSinToken401"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Agenda (/turnos/) como cliente -> 403" id="c5274fee-7789-47b1-a0a0-fb293f894c9f" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.054">
+    <testcase name="Status 403" time="0.054" classname="05TurnosAgendaTurnosComoCliente403"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Agenda como admin -> 200" id="47e42e9d-f822-4863-a51a-09365caa21d4" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.079">
+    <testcase name="Status 200" time="0.079" classname="05TurnosAgendaComoAdmin200"/>
+    <testcase name="page_size 7 máx" time="0.079" classname="05TurnosAgendaComoAdmin200"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Agenda filtrada por estado" id="18c468b1-c022-4b7d-80e3-db85387f2f08" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.069">
+    <testcase name="Status 200" time="0.069" classname="05TurnosAgendaFiltradaPorEstado"/>
+    <testcase name="Todos pendientes" time="0.069" classname="05TurnosAgendaFiltradaPorEstado"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Cambiar estado a confirmado (admin)" id="085324bd-08bb-4316-9228-d603db285631" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.059">
+    <testcase name="Status 200" time="0.059" classname="05TurnosCambiarEstadoAConfirmadoAdmin"/>
+    <testcase name="Estado confirmado" time="0.059" classname="05TurnosCambiarEstadoAConfirmadoAdmin"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Cambiar a estado inválido -> 400" id="b87ed82d-24a5-40c0-88c0-f3da89cd0015" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.054">
+    <testcase name="Status 400" time="0.054" classname="05TurnosCambiarAEstadoInvalido400"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Cliente no puede PATCH estado -> 403" id="1027b79e-96d9-48ab-a089-99efcc5acfe1" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.050">
+    <testcase name="Status 403" time="0.050" classname="05TurnosClienteNoPuedePatchEstado403"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Servicios más solicitados" id="585b3b57-87cc-4115-a2ce-095998e325ec" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.052">
+    <testcase name="Status 200" time="0.052" classname="05TurnosServiciosMasSolicitados"/>
+    <testcase name="Es un array" time="0.052" classname="05TurnosServiciosMasSolicitados"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Cancelar turno inexistente -> 404" id="e317aaa0-0719-4a79-b721-6848ce79263b" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.055">
+    <testcase name="Status 404" time="0.055" classname="05TurnosCancelarTurnoInexistente404"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Cancelar turno propio (cliente)" id="d6d05f5b-a75a-4352-87ef-0fc7b3e5dc43" timestamp="2026-10-14T00:16:30.179Z" tests="2" failures="0" errors="0" time="0.060">
+    <testcase name="Status 200" time="0.060" classname="05TurnosCancelarTurnoPropioCliente"/>
+    <testcase name="Estado cancelado" time="0.060" classname="05TurnosCancelarTurnoPropioCliente"/>
+  </testsuite>
+  <testsuite name="05 Turnos / Cancelar turno ya cancelado -> 400" id="cc7a0eb8-4f52-4329-8653-717321b1c0e4" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.059">
+    <testcase name="Status 400" time="0.059" classname="05TurnosCancelarTurnoYaCancelado400"/>
+  </testsuite>
+  <testsuite name="06 Bajas lógicas (DELETE) / Oferta: DELETE (baja lógica)" id="cf58d599-09d5-474c-b268-0cf1acf55924" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.055">
+    <testcase name="Baja aceptada" time="0.055" classname="06BajasLogicasDeleteOfertaDeleteBajaLogica"/>
+  </testsuite>
+  <testsuite name="06 Bajas lógicas (DELETE) / Oferta: GET tras DELETE -> inactiva" id="c09f879e-8ac9-49b9-b410-efbcd254e52d" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.058">
+    <testcase name="Inactiva o no visible" time="0.058" classname="06BajasLogicasDeleteOfertaGetTrasDeleteInactiva"/>
+  </testsuite>
+  <testsuite name="06 Bajas lógicas (DELETE) / Horario: DELETE (baja lógica)" id="e59e5ce3-261b-4f86-a6d5-79d0918934fa" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.057">
+    <testcase name="Baja aceptada" time="0.057" classname="06BajasLogicasDeleteHorarioDeleteBajaLogica"/>
+  </testsuite>
+  <testsuite name="06 Bajas lógicas (DELETE) / Horario: GET tras DELETE -> inactivo" id="5b51b169-9529-4c41-8c8f-9849509a79dd" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.052">
+    <testcase name="Inactivo o no visible" time="0.052" classname="06BajasLogicasDeleteHorarioGetTrasDeleteInactivo"/>
+  </testsuite>
+  <testsuite name="06 Bajas lógicas (DELETE) / Servicio: DELETE (baja lógica)" id="b22b9d71-9c4b-4d46-9024-686cace4e9d2" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.050">
+    <testcase name="Baja aceptada" time="0.050" classname="06BajasLogicasDeleteServicioDeleteBajaLogica"/>
+  </testsuite>
+  <testsuite name="06 Bajas lógicas (DELETE) / Servicio: DELETE sin token -> 401" id="e950c991-eebd-4563-ba10-2d189f09b30a" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.047">
+    <testcase name="Status 401" time="0.047" classname="06BajasLogicasDeleteServicioDeleteSinToken401"/>
+  </testsuite>
+  <testsuite name="06 Bajas lógicas (DELETE) / Servicio: GET tras DELETE -> inactivo" id="358f1c6c-0b9f-48b3-b11d-fef6a3cff776" timestamp="2026-10-14T00:16:30.179Z" tests="1" failures="0" errors="0" time="0.052">
+    <testcase name="Inactivo o no visible" time="0.052" classname="06BajasLogicasDeleteServicioGetTrasDeleteInactivo"/>
+  </testsuite>
+</testsuites>

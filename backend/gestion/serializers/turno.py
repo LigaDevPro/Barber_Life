@@ -122,11 +122,14 @@ class TurnoUpdateEstadoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Turno
         fields = ('estado',)
-
-    def validate_estado(self, value):
-        if value not in Turno.Estado.values:
-            raise serializers.ValidationError('Estado inválido.')
-        return value
+        extra_kwargs = {
+            'estado': {
+                'error_messages': {
+                    'invalid_choice': 'Estado inválido. Valores permitidos: '
+                                      + ', '.join(Turno.Estado.values) + '.',
+                },
+            },
+        }
 
 
 class ServicioMasSolicitadoSerializer(serializers.Serializer):

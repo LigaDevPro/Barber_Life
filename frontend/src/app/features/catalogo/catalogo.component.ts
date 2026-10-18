@@ -49,6 +49,9 @@ export class CatalogoComponent implements OnInit {
 
   loading = signal(true);
   errorMsg = signal<string | null>(null);
+  /** Aviso de éxito (Mejora 2 de Figma: «Horario agregado» con el detalle). */
+  aviso = signal<{ titulo: string; detalle: string } | null>(null);
+  private avisoTimer: ReturnType<typeof setTimeout> | null = null;
 
   servicios = signal<Servicio[]>([]);
   barberos = signal<BarberoPublic[]>([]);
@@ -210,6 +213,11 @@ export class CatalogoComponent implements OnInit {
       .subscribe({
         next: () => {
           this.guardandoHorario.set(false);
+          const dia = this.dias.find((d) => d.valor === raw.dia_semana)?.nombre ?? '';
+          this.mostrarAviso(
+            'Horario agregado',
+            `${dia} · ${raw.hora_inicio.slice(0, 5)} a ${raw.hora_fin.slice(0, 5)} · cada ${raw.intervalo_minutos} min`,
+          );
           this.formHorario.reset({ dia_semana: 1, hora_inicio: '09:00', hora_fin: '18:00', intervalo_minutos: 30 });
           this.cargarHorariosYOferta();
         },
@@ -218,6 +226,17 @@ export class CatalogoComponent implements OnInit {
           this.errorMsg.set(primerError(err) || 'No se pudo crear el horario.');
         },
       });
+  }
+
+  mostrarAviso(titulo: string, detalle: string): void {
+    if (this.avisoTimer) clearTimeout(this.avisoTimer);
+    this.aviso.set({ titulo, detalle });
+    this.avisoTimer = setTimeout(() => this.aviso.set(null), 6000);
+  }
+
+  cerrarAviso(): void {
+    if (this.avisoTimer) clearTimeout(this.avisoTimer);
+    this.aviso.set(null);
   }
 
   toggleHorario(h: Horario): void {

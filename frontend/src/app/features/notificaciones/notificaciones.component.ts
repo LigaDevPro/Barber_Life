@@ -1,8 +1,10 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { NotificacionService } from '../../core/services/notificacion.service';
+import { NotificacionesTiempoRealService } from '../../core/services/notificaciones-tiempo-real.service';
 import { Notificacion, Pagina } from '../../core/models/models';
 import { TopbarComponent } from '../../shared/topbar/topbar.component';
 
@@ -14,6 +16,8 @@ import { TopbarComponent } from '../../shared/topbar/topbar.component';
 })
 export class NotificacionesComponent implements OnInit {
   private notificacionService = inject(NotificacionService);
+  private tiempoReal = inject(NotificacionesTiempoRealService);
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   authService = inject(AuthService);
 
@@ -26,6 +30,20 @@ export class NotificacionesComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
+    // Tiempo real: una notificación nueva aparece arriba de la lista sin recargar.
+    this.tiempoReal.nueva$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((n) => this.agregarEnVivo(n));
+  }
+
+  private agregarEnVivo(n: Notificacion): void {
+    const p = this.pagina();
+    if (!p || p.page !== 1 || p.results.some((r) => r.id === n.id)) return;
+    const count = p.count + 1;
+    this.pagina.set({
+      ...p,
+      count,
+      num_pages: Math.max(1, Math.ceil(count / 7)),
+      results: [n, ...p.results].slice(0, 7),
+    });
   }
 
   cargar(page = 1): void {

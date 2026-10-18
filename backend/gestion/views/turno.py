@@ -1,4 +1,8 @@
+import csv
+from datetime import date
+
 from django.db.models import Count, Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.exceptions import PermissionDenied, ValidationError
@@ -13,6 +17,7 @@ from ..serializers import (
     TurnoListSerializer, TurnoCreateSerializer, TurnoUpdateEstadoSerializer,
     ServicioMasSolicitadoSerializer,
 )
+from ..emails import enviar_turno_reservado, enviar_estado_turno, enviar_turno_cancelado_al_barbero
 from ..mongo import registrar_notificacion, registrar_evento_log
 
 # ---------------------------------------------------------------------------
@@ -32,12 +37,68 @@ def _verificar_ownership(usuario, turno, attr, mensaje):
         raise PermissionDenied(mensaje)
 
 
+def _parsear_fecha(valor, campo):
+    """Convierte 'YYYY-MM-DD' en date; si el formato es inválido, 400 con el
+    error en el campo (no un 500 ni un filtro que se ignora en silencio)."""
+    try:
+        return date.fromisoformat(valor)
+    except ValueError:
+        raise ValidationError({campo: 'Usá el formato AAAA-MM-DD.'})
+
+
+class FiltrosTurnosMixin:
+    """Visibilidad y filtros compartidos por el listado y la exportación de
+    turnos, para que el CSV exportado sea exactamente lo que se ve en pantalla.
+
+    Parámetros: ?barbero=<id> (solo admin), ?estado=, ?q= (texto sobre el
+    cliente), ?fecha_desde= y ?fecha_hasta= (AAAA-MM-DD, ambos inclusivos).
+    Un Barbero solo ve su propia agenda aunque manipule ?barbero=."""
+
+    def turnos_filtrados(self):
+        params = self.request.query_params
+        usuario = self.request.user
+        qs = Turno.objects.select_related('cliente__usuario', 'barbero__usuario', 'servicio')
+
+        if usuario.rol == 'admin':
+            barbero_id = params.get('barbero')
+            if barbero_id:
+                qs = qs.filter(barbero_id=barbero_id)
+        else:
+            barbero = getattr(usuario, 'barbero', None)
+            qs = qs.filter(barbero=barbero) if barbero else qs.none()
+
+        estado = params.get('estado')
+        if estado:
+            qs = qs.filter(estado=estado)
+
+        q = params.get('q')
+        if q:
+            qs = qs.filter(
+                Q(cliente__usuario__first_name__icontains=q) |
+                Q(cliente__usuario__last_name__icontains=q) |
+                Q(cliente__usuario__email__icontains=q)
+            )
+
+        desde = params.get('fecha_desde')
+        hasta = params.get('fecha_hasta')
+        desde = _parsear_fecha(desde, 'fecha_desde') if desde else None
+        hasta = _parsear_fecha(hasta, 'fecha_hasta') if hasta else None
+        if desde and hasta and desde > hasta:
+            raise ValidationError({'fecha_hasta': 'Tiene que ser igual o posterior a fecha_desde.'})
+        if desde:
+            qs = qs.filter(fecha_turno__gte=desde)
+        if hasta:
+            qs = qs.filter(fecha_turno__lte=hasta)
+
+        return qs.order_by('-fecha_turno', '-hora_inicio')
+
+
 class TurnosPagination(PaginacionEstandar):
     pass
 
 
-class TurnosListView(generics.ListCreateAPIView):
-    """GET /api/turnos/?barbero=<id>&estado=&q= — Barbero o Admin.
+class TurnosListView(FiltrosTurnosMixin, generics.ListCreateAPIView):
+    """GET /api/turnos/?barbero=<id>&estado=&q=&fecha_desde=&fecha_hasta= — Barbero o Admin.
     Un Barbero solo puede ver su propia agenda aunque manipule ?barbero= por
     la URL (RBAC: 'Barbero: reserva de turnos ajenos -> Denegado').
     El Administrador ve todo y puede filtrar por barbero.
@@ -64,33 +125,56 @@ class TurnosListView(generics.ListCreateAPIView):
             f'Tenés un nuevo turno el {turno.fecha_turno:%d/%m} {turno.hora_inicio:%H:%M}.',
         )
         registrar_evento_log(request.user.id, 'creacion_turno', {'turno_id': turno.id})
+        enviar_turno_reservado(turno)
         return Response(TurnoListSerializer(turno).data, status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
-        usuario = self.request.user
-        qs = Turno.objects.select_related('cliente__usuario', 'barbero__usuario', 'servicio')
+        return self.turnos_filtrados()
 
-        if usuario.rol == 'admin':
-            barbero_id = self.request.query_params.get('barbero')
-            if barbero_id:
-                qs = qs.filter(barbero_id=barbero_id)
-        else:
-            barbero = getattr(usuario, 'barbero', None)
-            qs = qs.filter(barbero=barbero) if barbero else qs.none()
 
-        estado = self.request.query_params.get('estado')
-        if estado:
-            qs = qs.filter(estado=estado)
+class TurnosExportarView(FiltrosTurnosMixin, APIView):
+    """GET /api/turnos/exportar/ — descarga en CSV los turnos que se ven en
+    el listado: acepta los mismos filtros (?barbero=, ?estado=, ?q=,
+    ?fecha_desde=, ?fecha_hasta=) y respeta la misma visibilidad (un Barbero
+    solo exporta su agenda). Sin paginar: exporta todo lo que matchea."""
+    permission_classes = (IsAuthenticated, EsBarberoOAdmin)
 
-        q = self.request.query_params.get('q')
-        if q:
-            qs = qs.filter(
-                Q(cliente__usuario__first_name__icontains=q) |
-                Q(cliente__usuario__last_name__icontains=q) |
-                Q(cliente__usuario__email__icontains=q)
-            )
+    COLUMNAS = (
+        'ID', 'Fecha', 'Hora inicio', 'Hora fin', 'Cliente', 'Email del cliente',
+        'Barbero', 'Servicio', 'Estado', 'Precio', 'Observaciones',
+    )
 
-        return qs.order_by('-fecha_turno', '-hora_inicio')
+    @staticmethod
+    def _celda(valor):
+        """Neutraliza la inyección de fórmulas: Excel interpreta como fórmula
+        una celda que empieza con = + - @, y 'observaciones' es texto libre."""
+        texto = '' if valor is None else str(valor)
+        return "'" + texto if texto[:1] in ('=', '+', '-', '@') else texto
+
+    def get(self, request):
+        turnos = self.turnos_filtrados()
+        registrar_evento_log(request.user.id, 'exportacion_turnos', {'cantidad': turnos.count()})
+
+        respuesta = HttpResponse(content_type='text/csv; charset=utf-8')
+        respuesta['Content-Disposition'] = 'attachment; filename="turnos.csv"'
+        respuesta.write('\ufeff')  # BOM: Excel abre bien las tildes
+        escritor = csv.writer(respuesta)
+        escritor.writerow(self.COLUMNAS)
+        for t in turnos:
+            escritor.writerow([self._celda(c) for c in (
+                t.id,
+                t.fecha_turno.strftime('%d/%m/%Y'),
+                t.hora_inicio.strftime('%H:%M'),
+                t.hora_fin.strftime('%H:%M'),
+                t.cliente.usuario.get_display_name(),
+                t.cliente.usuario.email,
+                t.barbero.usuario.get_display_name(),
+                t.servicio.nombre,
+                t.get_estado_display(),
+                t.precio(),
+                t.observaciones,
+            )])
+        return respuesta
 
 
 class MisTurnosView(generics.ListAPIView):
@@ -144,6 +228,7 @@ class TurnoDetailView(generics.RetrieveUpdateAPIView):
             f'ahora está {turno.get_estado_display()}.',
         )
         registrar_evento_log(self.request.user.id, 'cambio_estado_turno', {'turno_id': turno.id, 'estado': turno.estado})
+        enviar_estado_turno(turno)
 
 
 class TurnoCancelarView(APIView):
@@ -183,6 +268,7 @@ class TurnoCancelarView(APIView):
             f'El turno del {turno.fecha_turno:%d/%m} {turno.hora_inicio:%H:%M} fue cancelado.',
         )
         registrar_evento_log(usuario.id, 'cancelacion_turno', {'turno_id': turno.id})
+        enviar_turno_cancelado_al_barbero(turno)
         return Response(TurnoListSerializer(turno).data)
 
 

@@ -4,19 +4,20 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { TurnoService } from '../../core/services/turno.service';
 import { Pagina, TurnoResumen } from '../../core/models/models';
+import { DialogFocusDirective } from '../../shared/dialog-focus/dialog-focus.directive';
 import { TopbarComponent } from '../../shared/topbar/topbar.component';
 
 const ESTADO_CLASSES: Record<string, string> = {
-  pendiente: 'bg-[rgba(224,197,111,0.15)] text-bl-warning',
-  confirmado: 'bg-[rgba(111,170,224,0.15)] text-[#6faae0]',
-  completado: 'bg-[rgba(111,224,154,0.15)] text-bl-success',
-  cancelado: 'bg-[rgba(224,111,111,0.15)] text-bl-danger',
+  pendiente: 'bg-bl-warning/15 text-bl-warning',
+  confirmado: 'bg-bl-info/15 text-bl-info',
+  completado: 'bg-bl-success/15 text-bl-success',
+  cancelado: 'bg-bl-danger/15 text-bl-danger-text',
 };
 
 @Component({
   selector: 'app-mis-turnos',
   standalone: true,
-  imports: [CommonModule, RouterLink, TopbarComponent],
+  imports: [CommonModule, RouterLink, TopbarComponent, DialogFocusDirective],
   templateUrl: './mis-turnos.component.html',
 })
 export class MisTurnosComponent implements OnInit {
@@ -29,6 +30,8 @@ export class MisTurnosComponent implements OnInit {
   loading = signal(true);
   errorMsg = signal<string | null>(null);
   cancelandoId = signal<number | null>(null);
+  /** Turno pendiente de confirmación (Mejora 1 de Figma: «¿Cancelar este turno?»). */
+  turnoACancelar = signal<TurnoResumen | null>(null);
 
   ngOnInit(): void {
     this.cargar();
@@ -69,7 +72,21 @@ export class MisTurnosComponent implements OnInit {
   }
 
   estadoClasses(estado: string): string {
-    return `inline-block rounded-full px-2 py-0.5 text-[10.5px] capitalize ${ESTADO_CLASSES[estado] ?? ''}`;
+    return `inline-block rounded-badge px-2.5 py-0.75 text-[10.5px] capitalize ${ESTADO_CLASSES[estado] ?? ''}`;
+  }
+
+  pedirConfirmacion(turno: TurnoResumen): void {
+    this.turnoACancelar.set(turno);
+  }
+
+  cerrarConfirmacion(): void {
+    this.turnoACancelar.set(null);
+  }
+
+  confirmarCancelacion(): void {
+    const turno = this.turnoACancelar();
+    this.turnoACancelar.set(null);
+    if (turno) this.cancelar(turno);
   }
 
   cancelar(turno: TurnoResumen): void {

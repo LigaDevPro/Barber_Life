@@ -1,0 +1,200 @@
+[
+ {
+  "vp": "desktop",
+  "pantalla": "login",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/login",
+  "title": "Iniciar sesión | Barber Life",
+  "passes": 36,
+  "violations": 0
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "register",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/register",
+  "title": "Crear cuenta | Barber Life",
+  "passes": 34,
+  "violations": 0
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "inicio",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/inicio",
+  "title": "Inicio | Barber Life",
+  "passes": 32,
+  "violations": 0
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "solicitar-turno",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/solicitar-turno",
+  "title": "Solicitar turno | Barber Life",
+  "passes": 32,
+  "violations": 0
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "mis-turnos",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/mis-turnos",
+  "title": "Mis turnos | Barber Life",
+  "passes": 32,
+  "violations": 0
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "perfil-cliente",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Mi perfil | Barber Life",
+  "passes": 35,
+  "violations": 0
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "notificaciones",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/notificaciones",
+  "title": "Notificaciones | Barber Life",
+  "passes": 34,
+  "violations": 0
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "dashboard",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/dashboard",
+  "title": "Dashboard | Barber Life",
+  "passes": 34,
+  "violations": 0
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "gestion-turnos",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/turnos",
+  "title": "Gestión de turnos | Barber Life",
+  "passes": 38,
+  "violations": 0
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "catalogo",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/catalogo",
+  "title": "Catálogo | Barber Life",
+  "passes": 32,
+  "violations": 0
+ },
+ {
+  "vp": "desktop",
+  "pantalla": "perfil-barbero",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Mi perfil | Barber Life",
+  "passes": 35,
+  "violations": 0
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "login",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/login",
+  "title": "Iniciar sesión | Barber Life",
+  "passes": 33,
+  "violations": 0
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "register",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/register",
+  "title": "Crear cuenta | Barber Life",
+  "passes": 27,
+  "violations": 0
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "inicio",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/inicio",
+  "title": "Inicio | Barber Life",
+  "passes": 32,
+  "violations": 0
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "solicitar-turno",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/solicitar-turno",
+  "title": "Solicitar turno | Barber Life",
+  "passes": 32,
+  "violations": 0
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "mis-turnos",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/mis-turnos",
+  "title": "Mis turnos | Barber Life",
+  "passes": 32,
+  "violations": 0
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "perfil-cliente",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Mi perfil | Barber Life",
+  "passes": 35,
+  "violations": 0
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "notificaciones",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/notificaciones",
+  "title": "Notificaciones | Barber Life",
+  "passes": 34,
+  "violations": 0
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "dashboard",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/dashboard",
+  "title": "Dashboard | Barber Life",
+  "passes": 34,
+  "violations": 0
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "gestion-turnos",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/turnos",
+  "title": "Gestión de turnos | Barber Life",
+  "passes": 38,
+  "violations": 0
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "catalogo",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/catalogo",
+  "title": "Catálogo | Barber Life",
+  "passes": 32,
+  "violations": 0
+ },
+ {
+  "vp": "mobile",
+  "pantalla": "perfil-barbero",
+  "meta": true,
+  "url": "http://127.0.0.1:4200/perfil",
+  "title": "Mi perfil | Barber Life",
+  "passes": 35,
+  "violations": 0
+ }
+]
