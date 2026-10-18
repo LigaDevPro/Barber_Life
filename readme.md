@@ -45,7 +45,7 @@ El proyecto implementa una arquitectura **Cliente-Servidor** separada en dos rep
 | Backend | Django 6 + Django REST Framework + Channels/Daphne (ASGI) | [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) |
 | Base de datos | PostgreSQL + MongoDB | [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) |
 | Infraestructura | Docker + Docker Compose | [/Raíz](https://github.com/LigaDevPro/Barber_Life/tree/main/) - [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) |
-| Pagos | Mercado Pago API |
+| Pagos | Mercado Pago API | [/Raíz](https://github.com/LigaDevPro/Barber_Life/tree/main/) |
 | Autenticación | JWT (SimpleJWT) + Google Identity Services | [/backend](https://github.com/LigaDevPro/Barber_Life/tree/main/backend) - [/frontend](https://github.com/LigaDevPro/Barber_Life/tree/main/frontend) |
 
 ---
