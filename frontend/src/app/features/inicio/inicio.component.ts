@@ -29,6 +29,11 @@ export class InicioComponent implements OnInit {
   errorMsg = signal<string | null>(null);
   barberoModal = signal<BarberoDetail | null>(null);
 
+  irAServicios(e: Event): void {
+    e.preventDefault();
+    document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
   ngOnInit(): void {
     forkJoin({
       servicios: this.catalogoService.listarServicios().pipe(catchError(() => of([] as Servicio[]))),
