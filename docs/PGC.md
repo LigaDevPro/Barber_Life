@@ -63,3 +63,8 @@ Los merges de `develop` hacia `main` representan las líneas base "oficiales" de
 - La línea base `v0.3.0` corresponde al cierre del Sprint 4: los cambios se integraron en `develop` mediante los Pull Requests #158 a #166, se promovieron a `main` y se marcaron con el tag `v0.3.0`. Es la versión de la entrega final del proyecto.
 
 ## 4. Control de cambios
+
+- **Ramas:** una rama por integrante, creada a partir de `develop` (`main` ← `develop` ← rama personal).
+- **Pull Requests:** cada cambio se divide en un Pull Request de backend y otro de frontend, con título `[backend]: ...` o `[frontend]: ...`, y se integra solo después de ser revisado.
+- **Issues:** cada historia de usuario se registra como un issue padre en GitHub, dividido en sub-issues de Backend y Frontend, asignados a los integrantes y asociados al milestone del sprint.
+- **Commits:** en español y en modo imperativo, describiendo la acción realizada.
