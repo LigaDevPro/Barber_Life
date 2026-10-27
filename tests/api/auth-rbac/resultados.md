@@ -1,7 +1,7 @@
 # Resultados AUT-API — Autenticación y RBAC
 
-- Fecha: 13/10/2026 · API local (Django 6.1 + PostgreSQL 16 + MongoDB 7), datos `seed_demo`, rama `develop` (PR #115)
-- Requests: 26 · Aserciones: 37 · Fallidas: 0
+- Fecha: 27/10/2026 · API local con Docker Compose, datos `seed_demo`, rama `develop`
+- Requests: 26 · Aserciones: 115 · Fallidas: 0
 
 | # | Request | Método | HTTP | Resultado |
 |---|---|---|---|---|
@@ -26,7 +26,7 @@
 | 19 | Dashboard sin token -> 401 | GET | 401 | PASA |
 | 20 | Perfil cliente /clientes/me/ | GET | 200 | PASA |
 | 21 | Perfil barbero /barberos/me/ | GET | 200 | PASA |
-| 22 | Cliente en /barberos/me/ -> 403/404 | GET | 404 | PASA |
+| 22 | Cliente en /barberos/me/ -> 403/404 | GET | 403 | PASA |
 | 23 | Notificaciones del cliente | GET | 200 | PASA |
 | 24 | Notificaciones sin token -> 401 | GET | 401 | PASA |
 | 25 | Pagos sin token -> 401 | GET | 401 | PASA |
