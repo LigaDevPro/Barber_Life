@@ -7,7 +7,18 @@ y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
-Sin cambios pendientes.
+### Agregado
+- CI: nuevo job «API (Newman) y E2E (Playwright)» que levanta Docker Compose, carga `seed_demo` y corre las dos colecciones de Newman y los 45 tests de Playwright; los reportes se publican como artefactos.
+- API: verificaciones comunes a los 75 requests de las colecciones de Newman (tiempo de respuesta, cabecera `Content-Type` y cuerpo JSON); las aserciones pasan de 124 a 349.
+- API: `tests/api/generar_resultados.py` genera `resultados.md` a partir del reporte JSON de Newman.
+- E2E: reporte HTML autocontenido de Playwright en `e2e/reportes/reporte_e2e.html` (`pytest-html`).
+
+### Corregido
+- Accesibilidad: la insignia «confirmado» de Mis turnos y Gestión de turnos pasa de un contraste de 4,21:1 a 5,55:1 (WCAG 1.4.3).
+
+### Documentación
+- `Participacion_Individual.md` alineada con el historial de Git (incluye los cinco archivos de test del 16/10 y el detalle de diseñador y ejecutor).
+- READMEs de `tests/api` y `e2e` actualizados.
 
 ## [0.3.0] - 2026-10-17
 
