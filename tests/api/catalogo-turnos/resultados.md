@@ -1,7 +1,7 @@
 # Resultados AUT-API — Catálogo y Turnos
 
-- Fecha: 13/10/2026 · API local (Django 6.1 + PostgreSQL 16 + MongoDB 7), datos `seed_demo`, rama `develop` (PR #115)
-- Requests: 49 · Aserciones: 87 · Fallidas: 0
+- Fecha: 27/10/2026 · API local con Docker Compose, datos `seed_demo`, rama `develop`
+- Requests: 49 · Aserciones: 234 · Fallidas: 0
 
 | # | Request | Método | HTTP | Resultado |
 |---|---|---|---|---|
