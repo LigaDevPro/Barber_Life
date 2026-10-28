@@ -9,7 +9,7 @@ import { TopbarComponent } from '../../shared/topbar/topbar.component';
 
 const ESTADO_CLASSES: Record<string, string> = {
   pendiente: 'bg-bl-warning/15 text-bl-warning',
-  confirmado: 'bg-bl-info/15 text-bl-info',
+  confirmado: 'bg-bl-info/15 text-bl-info-text',
   completado: 'bg-bl-success/15 text-bl-success',
   cancelado: 'bg-bl-danger/15 text-bl-danger-text',
 };

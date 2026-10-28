@@ -45,7 +45,7 @@ def _entrar(auditoria, rol, cliente_nuevo):
 
 @pytest.mark.parametrize('nombre, rol, ruta, titulo', PANTALLAS, ids=IDS)
 def test_acc_01_sin_violaciones_axe_criticas_ni_serias(auditoria, cliente_nuevo, nombre, rol, ruta, titulo):
-    """ACC-01 · HU Accesibilidad · axe-core WCAG 2.2 AA: 0 violaciones critical/serious."""
+    """ACC-01 · WCAG 2.2 AA (1.1.1, 1.3.1, 1.4.3 contraste, 2.4.x, 4.1.2 y demás reglas wcag2a/2aa/21aa/22aa de axe-core) · 0 violaciones critical/serious."""
     # Arrange
     _entrar(auditoria, rol, cliente_nuevo)
 
