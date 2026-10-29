@@ -14,6 +14,8 @@
   --color-bl-accent-3: #949cf7;
   --color-bl-blue: #00a8fc;
   --color-bl-info: #00a8fc;
+  /* Texto de la insignia «confirmado» sobre su fondo celeste translúcido (contraste AA 5.55:1; con --color-bl-info daba 4.21:1, WCAG 1.4.3). */
+  --color-bl-info-text: #4cc3ff;
   --color-bl-danger: #ed4245;
   /* Texto/borde de errores y acciones destructivas sobre fondo oscuro (contraste AA 5.01:1) */
   --color-bl-danger-text: #ff7a7c;

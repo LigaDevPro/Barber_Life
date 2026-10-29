@@ -4,8 +4,8 @@ Colecciones que validan el contrato de la API REST de Barber Life desde afuera: 
 
 | Carpeta | Colección | Requests | Aserciones |
 |---|---|---|---|
-| `auth-rbac/` | Barber Life - AUT-API 1: Autenticación y RBAC | 26 | 37 |
-| `catalogo-turnos/` | Barber Life - AUT-API 2: Catálogo y Turnos | 49 | 87 |
+| `auth-rbac/` | Barber Life - AUT-API 1: Autenticación y RBAC | 26 | 115 |
+| `catalogo-turnos/` | Barber Life - AUT-API 2: Catálogo y Turnos | 49 | 234 |
 
 Cada carpeta contiene la colección (`*.postman_collection.json`), el entorno (`entorno.local.json`) y la evidencia de la última corrida: `reporte_newman.html`, `reporte_newman_junit.xml`, `resultado_newman.json` y `resultados.md` (tabla con el resultado de cada request).
 
@@ -81,7 +81,9 @@ newman run AuthRBAC.postman_collection.json -e entorno.local.json --env-var "bas
 
 ## Resultados
 
-Última corrida: 13/10/2026 sobre `develop`, con los datos de `seed_demo`: **75 requests, 124 aserciones, 0 fallidas**. El detalle está en `resultados.md` de cada carpeta y los reportes completos en `reporte_newman.html`.
+Última corrida: 27/10/2026 sobre `develop`, con los datos de `seed_demo`: **75 requests, 349 aserciones, 0 fallidas** (115 en AuthRBAC y 234 en CatalogoTurnos). El detalle está en `resultados.md` de cada carpeta y los reportes completos en `reporte_newman.html`.
+
+Cada request valida, además de sus aserciones propias, el tiempo de respuesta (< 3000 ms), la cabecera `Content-Type` y que el cuerpo sea JSON válido.
 
 Estos resultados figuran en la Matriz de Trazabilidad (capa "API (Postman/Newman)") y en la página Testing de la Wiki.
 

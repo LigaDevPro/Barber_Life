@@ -1,92 +1,170 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Barber Life - AUT-API 1: Autenticación y RBAC" tests="26" time="6.779">
-  <testsuite name="Auth (registro, login, refresh, me) / Registro cliente OK" id="f7f026f4-ecc8-44fa-9192-22ceaa8dbf31" timestamp="2026-10-14T00:16:21.983Z" tests="2" failures="0" errors="0" time="0.957">
-    <testcase name="Status 201" time="0.957" classname="AuthRegistroLoginRefreshMeRegistroClienteOk"/>
-    <testcase name="Mensaje de cuenta creada" time="0.957" classname="AuthRegistroLoginRefreshMeRegistroClienteOk"/>
+<testsuites name="Barber Life - AUT-API 1: Autenticación y RBAC" tests="26" time="5.639">
+  <testsuite name="Auth (registro, login, refresh, me) / Registro cliente OK" id="dce3f52f-2a2b-4f43-b3ed-2384a6b00025" timestamp="2026-10-27T23:17:57.342Z" tests="5" failures="0" errors="0" time="1.524">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="1.524" classname="AuthRegistroLoginRefreshMeRegistroClienteOk"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="1.524" classname="AuthRegistroLoginRefreshMeRegistroClienteOk"/>
+    <testcase name="El cuerpo es JSON válido" time="1.524" classname="AuthRegistroLoginRefreshMeRegistroClienteOk"/>
+    <testcase name="Status 201" time="1.524" classname="AuthRegistroLoginRefreshMeRegistroClienteOk"/>
+    <testcase name="Mensaje de cuenta creada" time="1.524" classname="AuthRegistroLoginRefreshMeRegistroClienteOk"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Registro email duplicado -> 400" id="58f9d462-6976-4ea0-a4fe-790973a796e7" timestamp="2026-10-14T00:16:21.983Z" tests="2" failures="0" errors="0" time="0.014">
-    <testcase name="Status 400" time="0.014" classname="AuthRegistroLoginRefreshMeRegistroEmailDuplicado400"/>
-    <testcase name="Error en email" time="0.014" classname="AuthRegistroLoginRefreshMeRegistroEmailDuplicado400"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Registro email duplicado -> 400" id="05365c67-4418-4ff1-be6e-65019e1293e0" timestamp="2026-10-27T23:17:57.342Z" tests="5" failures="0" errors="0" time="0.068">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.068" classname="AuthRegistroLoginRefreshMeRegistroEmailDuplicado400"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.068" classname="AuthRegistroLoginRefreshMeRegistroEmailDuplicado400"/>
+    <testcase name="El cuerpo es JSON válido" time="0.068" classname="AuthRegistroLoginRefreshMeRegistroEmailDuplicado400"/>
+    <testcase name="Status 400" time="0.068" classname="AuthRegistroLoginRefreshMeRegistroEmailDuplicado400"/>
+    <testcase name="Error en email" time="0.068" classname="AuthRegistroLoginRefreshMeRegistroEmailDuplicado400"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Registro contraseñas distintas -> 400" id="b25810c7-f34b-40b0-bc1f-d9ed64daf062" timestamp="2026-10-14T00:16:21.983Z" tests="2" failures="0" errors="0" time="0.050">
-    <testcase name="Status 400" time="0.050" classname="AuthRegistroLoginRefreshMeRegistroContrasenasDistintas400"/>
-    <testcase name="Error en password_confirm" time="0.050" classname="AuthRegistroLoginRefreshMeRegistroContrasenasDistintas400"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Registro contraseñas distintas -> 400" id="285fd802-ddc3-4c44-a53b-fda3e32226e2" timestamp="2026-10-27T23:17:57.342Z" tests="5" failures="0" errors="0" time="0.075">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.075" classname="AuthRegistroLoginRefreshMeRegistroContrasenasDistintas400"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.075" classname="AuthRegistroLoginRefreshMeRegistroContrasenasDistintas400"/>
+    <testcase name="El cuerpo es JSON válido" time="0.075" classname="AuthRegistroLoginRefreshMeRegistroContrasenasDistintas400"/>
+    <testcase name="Status 400" time="0.075" classname="AuthRegistroLoginRefreshMeRegistroContrasenasDistintas400"/>
+    <testcase name="Error en password_confirm" time="0.075" classname="AuthRegistroLoginRefreshMeRegistroContrasenasDistintas400"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Registro contraseña débil -> 400" id="75d6f868-9ce2-4687-86c0-772a09600617" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.053">
-    <testcase name="Status 400" time="0.053" classname="AuthRegistroLoginRefreshMeRegistroContrasenaDebil400"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Registro contraseña débil -> 400" id="c96f4a5a-cfbd-45c1-bee6-ceda55445cc8" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.039">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.039" classname="AuthRegistroLoginRefreshMeRegistroContrasenaDebil400"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.039" classname="AuthRegistroLoginRefreshMeRegistroContrasenaDebil400"/>
+    <testcase name="El cuerpo es JSON válido" time="0.039" classname="AuthRegistroLoginRefreshMeRegistroContrasenaDebil400"/>
+    <testcase name="Status 400" time="0.039" classname="AuthRegistroLoginRefreshMeRegistroContrasenaDebil400"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Registro email inválido -> 400" id="bc666d92-9a5f-43d2-b26b-3541de77f3d5" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.045">
-    <testcase name="Status 400" time="0.045" classname="AuthRegistroLoginRefreshMeRegistroEmailInvalido400"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Registro email inválido -> 400" id="90602db2-1bf4-42af-a4b6-bbe67bc52163" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.016">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.016" classname="AuthRegistroLoginRefreshMeRegistroEmailInvalido400"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.016" classname="AuthRegistroLoginRefreshMeRegistroEmailInvalido400"/>
+    <testcase name="El cuerpo es JSON válido" time="0.016" classname="AuthRegistroLoginRefreshMeRegistroEmailInvalido400"/>
+    <testcase name="Status 400" time="0.016" classname="AuthRegistroLoginRefreshMeRegistroEmailInvalido400"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Login cliente OK" id="ab7df820-965f-4bc3-a6fe-76f075045418" timestamp="2026-10-14T00:16:21.983Z" tests="3" failures="0" errors="0" time="0.987">
-    <testcase name="Status 200" time="0.987" classname="AuthRegistroLoginRefreshMeLoginClienteOk"/>
-    <testcase name="Devuelve access, refresh y usuario" time="0.987" classname="AuthRegistroLoginRefreshMeLoginClienteOk"/>
-    <testcase name="Rol cliente" time="0.987" classname="AuthRegistroLoginRefreshMeLoginClienteOk"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Login cliente OK" id="f0696982-5e53-4fbc-9503-4eeeec8f31d7" timestamp="2026-10-27T23:17:57.342Z" tests="6" failures="0" errors="0" time="0.856">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.856" classname="AuthRegistroLoginRefreshMeLoginClienteOk"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.856" classname="AuthRegistroLoginRefreshMeLoginClienteOk"/>
+    <testcase name="El cuerpo es JSON válido" time="0.856" classname="AuthRegistroLoginRefreshMeLoginClienteOk"/>
+    <testcase name="Status 200" time="0.856" classname="AuthRegistroLoginRefreshMeLoginClienteOk"/>
+    <testcase name="Devuelve access, refresh y usuario" time="0.856" classname="AuthRegistroLoginRefreshMeLoginClienteOk"/>
+    <testcase name="Rol cliente" time="0.856" classname="AuthRegistroLoginRefreshMeLoginClienteOk"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Login contraseña incorrecta -> 400" id="4fc6ca21-6035-4844-81dc-b2da7c183275" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.911">
-    <testcase name="Status 400" time="0.911" classname="AuthRegistroLoginRefreshMeLoginContrasenaIncorrecta400"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Login contraseña incorrecta -> 400" id="c251dcf8-f493-43ce-a3b2-43533da6f55f" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.677">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.677" classname="AuthRegistroLoginRefreshMeLoginContrasenaIncorrecta400"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.677" classname="AuthRegistroLoginRefreshMeLoginContrasenaIncorrecta400"/>
+    <testcase name="El cuerpo es JSON válido" time="0.677" classname="AuthRegistroLoginRefreshMeLoginContrasenaIncorrecta400"/>
+    <testcase name="Status 400" time="0.677" classname="AuthRegistroLoginRefreshMeLoginContrasenaIncorrecta400"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Login email inexistente -> 400" id="e37dd3fd-4774-40fe-be5a-c6ea612e3b53" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.983">
-    <testcase name="Status 400" time="0.983" classname="AuthRegistroLoginRefreshMeLoginEmailInexistente400"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Login email inexistente -> 400" id="466668be-ea41-41d2-8dee-0aaa811e2e19" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.673">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.673" classname="AuthRegistroLoginRefreshMeLoginEmailInexistente400"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.673" classname="AuthRegistroLoginRefreshMeLoginEmailInexistente400"/>
+    <testcase name="El cuerpo es JSON válido" time="0.673" classname="AuthRegistroLoginRefreshMeLoginEmailInexistente400"/>
+    <testcase name="Status 400" time="0.673" classname="AuthRegistroLoginRefreshMeLoginEmailInexistente400"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Login sin campos -> 400" id="ca008549-ae8d-465f-914c-cecfc24766a9" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.049">
-    <testcase name="Status 400" time="0.049" classname="AuthRegistroLoginRefreshMeLoginSinCampos400"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Login sin campos -> 400" id="82358bf7-dade-4257-b643-04da6dbaa099" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.012">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.012" classname="AuthRegistroLoginRefreshMeLoginSinCampos400"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.012" classname="AuthRegistroLoginRefreshMeLoginSinCampos400"/>
+    <testcase name="El cuerpo es JSON válido" time="0.012" classname="AuthRegistroLoginRefreshMeLoginSinCampos400"/>
+    <testcase name="Status 400" time="0.012" classname="AuthRegistroLoginRefreshMeLoginSinCampos400"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Login admin" id="5b3447f1-caad-4a51-b62c-3a3897bf8f33" timestamp="2026-10-14T00:16:21.983Z" tests="2" failures="0" errors="0" time="0.997">
-    <testcase name="Status 200" time="0.997" classname="AuthRegistroLoginRefreshMeLoginAdmin"/>
-    <testcase name="Rol admin" time="0.997" classname="AuthRegistroLoginRefreshMeLoginAdmin"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Login admin" id="d17fb40c-9e7e-474f-b916-8223026917b1" timestamp="2026-10-27T23:17:57.342Z" tests="5" failures="0" errors="0" time="0.725">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.725" classname="AuthRegistroLoginRefreshMeLoginAdmin"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.725" classname="AuthRegistroLoginRefreshMeLoginAdmin"/>
+    <testcase name="El cuerpo es JSON válido" time="0.725" classname="AuthRegistroLoginRefreshMeLoginAdmin"/>
+    <testcase name="Status 200" time="0.725" classname="AuthRegistroLoginRefreshMeLoginAdmin"/>
+    <testcase name="Rol admin" time="0.725" classname="AuthRegistroLoginRefreshMeLoginAdmin"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Login barbero" id="bcb120df-318f-4100-a112-32af7c14011b" timestamp="2026-10-14T00:16:21.983Z" tests="2" failures="0" errors="0" time="0.975">
-    <testcase name="Status 200" time="0.975" classname="AuthRegistroLoginRefreshMeLoginBarbero"/>
-    <testcase name="Rol barbero" time="0.975" classname="AuthRegistroLoginRefreshMeLoginBarbero"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Login barbero" id="b96f6a5a-dbae-443c-934f-6794061e86f1" timestamp="2026-10-27T23:17:57.342Z" tests="5" failures="0" errors="0" time="0.689">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.689" classname="AuthRegistroLoginRefreshMeLoginBarbero"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.689" classname="AuthRegistroLoginRefreshMeLoginBarbero"/>
+    <testcase name="El cuerpo es JSON válido" time="0.689" classname="AuthRegistroLoginRefreshMeLoginBarbero"/>
+    <testcase name="Status 200" time="0.689" classname="AuthRegistroLoginRefreshMeLoginBarbero"/>
+    <testcase name="Rol barbero" time="0.689" classname="AuthRegistroLoginRefreshMeLoginBarbero"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Me con token -> 200" id="241e8d34-a1bc-4d91-906d-9e05f709dedd" timestamp="2026-10-14T00:16:21.983Z" tests="2" failures="0" errors="0" time="0.052">
-    <testcase name="Status 200" time="0.052" classname="AuthRegistroLoginRefreshMeMeConToken200"/>
-    <testcase name="Email coincide" time="0.052" classname="AuthRegistroLoginRefreshMeMeConToken200"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Me con token -> 200" id="0962e004-cc73-4482-9441-48785f1daf30" timestamp="2026-10-27T23:17:57.342Z" tests="5" failures="0" errors="0" time="0.021">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.021" classname="AuthRegistroLoginRefreshMeMeConToken200"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.021" classname="AuthRegistroLoginRefreshMeMeConToken200"/>
+    <testcase name="El cuerpo es JSON válido" time="0.021" classname="AuthRegistroLoginRefreshMeMeConToken200"/>
+    <testcase name="Status 200" time="0.021" classname="AuthRegistroLoginRefreshMeMeConToken200"/>
+    <testcase name="Email coincide" time="0.021" classname="AuthRegistroLoginRefreshMeMeConToken200"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Me sin token -> 401" id="a7d36410-edf3-4395-8a3b-8363e9dce5b3" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.046">
-    <testcase name="Status 401" time="0.046" classname="AuthRegistroLoginRefreshMeMeSinToken401"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Me sin token -> 401" id="1b969059-6e8a-48ed-9c2a-5f415b099e1c" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.006">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.006" classname="AuthRegistroLoginRefreshMeMeSinToken401"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.006" classname="AuthRegistroLoginRefreshMeMeSinToken401"/>
+    <testcase name="El cuerpo es JSON válido" time="0.006" classname="AuthRegistroLoginRefreshMeMeSinToken401"/>
+    <testcase name="Status 401" time="0.006" classname="AuthRegistroLoginRefreshMeMeSinToken401"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Me con token inválido -> 401" id="e0cbeb6b-596e-4ea9-9486-60ed67c33308" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.043">
-    <testcase name="Status 401" time="0.043" classname="AuthRegistroLoginRefreshMeMeConTokenInvalido401"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Me con token inválido -> 401" id="f2410dc0-780c-4885-b6f1-e4ce4a6a4b29" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.006">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.006" classname="AuthRegistroLoginRefreshMeMeConTokenInvalido401"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.006" classname="AuthRegistroLoginRefreshMeMeConTokenInvalido401"/>
+    <testcase name="El cuerpo es JSON válido" time="0.006" classname="AuthRegistroLoginRefreshMeMeConTokenInvalido401"/>
+    <testcase name="Status 401" time="0.006" classname="AuthRegistroLoginRefreshMeMeConTokenInvalido401"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Refresh token OK" id="d122f676-0e19-46ab-80b4-174f122bf278" timestamp="2026-10-14T00:16:21.983Z" tests="2" failures="0" errors="0" time="0.046">
-    <testcase name="Status 200" time="0.046" classname="AuthRegistroLoginRefreshMeRefreshTokenOk"/>
-    <testcase name="Devuelve nuevo access" time="0.046" classname="AuthRegistroLoginRefreshMeRefreshTokenOk"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Refresh token OK" id="0b0e61a7-e747-4298-884f-27ebc87fc974" timestamp="2026-10-27T23:17:57.342Z" tests="5" failures="0" errors="0" time="0.008">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.008" classname="AuthRegistroLoginRefreshMeRefreshTokenOk"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.008" classname="AuthRegistroLoginRefreshMeRefreshTokenOk"/>
+    <testcase name="El cuerpo es JSON válido" time="0.008" classname="AuthRegistroLoginRefreshMeRefreshTokenOk"/>
+    <testcase name="Status 200" time="0.008" classname="AuthRegistroLoginRefreshMeRefreshTokenOk"/>
+    <testcase name="Devuelve nuevo access" time="0.008" classname="AuthRegistroLoginRefreshMeRefreshTokenOk"/>
   </testsuite>
-  <testsuite name="Auth (registro, login, refresh, me) / Refresh token inválido -> 401" id="75a261e7-e379-49d1-bcc7-0e28ac38f6fd" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.045">
-    <testcase name="Status 401" time="0.045" classname="AuthRegistroLoginRefreshMeRefreshTokenInvalido401"/>
+  <testsuite name="Auth (registro, login, refresh, me) / Refresh token inválido -> 401" id="5c4f6360-d392-473e-8b42-b771adf36afa" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.008">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.008" classname="AuthRegistroLoginRefreshMeRefreshTokenInvalido401"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.008" classname="AuthRegistroLoginRefreshMeRefreshTokenInvalido401"/>
+    <testcase name="El cuerpo es JSON válido" time="0.008" classname="AuthRegistroLoginRefreshMeRefreshTokenInvalido401"/>
+    <testcase name="Status 401" time="0.008" classname="AuthRegistroLoginRefreshMeRefreshTokenInvalido401"/>
   </testsuite>
-  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Dashboard como barbero -> 200" id="51111eb0-9ac4-4c5c-9755-e3ebd7f9d4da" timestamp="2026-10-14T00:16:21.983Z" tests="2" failures="0" errors="0" time="0.074">
-    <testcase name="Status 200" time="0.074" classname="RbacPerfilesDashboardYNotificacionesDashboardComoBarbero200"/>
-    <testcase name="Tiene KPIs" time="0.074" classname="RbacPerfilesDashboardYNotificacionesDashboardComoBarbero200"/>
+  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Dashboard como barbero -> 200" id="6d1e5aa8-f3e6-4c1f-a426-1caf87080932" timestamp="2026-10-27T23:17:57.342Z" tests="5" failures="0" errors="0" time="0.097">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.097" classname="RbacPerfilesDashboardYNotificacionesDashboardComoBarbero200"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.097" classname="RbacPerfilesDashboardYNotificacionesDashboardComoBarbero200"/>
+    <testcase name="El cuerpo es JSON válido" time="0.097" classname="RbacPerfilesDashboardYNotificacionesDashboardComoBarbero200"/>
+    <testcase name="Status 200" time="0.097" classname="RbacPerfilesDashboardYNotificacionesDashboardComoBarbero200"/>
+    <testcase name="Tiene KPIs" time="0.097" classname="RbacPerfilesDashboardYNotificacionesDashboardComoBarbero200"/>
   </testsuite>
-  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Dashboard como cliente -> 403" id="06c04a0a-807a-4a94-948b-c09a440eb252" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.053">
-    <testcase name="Status 403" time="0.053" classname="RbacPerfilesDashboardYNotificacionesDashboardComoCliente403"/>
+  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Dashboard como cliente -> 403" id="c56e91e5-5694-4cd3-85b7-fe50e0df44e0" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.021">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.021" classname="RbacPerfilesDashboardYNotificacionesDashboardComoCliente403"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.021" classname="RbacPerfilesDashboardYNotificacionesDashboardComoCliente403"/>
+    <testcase name="El cuerpo es JSON válido" time="0.021" classname="RbacPerfilesDashboardYNotificacionesDashboardComoCliente403"/>
+    <testcase name="Status 403" time="0.021" classname="RbacPerfilesDashboardYNotificacionesDashboardComoCliente403"/>
   </testsuite>
-  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Dashboard sin token -> 401" id="b9f2872d-0e3d-4135-91d0-335e8b977f74" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.045">
-    <testcase name="Status 401" time="0.045" classname="RbacPerfilesDashboardYNotificacionesDashboardSinToken401"/>
+  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Dashboard sin token -> 401" id="7408cfe0-61dd-4b42-967a-fd87117f20a0" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.007">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.007" classname="RbacPerfilesDashboardYNotificacionesDashboardSinToken401"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.007" classname="RbacPerfilesDashboardYNotificacionesDashboardSinToken401"/>
+    <testcase name="El cuerpo es JSON válido" time="0.007" classname="RbacPerfilesDashboardYNotificacionesDashboardSinToken401"/>
+    <testcase name="Status 401" time="0.007" classname="RbacPerfilesDashboardYNotificacionesDashboardSinToken401"/>
   </testsuite>
-  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Perfil cliente /clientes/me/" id="6f960fad-d427-41d8-b919-ba8b130f81ed" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.060">
-    <testcase name="Status 200" time="0.060" classname="RbacPerfilesDashboardYNotificacionesPerfilClienteClientesMe"/>
+  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Perfil cliente /clientes/me/" id="5febf488-29a6-4aee-811c-8e21d13dbe66" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.024">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.024" classname="RbacPerfilesDashboardYNotificacionesPerfilClienteClientesMe"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.024" classname="RbacPerfilesDashboardYNotificacionesPerfilClienteClientesMe"/>
+    <testcase name="El cuerpo es JSON válido" time="0.024" classname="RbacPerfilesDashboardYNotificacionesPerfilClienteClientesMe"/>
+    <testcase name="Status 200" time="0.024" classname="RbacPerfilesDashboardYNotificacionesPerfilClienteClientesMe"/>
   </testsuite>
-  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Perfil barbero /barberos/me/" id="96c2c51d-37c5-4e4f-a047-a14c71624b7c" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.053">
-    <testcase name="Status 200" time="0.053" classname="RbacPerfilesDashboardYNotificacionesPerfilBarberoBarberosMe"/>
+  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Perfil barbero /barberos/me/" id="84d18a59-0d28-4833-bad8-454f359ac719" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.025">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.025" classname="RbacPerfilesDashboardYNotificacionesPerfilBarberoBarberosMe"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.025" classname="RbacPerfilesDashboardYNotificacionesPerfilBarberoBarberosMe"/>
+    <testcase name="El cuerpo es JSON válido" time="0.025" classname="RbacPerfilesDashboardYNotificacionesPerfilBarberoBarberosMe"/>
+    <testcase name="Status 200" time="0.025" classname="RbacPerfilesDashboardYNotificacionesPerfilBarberoBarberosMe"/>
   </testsuite>
-  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Cliente en /barberos/me/ -> 403/404" id="5278e6c0-8be5-4879-9a35-ae0ee26d0afb" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.054">
-    <testcase name="Denegado" time="0.054" classname="RbacPerfilesDashboardYNotificacionesClienteEnBarberosMe403404"/>
+  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Cliente en /barberos/me/ -> 403/404" id="3ac10a09-4112-4533-96be-ce57a3ecd1bf" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.023">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.023" classname="RbacPerfilesDashboardYNotificacionesClienteEnBarberosMe403404"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.023" classname="RbacPerfilesDashboardYNotificacionesClienteEnBarberosMe403404"/>
+    <testcase name="El cuerpo es JSON válido" time="0.023" classname="RbacPerfilesDashboardYNotificacionesClienteEnBarberosMe403404"/>
+    <testcase name="Denegado" time="0.023" classname="RbacPerfilesDashboardYNotificacionesClienteEnBarberosMe403404"/>
   </testsuite>
-  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Notificaciones del cliente" id="eb8ce476-ef4d-43a2-bc22-033a0ca6ab23" timestamp="2026-10-14T00:16:21.983Z" tests="2" failures="0" errors="0" time="0.052">
-    <testcase name="Status 200" time="0.052" classname="RbacPerfilesDashboardYNotificacionesNotificacionesDelCliente"/>
-    <testcase name="Paginado" time="0.052" classname="RbacPerfilesDashboardYNotificacionesNotificacionesDelCliente"/>
+  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Notificaciones del cliente" id="07376481-9c33-4389-bff9-f860638b8628" timestamp="2026-10-27T23:17:57.342Z" tests="5" failures="0" errors="0" time="0.022">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.022" classname="RbacPerfilesDashboardYNotificacionesNotificacionesDelCliente"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.022" classname="RbacPerfilesDashboardYNotificacionesNotificacionesDelCliente"/>
+    <testcase name="El cuerpo es JSON válido" time="0.022" classname="RbacPerfilesDashboardYNotificacionesNotificacionesDelCliente"/>
+    <testcase name="Status 200" time="0.022" classname="RbacPerfilesDashboardYNotificacionesNotificacionesDelCliente"/>
+    <testcase name="Paginado" time="0.022" classname="RbacPerfilesDashboardYNotificacionesNotificacionesDelCliente"/>
   </testsuite>
-  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Notificaciones sin token -> 401" id="f7bbc345-03fd-48d3-a91a-c93f0eddc4b0" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.043">
-    <testcase name="Status 401" time="0.043" classname="RbacPerfilesDashboardYNotificacionesNotificacionesSinToken401"/>
+  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Notificaciones sin token -> 401" id="a0757be2-cffe-47a9-bcdf-3e4300b98d29" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.005">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.005" classname="RbacPerfilesDashboardYNotificacionesNotificacionesSinToken401"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.005" classname="RbacPerfilesDashboardYNotificacionesNotificacionesSinToken401"/>
+    <testcase name="El cuerpo es JSON válido" time="0.005" classname="RbacPerfilesDashboardYNotificacionesNotificacionesSinToken401"/>
+    <testcase name="Status 401" time="0.005" classname="RbacPerfilesDashboardYNotificacionesNotificacionesSinToken401"/>
   </testsuite>
-  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Pagos sin token -> 401" id="8b306e3b-8d41-4ede-b60e-deb4dc77843d" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.044">
-    <testcase name="Status 401" time="0.044" classname="RbacPerfilesDashboardYNotificacionesPagosSinToken401"/>
+  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Pagos sin token -> 401" id="2c895b1c-9a69-4fd6-b761-f02e63841475" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.005">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.005" classname="RbacPerfilesDashboardYNotificacionesPagosSinToken401"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.005" classname="RbacPerfilesDashboardYNotificacionesPagosSinToken401"/>
+    <testcase name="El cuerpo es JSON válido" time="0.005" classname="RbacPerfilesDashboardYNotificacionesPagosSinToken401"/>
+    <testcase name="Status 401" time="0.005" classname="RbacPerfilesDashboardYNotificacionesPagosSinToken401"/>
   </testsuite>
-  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Método no permitido (DELETE /auth/login/) -> 405" id="f81f3b1e-d90d-46e5-aac8-b0cb54b21706" timestamp="2026-10-14T00:16:21.983Z" tests="1" failures="0" errors="0" time="0.048">
-    <testcase name="Status 405" time="0.048" classname="RbacPerfilesDashboardYNotificacionesMetodoNoPermitidoDeleteAuthLogin405"/>
+  <testsuite name="RBAC, perfiles, dashboard y notificaciones / Método no permitido (DELETE /auth/login/) -> 405" id="0266cd79-3f21-4d30-9f22-7ca1f6b47aa3" timestamp="2026-10-27T23:17:57.342Z" tests="4" failures="0" errors="0" time="0.007">
+    <testcase name="Tiempo de respuesta menor a 3000 ms" time="0.007" classname="RbacPerfilesDashboardYNotificacionesMetodoNoPermitidoDeleteAuthLogin405"/>
+    <testcase name="Cabecera Content-Type: application/json (o cuerpo vacío en 204)" time="0.007" classname="RbacPerfilesDashboardYNotificacionesMetodoNoPermitidoDeleteAuthLogin405"/>
+    <testcase name="El cuerpo es JSON válido" time="0.007" classname="RbacPerfilesDashboardYNotificacionesMetodoNoPermitidoDeleteAuthLogin405"/>
+    <testcase name="Status 405" time="0.007" classname="RbacPerfilesDashboardYNotificacionesMetodoNoPermitidoDeleteAuthLogin405"/>
   </testsuite>
 </testsuites>
