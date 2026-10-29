@@ -9,7 +9,6 @@
   <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white"/>
   <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"/>
 </p>
----
  
 ## Descripción
  
@@ -219,7 +218,7 @@ El proyecto tiene pruebas automatizadas en tres capas, más accesibilidad, y tod
 docker compose exec backend python manage.py test
 ```
  
-Las instrucciones para correr Newman y Playwright, con sus requisitos y reportes, están en [`tests/api/README.md`](tests/api/README.md) y [`e2e/README.md`](e2e/README.md). Los reportes de Newman, de Playwright y de cobertura también se publican como artefactos en cada corrida del CI.
+Las instrucciones para correr Newman y Playwright, con sus requisitos y reportes, están en [`tests/api/README.md`](tests/api/README.md) y [`e2e/README.md`](e2e/README.md). Los reportes de Newman, de Playwright y de cobertura también se publican como artefactos en cada corrida del CI. La guía completa de ejecución y los resultados están en la [Wiki de Testing](https://github.com/LigaDevPro/Barber_Life/wiki/Testing.md-%28verificacion-y-validacion-de-programas%29).
  
 **Accesibilidad:** las 11 pantallas principales se auditaron con axe-core y Lighthouse, antes y después de las correcciones, y se recorrió el flujo de reserva con NVDA. Los 13 hallazgos (A11Y-01 a A11Y-13) están corregidos y verificados. Detalle en [`docs/accesibilidad/Informe_Accesibilidad.md`](docs/accesibilidad/Informe_Accesibilidad.md).
  
@@ -266,7 +265,7 @@ Esta estrategia se adapta bien a un equipo chico (5 integrantes) donde cada pers
 - [`accesibilidad/Informe_Accesibilidad.md`](docs/accesibilidad/Informe_Accesibilidad.md): informe de accesibilidad con la evidencia del antes y el después.
 - [`Participacion_Individual.md`](docs/Participacion_Individual.md): autoría de tests y hallazgos por integrante, y quién diseñó y ejecutó cada capa.
 - [`CHANGELOG.md`](CHANGELOG.md): historial de cambios por versión.
-**Fuera del repositorio (Google Drive):** Plan de Pruebas y Reporte de Bugs, Planilla de casos de prueba, Matriz de trazabilidad (historia de usuario → caso → test automatizado → resultado → bug), IEEE 830, requisitos RF/RNF, diagrama de Gantt, plan de gestión, informe de avances y manual de usuario. Los enlaces a las tres de QA están en la [página Wiki](https://github.com/LigaDevPro/Barber_Life/wiki).
+**Fuera del repositorio (Google Drive):** Plan de Pruebas y Reporte de Bugs, Planilla de casos de prueba, Matriz de trazabilidad (historia de usuario → caso → test automatizado → resultado → bug), IEEE 830, requisitos RF/RNF, diagrama de Gantt, plan de gestión, informe de avances y manual de usuario. Los enlaces a las tres de QA están en la [página de Testing de la Wiki (verificación y validación de programas)](https://github.com/LigaDevPro/Barber_Life/wiki/Testing.md-%28verificacion-y-validacion-de-programas%29).
  
 ---
  
