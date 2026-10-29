@@ -5,7 +5,9 @@ Todos los cambios significativos de este proyecto se documentan en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto adhiere a [Versionado Semántico](https://semver.org/lang/es/).
  
-## [Unreleased] 2026-10-29
+## [Unreleased]
+ 
+## [0.3.1] - 2026-10-29
  
 Cierre de la verificación y validación del Sprint 4: Newman y Playwright en el CI, documentación de QA alineada con Git y un ajuste de contraste.
  
