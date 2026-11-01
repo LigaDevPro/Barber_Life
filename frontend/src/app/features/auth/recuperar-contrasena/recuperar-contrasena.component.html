@@ -1,0 +1,52 @@
+<div class="min-h-screen lg:grid lg:grid-cols-2">
+  <aside class="hidden lg:block" aria-label="Presentación de Barber Life"><bl-auth-hero /></aside>
+
+  <main
+    class="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_50%_0%,var(--color-bl-surface)_0%,var(--color-bl-bg)_60%)] p-6 lg:bg-bl-bg lg:bg-none"
+  >
+    <div class="flex w-full max-w-95 flex-col items-center gap-1.5 text-center lg:max-w-105">
+      <bl-logo class="lg:hidden" [size]="72" />
+
+      <h1 class="mt-4.5 mb-1 text-[28px] font-bold lg:mt-0 lg:text-[32px]">Recuperá tu contraseña</h1>
+      <p class="mb-5 text-sm text-bl-text-muted">Te mandamos un enlace a tu email para elegir una nueva</p>
+
+      @if (enviado()) {
+        <p class="w-full rounded-field border border-bl-success/40 bg-bl-success/15 px-3.5 py-2.5 text-[13px] text-bl-text" role="status" data-testid="recuperar-enviado">
+          {{ enviado() }}
+        </p>
+      } @else {
+        <form [formGroup]="form" (ngSubmit)="submit()" class="mb-2 flex w-full flex-col gap-3">
+          <label class="flex flex-col gap-1 text-left text-[13px] font-medium text-bl-text-muted">
+            Correo electrónico
+            <input
+              class="bl-input"
+              [class.bl-input--error]="form.get('email')?.invalid && form.get('email')?.touched"
+              type="email"
+              placeholder="tu@email.com"
+              autocomplete="email"
+              [attr.aria-invalid]="form.get('email')?.invalid && form.get('email')?.touched ? true : null"
+              aria-describedby="recuperar-email-error"
+              data-testid="recuperar-email"
+              formControlName="email"
+            />
+          </label>
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <span class="bl-error-text" id="recuperar-email-error" role="alert">Ingresá un email válido.</span>
+          }
+
+          @if (errorMsg()) {
+            <span class="bl-error-text" role="alert">{{ errorMsg() }}</span>
+          }
+
+          <button class="bl-btn bl-btn--primary" type="submit" [disabled]="loading()" data-testid="recuperar-submit">
+            {{ loading() ? 'Enviando...' : 'Enviar enlace' }}
+          </button>
+        </form>
+      }
+
+      <p class="mt-4.5 text-[13.5px] text-bl-text-muted">
+        <a routerLink="/login" class="font-semibold text-bl-accent-3 no-underline hover:underline">Volver a iniciar sesión</a>
+      </p>
+    </div>
+  </main>
+</div>
