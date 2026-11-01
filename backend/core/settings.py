@@ -184,6 +184,12 @@ MONGO_DB_NAME = os.environ.get('MONGO_DB_NAME', 'barberlife_nosql')
 # Ventana de cancelación autónoma del cliente (RBAC - restricciones críticas, wiki)
 CANCELACION_LIMITE_HORAS = int(os.environ.get('CANCELACION_LIMITE_HORAS', '2'))
 
+# US05: bloqueo del login tras intentos fallidos y vencimiento del enlace de
+# recuperación de contraseña (en segundos; Django lo usa en default_token_generator).
+LOGIN_MAX_INTENTOS = int(os.environ.get('LOGIN_MAX_INTENTOS', '3'))
+LOGIN_BLOQUEO_MINUTOS = int(os.environ.get('LOGIN_BLOQUEO_MINUTOS', '15'))
+PASSWORD_RESET_TIMEOUT = int(os.environ.get('PASSWORD_RESET_TIMEOUT', '3600'))
+
 # Mercado Pago (ya lo tenés instalado — clave lista para Sprint 3, CU-06;
 # todavía no hay ninguna vista que la use en este sprint)
 MERCADOPAGO_ACCESS_TOKEN = os.environ.get('MERCADOPAGO_ACCESS_TOKEN', '')
