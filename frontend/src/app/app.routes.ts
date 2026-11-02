@@ -15,6 +15,22 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
   },
   {
+    path: 'recuperar-contrasena',
+    title: 'Recuperar contraseña | Barber Life',
+    loadComponent: () =>
+      import('./features/auth/recuperar-contrasena/recuperar-contrasena.component').then(
+        (m) => m.RecuperarContrasenaComponent,
+      ),
+  },
+  {
+    path: 'restablecer-contrasena',
+    title: 'Nueva contraseña | Barber Life',
+    loadComponent: () =>
+      import('./features/auth/restablecer-contrasena/restablecer-contrasena.component').then(
+        (m) => m.RestablecerContrasenaComponent,
+      ),
+  },
+  {
     path: 'dashboard',
     title: 'Dashboard | Barber Life',
     loadComponent: () => import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),

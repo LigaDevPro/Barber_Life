@@ -5,7 +5,10 @@ submódulo vive cada clase. Cada dominio (auth, turno, cliente, barbero, ...)
 vive en su propio archivo para que distintas personas puedan trabajar en
 paralelo sin pisarse en el mismo archivo.
 """
-from .auth import RegisterSerializer, LoginSerializer, GoogleLoginSerializer, UsuarioMeSerializer, tokens_para
+from .auth import (
+    RegisterSerializer, LoginSerializer, GoogleLoginSerializer, UsuarioMeSerializer, tokens_para,
+    RecuperarContrasenaSerializer, RestablecerContrasenaSerializer,
+)
 from .turno import (
     TurnoListSerializer, TurnoCreateSerializer, TurnoUpdateEstadoSerializer,
     ServicioMasSolicitadoSerializer,
@@ -22,6 +25,7 @@ from .resena import ResenaSerializer, ResenaCreateSerializer
 
 __all__ = [
     'RegisterSerializer', 'LoginSerializer', 'UsuarioMeSerializer',
+    'RecuperarContrasenaSerializer', 'RestablecerContrasenaSerializer',
     'TurnoListSerializer', 'TurnoCreateSerializer', 'TurnoUpdateEstadoSerializer',
     'ServicioMasSolicitadoSerializer',
     'ClienteMeSerializer',

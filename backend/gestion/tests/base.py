@@ -18,6 +18,7 @@ from itertools import count
 from unittest import mock
 
 from bson import ObjectId
+from django.core.cache import cache
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -112,6 +113,9 @@ class BarberLifeTestCase(APITestCase):
 
     def setUp(self):
         super().setUp()
+        # El contador de intentos fallidos del login vive en la caché: se
+        # limpia para que un test no herede el bloqueo de otro.
+        cache.clear()
         self.mongo = FakeMongoDB()
         for destino in ('gestion.mongo.get_mongo_db', 'gestion.views.notificacion.get_mongo_db'):
             patcher = mock.patch(destino, return_value=self.mongo)
