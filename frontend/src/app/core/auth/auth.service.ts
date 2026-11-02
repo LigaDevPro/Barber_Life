@@ -41,7 +41,27 @@ export class AuthService {
       .pipe(tap((res) => this.guardarSesion(res)));
   }
 
-  private guardarSesion(res: LoginResponse): void {
+  /** POST /api/auth/password-reset/ — pide el enlace de recuperación (US05). */
+  solicitarRecuperacion(email: string): Observable<{ detail: string }> {
+    return this.http.post<{ detail: string }>(`${environment.apiUrl}/auth/password-reset/`, { email });
+  }
+
+  /** POST /api/auth/password-reset/confirm/ — guarda la contraseña nueva con el uid y token del mail. */
+  restablecerContrasena(
+    uid: string,
+    token: string,
+    password: string,
+    passwordConfirm: string,
+  ): Observable<{ detail: string }> {
+    return this.http.post<{ detail: string }>(`${environment.apiUrl}/auth/password-reset/confirm/`, {
+      uid,
+      token,
+      password,
+      password_confirm: passwordConfirm,
+    });
+  }
+
+    private guardarSesion(res: LoginResponse): void {
     localStorage.setItem(ACCESS_KEY, res.access);
     localStorage.setItem(REFRESH_KEY, res.refresh);
     localStorage.setItem(USER_KEY, JSON.stringify(res.usuario));

@@ -1,0 +1,65 @@
+<div class="min-h-screen lg:grid lg:grid-cols-2">
+  <aside class="hidden lg:block" aria-label="Presentación de Barber Life"><bl-auth-hero /></aside>
+
+  <main
+    class="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_50%_0%,var(--color-bl-surface)_0%,var(--color-bl-bg)_60%)] p-6 lg:bg-bl-bg lg:bg-none"
+  >
+    <div class="flex w-full max-w-95 flex-col items-center gap-1.5 text-center lg:max-w-105">
+      <bl-logo class="lg:hidden" [size]="72" />
+
+      <h1 class="mt-4.5 mb-1 text-[28px] font-bold lg:mt-0 lg:text-[32px]">Elegí una contraseña nueva</h1>
+      <p class="mb-5 text-sm text-bl-text-muted">Mínimo 8 caracteres</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="mb-2 flex w-full flex-col gap-3">
+        <label class="flex flex-col gap-1 text-left text-[13px] font-medium text-bl-text-muted">
+          Contraseña nueva
+          <input
+            class="bl-input"
+            [class.bl-input--error]="form.get('password')?.invalid && form.get('password')?.touched"
+            type="password"
+            autocomplete="new-password"
+            [attr.aria-invalid]="form.get('password')?.invalid && form.get('password')?.touched ? true : null"
+            aria-describedby="restablecer-password-error"
+            data-testid="restablecer-password"
+            formControlName="password"
+          />
+        </label>
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <span class="bl-error-text" id="restablecer-password-error" role="alert">Mínimo 8 caracteres.</span>
+        }
+
+        <label class="flex flex-col gap-1 text-left text-[13px] font-medium text-bl-text-muted">
+          Confirmar contraseña
+          <input
+            class="bl-input"
+            [class.bl-input--error]="form.hasError('mismatch') && form.get('passwordConfirm')?.touched"
+            type="password"
+            autocomplete="new-password"
+            [attr.aria-invalid]="form.hasError('mismatch') && form.get('passwordConfirm')?.touched ? true : null"
+            aria-describedby="restablecer-confirm-error"
+            data-testid="restablecer-password-confirm"
+            formControlName="passwordConfirm"
+          />
+        </label>
+        @if (form.hasError('mismatch') && form.get('passwordConfirm')?.touched) {
+          <span class="bl-error-text" id="restablecer-confirm-error" role="alert">Las contraseñas no coinciden.</span>
+        }
+
+        @if (errorMsg()) {
+          <span class="bl-error-text" role="alert" data-testid="restablecer-error">{{ errorMsg() }}</span>
+        }
+        @if (successMsg()) {
+          <span class="text-[13px] text-bl-success" role="status">{{ successMsg() }}</span>
+        }
+
+        <button class="bl-btn bl-btn--primary" type="submit" [disabled]="loading() || !!successMsg()" data-testid="restablecer-submit">
+          {{ loading() ? 'Guardando...' : 'Guardar contraseña' }}
+        </button>
+      </form>
+
+      <p class="mt-4.5 text-[13.5px] text-bl-text-muted">
+        <a routerLink="/recuperar-contrasena" class="font-semibold text-bl-accent-3 no-underline hover:underline">Pedir un enlace nuevo</a>
+      </p>
+    </div>
+  </main>
+</div>

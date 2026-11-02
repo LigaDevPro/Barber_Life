@@ -6,6 +6,7 @@ Escenarios:
   2. Reserva de turno registrada                  -> cliente
   3. Cambio de estado del turno (barbero/admin)   -> cliente
   4. Turno cancelado por el cliente               -> barbero
+  5. Recuperación de contraseña                   -> usuario que la pidió
 
 El envío es "best effort": si el servidor SMTP está caído o mal configurado
 se loguea el error pero la operación de negocio (registro, reserva, etc.)
@@ -102,4 +103,15 @@ def enviar_turno_cancelado_al_barbero(turno):
         [f'Hola {barbero.get_display_name()}, {turno.cliente.usuario.get_display_name()} canceló su turno:',
          *_detalle_turno(turno)],
         ('Ver agenda', f'{settings.FRONTEND_URL}/turnos'),
+    )
+
+
+def enviar_recuperacion_contrasena(usuario, enlace):
+    horas = settings.PASSWORD_RESET_TIMEOUT // 3600
+    return _enviar(
+        usuario.email, 'Recuperá tu contraseña de Barber Life', 'Restablecer contraseña',
+        [f'Hola {usuario.get_display_name()}, recibimos un pedido para cambiar tu contraseña.',
+         f'El enlace vence en {horas} hora{"s" if horas != 1 else ""} y sirve una sola vez.',
+         'Si no lo pediste vos, ignorá este mensaje: tu contraseña sigue igual.'],
+        ('Elegir una contraseña nueva', enlace),
     )

@@ -2,11 +2,16 @@
 
 HU: "Como usuario quiero iniciar sesión para acceder a mis funciones".
 """
+import uuid
+
 import pytest
 
 from pages.login_page import LoginPage
 
 PASSWORD_INCORRECTA = 'Password-incorrecta-1'
+# Un email inexistente distinto en cada corrida: el login se bloquea tras 3
+# intentos fallidos con el mismo email (US05) y no queremos depender de eso.
+EMAIL_INEXISTENTE = f'no.existe.{uuid.uuid4().hex[:8]}@mail.com'
 
 
 def test_tc_login_01_cliente_inicia_sesion_y_llega_a_inicio(page, base_url, cliente_nuevo):
@@ -25,7 +30,7 @@ def test_tc_login_01_cliente_inicia_sesion_y_llega_a_inicio(page, base_url, clie
     'caso, email, password, mensaje',
     [
         ('password_incorrecta', 'USAR_CLIENTE', PASSWORD_INCORRECTA, 'Email o contraseña incorrectos.'),
-        ('email_inexistente', 'no.existe.e2e@mail.com', 'Cualquier-1234', 'Email o contraseña incorrectos.'),
+        ('email_inexistente', EMAIL_INEXISTENTE, 'Cualquier-1234', 'Email o contraseña incorrectos.'),
         ('email_con_formato_invalido', 'esto-no-es-un-email', 'Cualquier-1234', 'Ingresá un email válido.'),
         ('password_vacia', 'USAR_CLIENTE', '', 'La contraseña es obligatoria.'),
     ],

@@ -26,6 +26,8 @@ RUTAS_PUBLICAS = (
     '/api/auth/login/',
     '/api/auth/refresh/',
     '/api/auth/google/',
+    # Prefijo: cubre también /api/auth/password-reset/confirm/.
+    '/api/auth/password-reset/',
     '/admin/',
     # Ruta exacta (no un prefijo compartido con otros endpoints): la llama
     # Mercado Pago, no un usuario logueado.

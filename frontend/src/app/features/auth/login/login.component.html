@@ -51,6 +51,13 @@
         <span class="bl-error-text" id="login-password-error" role="alert" data-testid="login-password-error">La contraseña es obligatoria.</span>
       }
 
+      <a
+        routerLink="/recuperar-contrasena"
+        class="self-end text-[13px] font-semibold text-bl-accent-3 no-underline hover:underline"
+        data-testid="login-olvide"
+        >¿Olvidaste tu contraseña?</a
+      >
+
       @if (errorMsg()) {
         <span class="bl-error-text" role="alert" data-testid="login-error">{{ errorMsg() }}</span>
       }
